@@ -61,7 +61,7 @@ client.on('ready', () => {
                     client.user.setAvatar(tweets[0].user.profile_image_url_https).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
                     var old_avatar = tweets[0].user.profile_image_url_https
                 } 
-                if (old_avatar === tweets[0].user.profile_image_url_https) return
+                if (old_avatar === tweets[0].user.profile_image_url_https) return;
                 
                 if (!old_tweets) {
                     var old_tweets = tweets[0].id
