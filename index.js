@@ -55,10 +55,6 @@ client.on('ready', () => {
                 
                 client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
 
-                if (!old_avatar){
-                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_avatar not defined, setting var`)
-                    var old_avatar = tweets[0].user.profile_image_url_https
-                } 
                 if (old_avatar && old_avatar !== tweets[0].user.profile_image_url_https){
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar changed, setting in Discord...`)
                     client.user.setAvatar(tweets[0].user.profile_image_url_https).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
@@ -67,11 +63,11 @@ client.on('ready', () => {
                 if (old_avatar && old_avatar === tweets[0].user.profile_image_url_https) {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar not changed`)
                 }
+                if (!old_avatar){
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_avatar not defined, setting var`)
+                    var old_avatar = tweets[0].user.profile_image_url_https
+                }
                 
-                if (!old_tweets) {
-                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_tweets not defined, setting var`)
-                    var old_tweets = tweets[0].id
-                } 
                 if (old_tweets && old_tweets !== tweets[0].id) {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] new tweet! sending in Discord...`)
                     let embed = new Discord.RichEmbed
@@ -88,6 +84,10 @@ client.on('ready', () => {
                 if (old_tweets && old_tweets === tweets[0].id) {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] no new tweets`)
                 }
+                if (!old_tweets) {
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_tweets not defined, setting var`)
+                    var old_tweets = tweets[0].id
+                } 
                });
         }, 60000)
     }).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
