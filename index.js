@@ -47,7 +47,7 @@ client.on('ready', () => {
     client.user.setActivity('Starting... Please wait 1 min', { type: 'WATCHING' });
     console.log('Please wait while we start the bot, it takes ~ 1 min')
 
-    setInterval(function() {
+    setInterval({
             twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
                 console.log('Refreshing status...')
                 if (err) console.log(err);
