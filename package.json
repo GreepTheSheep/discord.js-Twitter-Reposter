@@ -20,10 +20,6 @@
   "dependencies": {
     "discord.js": "^11.5.1",
     "fs": "0.0.1-security",
-    "get-tweets": "^4.0.0",
-    "get-twitter-followers": "^2.0.0",
-    "get-twitter-info": "^2.0.2",
-    "shelljs": "^0.8.3",
-    "twitter-tokens": "^1.0.3"
+    "twitter": "^1.7.1"
   }
 }

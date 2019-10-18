@@ -1,4 +1,10 @@
 {
-    "token" : "YOUR DISCORD BOT TOKEN",
-    "twitter" : "YOUR TWITTER ACCOUNT NAME WITHOUT THE @"
+    "channel_id": "YOUR CHANNEL ID WHO THE BOT SENDS YOUR TWEETS",
+
+    "discord_token" : "YOUR DISCORD BOT TOKEN",
+    "twitter_name" : "YOUR TWITTER ACCOUNT NAME WITHOUT THE @",
+    "consumer_key": "TWITTER CONSUMER KEY",
+    "consumer_secret": "TWITTER CONSUMER SECRET",
+    "access_token_key": "TWITTER TOKEN KEY",
+    "access_token_secret": "TWITTER TOKEN SECRET"
 }

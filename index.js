@@ -5,7 +5,20 @@ const client = new Discord.Client({
 const fs = require('fs');
 const configfile = "./config.json";
 const config = JSON.parse(fs.readFileSync(configfile, "utf8"));
-const shell = require('shelljs');
+
+const tweet_channel = client.channels.get(config.channel_id)
+
+const Twitter = require('twitter')
+const tokens = {
+    consumer_key:        config.consumer_key,
+    consumer_secret:     config.consumer_secret,
+    access_token:        config.access_token_key,
+    access_token_key:    config.access_token_key,
+    access_token_secret: config.access_token_secret
+};
+
+const twitter_client = new Twitter(tokens);
+const twitter_params = { screen_name: config.twitter_name };
 
 
 function functiondate() { 
@@ -30,17 +43,55 @@ function functiontime() {
 client.on('ready', () => { 
     const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
     console.log(readylog);
-    
-    const autopull = new Promise(function() {
+    client.user.setActivity('Starting... Please wait 1 min', { type: 'WATCHING' });
+    console.log('Please wait while we start the bot, it takes ~ 1 min')
+
+    const refresh = new Promise(function() {
         setInterval(function() {
-            getlogchannel().send('Pulling changes from GitHub...')
-            .then(m=>shell.exec('git pull'), function(code, stdout, stderr){
-                if (code != 0) return m.edit(`Error during pulling: \`\`\`${stderr}\`\`\``)
-                m.edit(`\`\`\`${stdout}\`\`\` :white_check_mark:`)
-            })
-        }, 8.64e+7);
-    }).catch(err=>getlogchannel().send('Error during auto pull: ' + err))
-    autopull
+            twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
+                console.log('Refreshing status...')
+                if (err) console.log(err);
+
+                if (!old_avatar){
+                    var old_avatar = tweets[0].user.profile_image_url_https
+                } 
+                if (old_avatar !== tweets[0].user.profile_image_url_https){
+                    client.user.setAvatar(tweets[0].user.profile_image_url_https).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
+                    var old_avatar = tweets[0].user.profile_image_url_https
+                } 
+                if (old_avatar === tweets[0].user.profile_image_url_https) return
+
+                if (!old_count){
+                    client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
+                    var old_count = tweets[0].user.followers_count
+                } 
+                if (old_count !== tweets[0].user.followers_count){
+                    client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
+                    var old_count = tweets[0].user.followers_count
+                } 
+                if (old_count === tweets[0].user.followers_count) return
+                
+                if (!old_tweets) {
+                    var old_tweets = tweets[0].created_at
+                } 
+                if (old_tweets !== tweets[0].created_at) {
+                    console.log(`[${functiondate()} - ${functiontime()}] Sending last tweet: '${tweets[0].text}'. ID: ${tweets[0].id}`)
+                    let embed = new Discord.RichEmbed
+                    embed   .setColor(`#${tweets[0].user.profile_background_color}`)
+                            .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https, `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                            .setDescription(tweets[0].text)
+                            .setTimestamp(tweets[0].created_at)
+                            .setFooter(`Likes: ${tweets[0].favorite_count}`);
+                    if (tweets[0].truncated === true) embed.setImage(tweets[0].entities.urls[0])
+
+                    client.channels.get(config.channel_id).send(embed).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
+                    var old_tweets = tweets[0].created_at
+                }
+                if (old_tweets === tweets[0].created_at) return
+              });
+        }, 60000)
+    }).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
+    refresh
 });
 
 client.on('message', message => {
@@ -76,4 +127,4 @@ client.on('reconnecting', () => {
     console.log(`[${functiondate(0)} - ${functiontime(0)}] ` + eventmsg)
 })
 
-client.login(config.token)
+client.login(config.discord_token)
