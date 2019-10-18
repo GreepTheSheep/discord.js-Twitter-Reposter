@@ -59,7 +59,7 @@ client.on('ready', () => {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_avatar not defined, setting var`)
                     var old_avatar = tweets[0].user.profile_image_url_https
                 } 
-                if (old_avatar !== tweets[0].user.profile_image_url_https){
+                if (old_avatar && old_avatar !== tweets[0].user.profile_image_url_https){
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar changed, setting in Discord...`)
                     client.user.setAvatar(tweets[0].user.profile_image_url_https).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
                     var old_avatar = tweets[0].user.profile_image_url_https
@@ -72,7 +72,7 @@ client.on('ready', () => {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_tweets not defined, setting var`)
                     var old_tweets = tweets[0].id
                 } 
-                if (old_tweets !== tweets[0].id) {
+                if (old_tweets && old_tweets !== tweets[0].id) {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] new tweet! sending in Discord...`)
                     let embed = new Discord.RichEmbed
                     embed   .setColor(`#${tweets[0].user.profile_background_color}`)
