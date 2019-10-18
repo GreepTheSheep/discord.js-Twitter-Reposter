@@ -64,7 +64,7 @@ client.on('ready', () => {
                     client.user.setAvatar(tweets[0].user.profile_image_url_https).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
                     var old_avatar = tweets[0].user.profile_image_url_https
                 } 
-                if (old_avatar === tweets[0].user.profile_image_url_https) {
+                if (old_avatar && old_avatar === tweets[0].user.profile_image_url_https) {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar not changed`)
                 }
                 
@@ -85,7 +85,7 @@ client.on('ready', () => {
                     client.channels.get(config.channel_id).send(embed).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
                     var old_tweets = tweets[0].id
                 }
-                if (old_tweets === tweets[0].id) {
+                if (old_tweets && old_tweets === tweets[0].id) {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] no new tweets`)
                 }
                });
