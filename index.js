@@ -56,19 +56,24 @@ client.on('ready', () => {
                 client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
 
                 if (!old_avatar){
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_avatar not defined, setting var`)
                     var old_avatar = tweets[0].user.profile_image_url_https
                 } 
                 if (old_avatar !== tweets[0].user.profile_image_url_https){
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar changed, setting in Discord...`)
                     client.user.setAvatar(tweets[0].user.profile_image_url_https).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
                     var old_avatar = tweets[0].user.profile_image_url_https
                 } 
-                if (old_avatar === tweets[0].user.profile_image_url_https) return;
+                if (old_avatar === tweets[0].user.profile_image_url_https) {
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar not changed`)
+                }
                 
                 if (!old_tweets) {
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_tweets not defined, setting var`)
                     var old_tweets = tweets[0].id
                 } 
                 if (old_tweets !== tweets[0].id) {
-                    console.log(`[${functiondate()} - ${functiontime()}] Sending last tweet: '${tweets[0].text}'. ID: ${tweets[0].id}`)
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] new tweet! sending in Discord...`)
                     let embed = new Discord.RichEmbed
                     embed   .setColor(`#${tweets[0].user.profile_background_color}`)
                             .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https, `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
@@ -80,7 +85,9 @@ client.on('ready', () => {
                     client.channels.get(config.channel_id).send(embed).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
                     var old_tweets = tweets[0].id
                 }
-                if (old_tweets === tweets[0].id) return;
+                if (old_tweets === tweets[0].id) {
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] no new tweets`)
+                }
                });
         }, 60000)
     }).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
