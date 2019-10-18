@@ -51,6 +51,8 @@ client.on('ready', () => {
             twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
                 console.log('Refreshing status...')
                 if (err) console.log(err);
+                
+                client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
 
                 if (!old_avatar){
                     var old_avatar = tweets[0].user.profile_image_url_https
@@ -60,16 +62,6 @@ client.on('ready', () => {
                     var old_avatar = tweets[0].user.profile_image_url_https
                 } 
                 if (old_avatar === tweets[0].user.profile_image_url_https) return
-
-                if (!old_count){
-                    client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
-                    var old_count = tweets[0].user.followers_count
-                } 
-                if (old_count !== tweets[0].user.followers_count){
-                    client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
-                    var old_count = tweets[0].user.followers_count
-                } 
-                if (old_count === tweets[0].user.followers_count) return
                 
                 if (!old_tweets) {
                     var old_tweets = tweets[0].created_at
