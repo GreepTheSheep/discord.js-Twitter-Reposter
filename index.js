@@ -92,7 +92,7 @@ client.on('ready', () => {
                });
         }, 5000)
    }catch(err){
-      console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
+      console.log(`[${functiondate()} - ${functiontime()}] ${err}`)
    }
 })
 
