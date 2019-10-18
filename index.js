@@ -51,6 +51,7 @@ client.on('ready', () => {
             twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
                 console.log('Refreshing status...')
                 if (err) console.log(err);
+                console.log(`[DEBUG: ${functiondate()} - ${functiontime()}]\nold tweet: ${old_tweets}\nnew tweet: ${tweets[0].id}\nold avatar: ${old_avatar}\nnew avatar: ${tweets[0].user.profile_image_url_https}`)
                 
                 client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
 
@@ -80,9 +81,6 @@ client.on('ready', () => {
                     var old_tweets = tweets[0].id
                 }
                 if (old_tweets === tweets[0].id) return;
-
-                console.log(`[DEBUG: ${functiondate()} - ${functiontime()}]\nold tweet: ${old_tweets}\nnew tweet: ${tweets[0].id}\nold avatar: ${old_avatar}\nnew avatar: ${tweets[0].user.profile_image_url_https}`)
-              
                });
         }, 60000)
     }).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
