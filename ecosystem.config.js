@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    name: 'API',
+    name: 'Twitter-Discord',
     script: 'index.js',
 
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
