@@ -64,9 +64,9 @@ client.on('ready', () => {
                 if (old_avatar === tweets[0].user.profile_image_url_https) return
                 
                 if (!old_tweets) {
-                    var old_tweets = tweets[0].created_at
+                    var old_tweets = tweets[0].id
                 } 
-                if (old_tweets !== tweets[0].created_at) {
+                if (old_tweets !== tweets[0].id) {
                     console.log(`[${functiondate()} - ${functiontime()}] Sending last tweet: '${tweets[0].text}'. ID: ${tweets[0].id}`)
                     let embed = new Discord.RichEmbed
                     embed   .setColor(`#${tweets[0].user.profile_background_color}`)
@@ -77,9 +77,10 @@ client.on('ready', () => {
                     if (tweets[0].truncated === true) embed.setImage(tweets[0].entities.urls[0])
 
                     client.channels.get(config.channel_id).send(embed).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
-                    var old_tweets = tweets[0].created_at
+                    var old_tweets = tweets[0].id
                 }
-                if (old_tweets === tweets[0].created_at) return
+                if (old_tweets === tweets[0].id) return
+                console.log(`[DEBUG: ${functiondate()} - ${functiontime()}]\nold tweet: ${old_tweets}\nnew tweet: ${tweets[0].id}\nold avatar: ${old_avatar}\nnew avatar: ${tweets[0].user.profile_image_url_https}`)
               });
         }, 60000)
     }).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
