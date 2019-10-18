@@ -4,7 +4,7 @@
   "description": "Get informations of a Twitter account & latest posts and sends it to a Discord bot",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js", 
+    "start": "node index.js",
     "test": "echo no test"
   },
   "repository": {
@@ -19,9 +19,11 @@
   "homepage": "https://github.com/GreepTheSheep/discord.js-Twitter-integration#readme",
   "dependencies": {
     "discord.js": "^11.5.1",
+    "fs": "0.0.1-security",
     "get-tweets": "^4.0.0",
     "get-twitter-followers": "^2.0.0",
     "get-twitter-info": "^2.0.2",
+    "shelljs": "^0.8.3",
     "twitter-tokens": "^1.0.3"
   }
 }
