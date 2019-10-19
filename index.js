@@ -94,7 +94,7 @@ client.on('ready', () => {
                 console.log(`[DEBUG: ${functiondate()} - ${functiontime()}]\nold tweet: ${old_tweets}\nnew tweet: ${tweets[0].id}\nold avatar: ${old_avatar}\nnew avatar: ${tweets[0].user.profile_image_url_https}`)
                 
              });
-        }, 5000)
+        }, 60000)
    }catch(err){
       console.log(`[${functiondate()} - ${functiontime()}] ${err}`)
    }
