@@ -42,6 +42,8 @@ function functiontime() {
 
 var old_avatar = undefined
 var old_tweets = undefined
+var old_count = undefined
+var old_name = undefined
 
 client.on('ready', () => { 
     try{
@@ -52,11 +54,34 @@ client.on('ready', () => {
 
     setInterval(function(){
             twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
-                console.log('Refreshing status...')
                 if (err) console.log(err);
-                
-                client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
 
+                if (old_name && old_name !== tweets[0].user.screen_name){
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] display namer changed, setting in Discord...`)
+                    client.user.setUsername(tweets[0].user.screen_name)
+                    old_name = tweets[0].user.screen_name
+                }
+                if (old_name && old_name === tweets[0].user.screen_name) {
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] display name not changed`)
+                }
+                if (!old_name){
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_name not defined, setting var`)
+                    old_name = tweets[0].user.screen_name
+                }
+                
+                if (old_count && old_count !== tweets[0].user.followers_count){
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] followers counter changed, setting in Discord...`)
+                    client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
+                    old_count = tweets[0].user.profile_image_url_https
+                }
+                if (old_count && old_count === tweets[0].user.followers_count) {
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] followers counter not changed`)
+                }
+                if (!old_count){
+                    console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_counts not defined, setting var`)
+                    old_count = tweets[0].user.followers_count
+                }
+                
                 if (old_avatar && old_avatar !== tweets[0].user.profile_image_url_https){
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar changed, setting in Discord...`)
                     client.user.setAvatar(tweets[0].user.profile_image_url_https).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
@@ -77,8 +102,7 @@ client.on('ready', () => {
                             .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https, `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                             .setDescription(tweets[0].text)
                             .setTimestamp(tweets[0].created_at)
-                            .setFooter(`Likes: ${tweets[0].favorite_count}`);
-                    if (tweets[0].truncated === true) embed.setImage(tweets[0].entities.urls[0])
+                    if (weets[0].entities.media[0] === true) embed.setImage(tweets[0].entities.media[0].media_url_https)
 
                     client.channels.get(config.channel_id).send(embed).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
                     old_tweets = tweets[0].id
