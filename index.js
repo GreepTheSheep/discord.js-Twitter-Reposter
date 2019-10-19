@@ -64,6 +64,7 @@ client.on('ready', () => {
                 }
                 if (!old_name){
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_name not defined, setting var`)
+                    client.user.setUsername(tweets[0].user.screen_name)
                     old_name = tweets[0].user.screen_name
                 }
                 
@@ -77,6 +78,7 @@ client.on('ready', () => {
                 }
                 if (!old_count){
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_counts not defined, setting var`)
+                    client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
                     old_count = tweets[0].user.followers_count
                 }
                 
