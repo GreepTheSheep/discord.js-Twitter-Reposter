@@ -102,7 +102,7 @@ client.on('ready', () => {
                             .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https, `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                             .setDescription(tweets[0].text)
                             .setTimestamp(tweets[0].created_at)
-                    if (weets[0].entities.media[0] === true) embed.setImage(tweets[0].entities.media[0].media_url_https)
+                    if (tweets[0].entities.media[0] === true) embed.setImage(tweets[0].entities.media[0].media_url_https)
 
                     client.channels.get(config.channel_id).send(embed).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
                     old_tweets = tweets[0].id
