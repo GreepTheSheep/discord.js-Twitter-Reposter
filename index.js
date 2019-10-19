@@ -40,8 +40,8 @@ function functiontime() {
     return time
 }
 
-var old_avatar
-var old_tweets
+var old_avatar = undefined
+var old_tweets = undefined
 
 client.on('ready', () => { 
     try{
@@ -50,7 +50,7 @@ client.on('ready', () => {
     client.user.setActivity('Starting... Please wait 1 min', { type: 'WATCHING' });
     console.log('Please wait while we start the bot, it takes ~ 1 min')
 
-    setInterval(function(old_avatar, old_tweets){
+    setInterval(function(){
             twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
                 console.log('Refreshing status...')
                 if (err) console.log(err);
@@ -92,7 +92,7 @@ client.on('ready', () => {
                 }
 
                 console.log(`[DEBUG: ${functiondate()} - ${functiontime()}]\nold tweet: ${old_tweets}\nnew tweet: ${tweets[0].id}\nold avatar: ${old_avatar}\nnew avatar: ${tweets[0].user.profile_image_url_https}`)
-                export var old_avatar, old_tweets
+                
              });
         }, 5000)
    }catch(err){
