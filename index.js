@@ -40,6 +40,9 @@ function functiontime() {
     return time
 }
 
+var old_avatar
+var old_tweets
+
 client.on('ready', () => { 
     try{
     const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
@@ -48,8 +51,6 @@ client.on('ready', () => {
     console.log('Please wait while we start the bot, it takes ~ 1 min')
 
     setInterval(function(){
-var old_avatar
-var old_tweets
             twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
                 console.log('Refreshing status...')
                 if (err) console.log(err);
