@@ -54,18 +54,18 @@ client.on('ready', () => {
             twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
                 if (err) console.log(err);
 
-                if (old_name && old_name !== tweets[0].user.screen_name){
+                if (old_name && old_name !== tweets[0].user.name){
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] display namer changed, setting in Discord...`)
-                    client.user.setUsername(tweets[0].user.screen_name)
-                    old_name = tweets[0].user.screen_name
+                    client.user.setUsername(tweets[0].user.name)
+                    old_name = tweets[0].user.name
                 }
-                if (old_name && old_name === tweets[0].user.screen_name) {
+                if (old_name && old_name === tweets[0].user.name) {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] display name not changed`)
                 }
                 if (!old_name){
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_name not defined, setting var`)
-                    client.user.setUsername(tweets[0].user.screen_name)
-                    old_name = tweets[0].user.screen_name
+                    client.user.setUsername(tweets[0].user.name)
+                    old_name = tweets[0].user.name
                 }
                 
                 if (old_count && old_count !== tweets[0].user.followers_count){
