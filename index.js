@@ -49,8 +49,6 @@ client.on('ready', () => {
     try{
     const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
     console.log(readylog);
-    client.user.setActivity('Starting... Please wait 1 min', { type: 'WATCHING' });
-    console.log('Please wait while we start the bot, it takes ~ 1 min')
 
     setInterval(function(){
             twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
@@ -118,7 +116,7 @@ client.on('ready', () => {
                 console.log(`[DEBUG: ${functiondate()} - ${functiontime()}]\nold tweet: ${old_tweets}\nnew tweet: ${tweets[0].id}\nold avatar: ${old_avatar}\nnew avatar: ${tweets[0].user.profile_image_url_https}`)
                 
              });
-        }, 60000)
+        }, 1000)
    }catch(err){
       console.log(`[${functiondate()} - ${functiontime()}] ${err}`)
    }
