@@ -114,11 +114,8 @@ client.on('ready', () => {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_tweets not defined, setting var`)
                     old_tweets = tweets[0].id
                 }
-
-                console.log(`[DEBUG: ${functiondate()} - ${functiontime()}]\nold tweet: ${old_tweets}\nnew tweet: ${tweets[0].id}\nold avatar: ${old_avatar}\nnew avatar: ${tweets[0].user.profile_image_url_https}`)
-                
              });
-        }, 1000)
+        }, 15000)
    }catch(err){
       console.log(`[${functiondate()} - ${functiontime()}] ${err}`)
    }
