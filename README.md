@@ -1,7 +1,9 @@
 # discord.js & Twitter
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FGreepTheSheep%2Fdiscord.js-Twitter-integration.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FGreepTheSheep%2Fdiscord.js-Twitter-integration?ref=badge_shield)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FGreepTheSheep%2Fdiscord.js-Twitter-integration.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FGreepTheSheep%2Fdiscord.js-Twitter-integration?ref=badge_shield) [![Discord](https://img.shields.io/badge/Live%20view-%23greep--tweets-green)](https://discord.gg/5QCQpr9)
 
 Get informations of a Twitter account & latest posts and sends it to a Discord bot
+
+![Creation time](https://img.shields.io/badge/Created%20in-5%20hours-brightgreen) ![lofi](https://img.shields.io/badge/Created%20with-lo--fi%20music-orange)
 
 ## Pictures (coming soon...)
 
