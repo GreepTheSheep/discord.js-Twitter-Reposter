@@ -5,7 +5,9 @@ Get informations of a Twitter account & latest posts and sends it to a Discord b
 
 ![Creation time](https://img.shields.io/badge/Created%20in-5%20hours-brightgreen) ![lofi](https://img.shields.io/badge/Created%20with-lo--fi%20music-orange)
 
-## Pictures (coming soon...)
+## Pictures
+![pic1](https://i.ibb.co/WVLx1dy/IMG-20191020-003135.jpg)
+![pic2](https://i.ibb.co/W6sPpBz/IMG-20191020-003201.jpg)
 
 ## Installation
 1) Install [Node.js](https://nodejs.org)
