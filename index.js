@@ -115,7 +115,7 @@ client.on('ready', () => {
                     old_tweets = tweets[0].id
                 }
              });
-        }, 1000)
+        }, 10000)
    }catch(err){
       console.log(`[${functiondate()} - ${functiontime()}] ${err}`)
    }
