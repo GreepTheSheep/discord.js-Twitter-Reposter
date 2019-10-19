@@ -40,8 +40,8 @@ function functiontime() {
     return time
 }
 
-const old_avatar = undefined
-const old_tweets = undefined
+var old_avatar
+var old_tweets
 
 client.on('ready', () => { 
     try{
@@ -50,7 +50,7 @@ client.on('ready', () => {
     client.user.setActivity('Starting... Please wait 1 min', { type: 'WATCHING' });
     console.log('Please wait while we start the bot, it takes ~ 1 min')
 
-    setInterval(function(){
+    setInterval(function(old_avatar, old_tweets){
             twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
                 console.log('Refreshing status...')
                 if (err) console.log(err);
@@ -60,14 +60,14 @@ client.on('ready', () => {
                 if (old_avatar && old_avatar !== tweets[0].user.profile_image_url_https){
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar changed, setting in Discord...`)
                     client.user.setAvatar(tweets[0].user.profile_image_url_https).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
-                    const old_avatar = tweets[0].user.profile_image_url_https
+                    var old_avatar = tweets[0].user.profile_image_url_https
                 }
                 if (old_avatar && old_avatar === tweets[0].user.profile_image_url_https) {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar not changed`)
                 }
                 if (!old_avatar){
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_avatar not defined, setting var`)
-                    const old_avatar = tweets[0].user.profile_image_url_https
+                    var old_avatar = tweets[0].user.profile_image_url_https
                 }
                 
                 if (old_tweets && old_tweets !== tweets[0].id) {
@@ -81,14 +81,14 @@ client.on('ready', () => {
                     if (tweets[0].truncated === true) embed.setImage(tweets[0].entities.urls[0])
 
                     client.channels.get(config.channel_id).send(embed).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
-                    const old_tweets = tweets[0].id
+                    var old_tweets = tweets[0].id
                 }
                 if (old_tweets && old_tweets === tweets[0].id) {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] no new tweets`)
                 }
                 if (!old_tweets) {
                     console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_tweets not defined, setting var`)
-                    const old_tweets = tweets[0].id
+                    var old_tweets = tweets[0].id
                 }
 
                 console.log(`[DEBUG: ${functiondate()} - ${functiontime()}]\nold tweet: ${old_tweets}\nnew tweet: ${tweets[0].id}\nold avatar: ${old_avatar}\nnew avatar: ${tweets[0].user.profile_image_url_https}`)
