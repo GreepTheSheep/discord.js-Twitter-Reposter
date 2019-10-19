@@ -40,6 +40,9 @@ function functiontime() {
     return time
 }
 
+const old_avatar = undefined
+const old_tweets = undefined
+
 client.on('ready', () => { 
     try{
     const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
