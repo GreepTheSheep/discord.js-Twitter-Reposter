@@ -56,7 +56,10 @@ client.on('ready', () => {
 
                 if (old_name && old_name !== tweets[0].user.name){
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] display name changed, setting in Discord...`)
-                    client.user.setUsername(tweets[0].user.name)
+                    client.user.setUsername(tweets[0].user.name).catch(err=>{
+                        console.log(err)
+                        client.user.setUsername(tweets[0].user.display_name)
+                    })
                     old_name = tweets[0].user.name
                 }
                 if (old_name && old_name === tweets[0].user.name) {
@@ -64,7 +67,10 @@ client.on('ready', () => {
                 }
                 if (!old_name){
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_name not defined, setting var`)
-                    client.user.setUsername(tweets[0].user.name)
+                    client.user.setUsername(tweets[0].user.name).catch(err=>{
+                        console.log(err)
+                        client.user.setUsername(tweets[0].user.display_name)
+                    })
                     old_name = tweets[0].user.name
                 }
                 
