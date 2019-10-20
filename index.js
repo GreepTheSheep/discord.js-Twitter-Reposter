@@ -155,7 +155,7 @@ client.on('ready', () => {
                                     .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})\nReply to ${tweets[0].entities.user_mentions[0].name} (@${tweets[0].entities.user_mentions[0].screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                                     .setDescription(tweets[0].text.replace(`@${tweets[0].entities.user_mentions[0].screen_name}`, ""))
                                     .setTimestamp(tweets[0].created_at)
-                                    .setThumbnail('http://iconshow.me/media/images/ui/free-vector-icons/png/512/reply.png.png')
+                                    .setThumbnail('https://cdn1.iconfinder.com/data/icons/messaging-3/48/Reply-512.png')
                                     if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
                                     client.channels.get(config.channel_id).send(embed)
                             }
