@@ -96,11 +96,12 @@ client.on('ready', () => {
                 }
                 if (old_avatar && old_avatar !== tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")){
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar changed, setting in Discord...`)
-                    client.user.setAvatar(tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
+                    client.user.setAvatar(tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")).catch(err=>if (debug === true) console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
                     old_avatar = tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")
                 }
                 if (!old_avatar){
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_avatar not defined, setting var`)
+                    client.user.setAvatar(tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")).catch(err=>if (debug === true) console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
                     old_avatar = tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")
                 }
                 
