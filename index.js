@@ -121,7 +121,7 @@ client.on('ready', () => {
                                 .setAuthor(`Retweet\n${tweets[0].retweeted_status.user.name} (@${tweets[0].retweeted_status.user.screen_name})`, tweets[0].retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                                 .setDescription(tweets[0].retweeted_status.text)
                                 .setTimestamp(tweets[0].retweeted_status.created_at)
-                                .setThumbnail('https://pbs.twimg.com/profile_images/3765342716/5e3d3cb25ec18783b296e2dd0cf4c8d3_400x400.png')
+                                .setThumbnail('https://img.icons8.com/color/96/000000/retweet.png')
                         if (tweets[0].retweeted_status.entities.media) embed.setImage(tweets[0].retweeted_status.entities.media[0].media_url_https)
                         client.channels.get(config.channel_id).send(embed)
                     }
