@@ -19,6 +19,7 @@ Get informations of a Twitter account & latest posts and sends it to a Discord b
 ### Optional installation:
 - This project is set to start with pm2. You can install pm2 by typing `npm install -g pm2` and start with `pm2 start ecosystem.config.js`
 - You can set a verbose log in your bot. In `config.json`, search the line with `"verbose"` and set it to `true`. By default this is set to false.
+- You can set the retweet option in your bot. In `config.json`, search the line with `"retweets"` and set it with what you want. By default this is set to true.
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FGreepTheSheep%2Fdiscord.js-Twitter-integration.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FGreepTheSheep%2Fdiscord.js-Twitter-integration?ref=badge_large)

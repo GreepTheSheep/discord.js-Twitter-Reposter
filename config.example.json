@@ -1,6 +1,7 @@
 {
     "channel_id": "YOUR CHANNEL ID WHO THE BOT SENDS YOUR TWEETS",
     "verbose": false,
+    "retweet": true,
 
     "discord_token" : "YOUR DISCORD BOT TOKEN",
     "twitter_name" : "YOUR TWITTER ACCOUNT NAME WITHOUT THE @",
