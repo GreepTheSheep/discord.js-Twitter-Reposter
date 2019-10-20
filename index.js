@@ -61,7 +61,7 @@ client.on('ready', () => {
                 if (old_name && old_name !== tweets[0].user.name){
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] display name changed, setting in Discord...`)
                     client.user.setUsername(tweets[0].user.name).catch(err=>{
-                        console.log(err)
+                        if (debug === true) console.log(err)
                         client.user.setUsername(tweets[0].user.screen_name)
                     })
                     old_name = tweets[0].user.name
@@ -167,7 +167,7 @@ client.on('ready', () => {
                     }catch(e){
                         client.channels.get(config.channel_id).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                         old_tweets = tweets[0].id
-                        console.log(e)
+                        if (debug === true) console.log(e)
                     }
                 }
                 if (!old_tweets) {
@@ -175,7 +175,7 @@ client.on('ready', () => {
                     old_tweets = tweets[0].id
                 }
              });
-        }, 10000)
+        }, 5000)
    }catch(err){
       console.log(`[${functiondate()} - ${functiontime()}] ${err}`)
    }
