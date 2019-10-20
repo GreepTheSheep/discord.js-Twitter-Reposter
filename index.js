@@ -117,7 +117,7 @@ client.on('ready', () => {
                     if (tweets[0].retweeted === true && config.retweet === true) {
                         if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}`)
                         embed   .setColor(`#${tweets[0].retweeted_status.user.profile_sidebar_border_color}`)
-                                .setAuthor(`Retweet\n${tweets[0].retweeted_status.user.name} (@${tweets[0].retweeted_status.user.screen_name})`, tweets[0].retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg").replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                                .setAuthor(`Retweet\n${tweets[0].retweeted_status.user.name} (@${tweets[0].retweeted_status.user.screen_name})`, tweets[0].retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                                 .setDescription(tweets[0].retweeted_status.text)
                                 .setTimestamp(tweets[0].retweeted_status.created_at)
                                 .setThumbnail('https://pbs.twimg.com/profile_images/3765342716/5e3d3cb25ec18783b296e2dd0cf4c8d3_400x400.png')
@@ -128,13 +128,38 @@ client.on('ready', () => {
                         if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
                     } 
                     else if (tweets[0].retweeted === false) {
-                        if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Simple tweet`)
-                        embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
-                                .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg").replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                                .setDescription(tweets[0].text)
-                                .setTimestamp(tweets[0].created_at)
-                            if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                            client.channels.get(config.channel_id).send(embed)
+                        if (config.reply === false){
+                            if (tweets[0].in_reply_to_status_id === null) {
+                                if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Simple tweet`)
+                                embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
+                                    .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                                    .setDescription(tweets[0].text)
+                                    .setTimestamp(tweets[0].created_at)
+                                    if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
+                                    client.channels.get(config.channel_id).send(embed)
+                            } else if (tweets[0].in_reply_to_status_id !== null){
+                                if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Reply to a tweet, but reply option is off`)
+                            }
+                        } else if (config.reply === true){
+                            if (tweets[0].in_reply_to_status_id === null) {
+                                if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Simple tweet`)
+                                embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
+                                    .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                                    .setDescription(tweets[0].text)
+                                    .setTimestamp(tweets[0].created_at)
+                                    if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
+                                    client.channels.get(config.channel_id).send(embed)
+                            } else if (tweets[0].in_reply_to_status_id !== null){
+                                if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Reply to a tweet`)
+                                embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
+                                    .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})\nReply to ${tweets[0].entities.user_mentions[0].name} (@${tweets[0].entities.user_mentions[0].screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                                    .setDescription(tweets[0].text.replace(`@${tweets[0].entities.user_mentions[0].screen_name}`, ""))
+                                    .setTimestamp(tweets[0].created_at)
+                                    .setThumbnail('http://iconshow.me/media/images/ui/free-vector-icons/png/512/reply.png.png')
+                                    if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
+                                    client.channels.get(config.channel_id).send(embed)
+                            }
+                        }
                     }
 
                     
