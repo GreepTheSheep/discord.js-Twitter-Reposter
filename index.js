@@ -58,7 +58,7 @@ client.on('ready', () => {
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] display name changed, setting in Discord...`)
                     client.user.setUsername(tweets[0].user.name).catch(err=>{
                         console.log(err)
-                        client.user.setUsername(tweets[0].user.display_name)
+                        client.user.setUsername(tweets[0].user.screen_name)
                     })
                     old_name = tweets[0].user.name
                 }
@@ -69,7 +69,7 @@ client.on('ready', () => {
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_name not defined, setting var`)
                     client.user.setUsername(tweets[0].user.name).catch(err=>{
                         console.log(err)
-                        client.user.setUsername(tweets[0].user.display_name)
+                        client.user.setUsername(tweets[0].user.screen_name)
                     })
                     old_name = tweets[0].user.name
                 }
@@ -77,7 +77,7 @@ client.on('ready', () => {
                 if (old_count && old_count !== tweets[0].user.followers_count){
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] followers counter changed, setting in Discord...`)
                     client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
-                    old_count = tweets[0].user.profile_image_url_https
+                    old_count = tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")
                 }
                 if (old_count && old_count === tweets[0].user.followers_count) {
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] followers counter not changed`)
@@ -88,24 +88,24 @@ client.on('ready', () => {
                     old_count = tweets[0].user.followers_count
                 }
                 
-                if (old_avatar && old_avatar !== tweets[0].user.profile_image_url_https){
+                if (old_avatar && old_avatar !== tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")){
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar changed, setting in Discord...`)
-                    client.user.setAvatar(tweets[0].user.profile_image_url_https).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
-                    old_avatar = tweets[0].user.profile_image_url_https
+                    client.user.setAvatar(tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")).catch(err=>console.log(`[${functiondate()} - ${functiontime()}] ${err}`))
+                    old_avatar = tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")
                 }
-                if (old_avatar && old_avatar === tweets[0].user.profile_image_url_https) {
+                if (old_avatar && old_avatar === tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")) {
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar not changed`)
                 }
                 if (!old_avatar){
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_avatar not defined, setting var`)
-                    old_avatar = tweets[0].user.profile_image_url_https
+                    old_avatar = tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")
                 }
                 
                 if (old_tweets && old_tweets !== tweets[0].id) {
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] new tweet! sending in Discord...`)
                     let embed = new Discord.RichEmbed
                     embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
-                            .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https, `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                            .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg").replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                             .setDescription(tweets[0].text)
                             .setTimestamp(tweets[0].created_at)
                     if (tweets[0].entities.media[0]) embed.setImage(tweets[0].entities.media[0].media_url_https)
