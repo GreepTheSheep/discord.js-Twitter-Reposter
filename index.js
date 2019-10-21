@@ -115,7 +115,7 @@ client.on('ready', () => {
                     
                     let embed = new Discord.RichEmbed
 
-                    if (tweets[0].retweeted === true && config.retweet === true) {
+                    if (tweets[0].retweeted === true && config.retweet === true || tweets[0].text.startsWith('RT') && config.retweet === true) {
                         if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}`)
                         embed   .setColor(`#${tweets[0].retweeted_status.user.profile_sidebar_border_color}`)
                                 .setAuthor(`Retweet\n${tweets[0].retweeted_status.user.name} (@${tweets[0].retweeted_status.user.screen_name})`, tweets[0].retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
@@ -125,10 +125,10 @@ client.on('ready', () => {
                         if (tweets[0].retweeted_status.entities.media) embed.setImage(tweets[0].retweeted_status.entities.media[0].media_url_https)
                         client.channels.get(config.channel_id).send(embed)
                     }
-                    else if (tweets[0].retweeted === true && config.retweet === false) {
+                    else if (tweets[0].retweeted === true && config.retweet === false || tweets[0].text.startsWith('RT') && config.retweet === false) {
                         if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
                     } 
-                    else if (tweets[0].retweeted === false) {
+                    else if (tweets[0].retweeted === false || !tweets[0].text.startsWith('RT')) {
                         if (config.reply === false){
                             if (tweets[0].in_reply_to_status_id === null) {
                                 if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Simple tweet`)
