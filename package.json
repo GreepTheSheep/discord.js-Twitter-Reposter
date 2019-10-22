@@ -19,7 +19,7 @@
   "homepage": "https://github.com/GreepTheSheep/discord.js-Twitter-integration#readme",
   "dependencies": {
     "discord.js": "^11.5.1",
-    "fs": "0.0.1-security",
+    "fs": "0.0.2",
     "twitter": "^1.7.1"
   }
 }
