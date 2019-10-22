@@ -3,7 +3,7 @@
 
 Get informations of a Twitter account & latest posts and sends it to a Discord bot
 
-![Creation time](https://img.shields.io/badge/Created%20in-5%20hours-brightgreen) ![lofi](https://img.shields.io/badge/Created%20with-lo--fi%20music-orange)
+[![Depfu](https://badges.depfu.com/badges/190262c44fa8dabd30ca874dd155e141/status.svg)](https://depfu.com) [![Depfu](https://badges.depfu.com/badges/190262c44fa8dabd30ca874dd155e141/overview.svg)](https://depfu.com/github/GreepTheSheep/discord.js-Twitter-integration?project_id=9856) [![Depfu](https://badges.depfu.com/badges/190262c44fa8dabd30ca874dd155e141/count.svg)](https://depfu.com/github/GreepTheSheep/discord.js-Twitter-integration?project_id=9856)
 
 ## Pictures
 ![pic1](https://i.ibb.co/WVLx1dy/IMG-20191020-003135.jpg)
