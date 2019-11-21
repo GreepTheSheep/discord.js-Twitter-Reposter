@@ -182,15 +182,6 @@ client.on('ready', () => {
    }
 })
 
-client.on('message', message => {
-    try {
-    
-    } catch (e) {
-        console.log(e)
-        getlogchannel().send(`**Message event ERROR** : ${e}`)
-    }
-});
-
 client.on('guildCreate', guild => {
     const botjoinguildlog = `${client.user.username} joined __${guild.name}__\n*ID: ${guild.id}*`
     console.log(`[${functiondate(0)} - ${functiontime(0)}]\n${botjoinguildlog}`)
@@ -203,8 +194,8 @@ client.on('guildDelete', guild => {
 
 client.on('disconnect', event => {
     var eventcodemsg = 'Event Code Message not set for this code'
-    if (event = '1000') eventcodemsg = 'Normal closure'
-    if (event = '1001') eventcodemsg = 'Can\'t connect to WebSocket'
+    if (event === '1000') eventcodemsg = 'Normal closure'
+    if (event === '1001') eventcodemsg = 'Can\'t connect to WebSocket'
     const eventmsg = `Bot down : code ${event}: "${eventcodemsg}"`
     console.log(`[${functiondate(0)} - ${functiontime(0)}] ` + eventmsg)
     getlogchannel().send(eventmsg)
