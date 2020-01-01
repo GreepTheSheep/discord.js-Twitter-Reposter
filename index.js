@@ -8,14 +8,6 @@ const configfile = "./config.json";
 var config
 config = JSON.parse(fs.readFileSync(configfile, "utf8"));
 
-/*
-if (client.user.id !== '661967218174853121') config = JSON.parse(fs.readFileSync(configfile, "utf8"));
-else {
-    const Enmap = require('enmap')
-    config = new Enmap({name:'config'})
-}
-*/
-
 const debug = config.verbose
 
 const Twitter = require('twitter')
@@ -53,7 +45,11 @@ client.on('ready', () => {
     const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
     console.log(readylog);
 
-    if (client.user.id !== '661967218174853121'){
+    if (client.user.id == '661967218174853121'){
+        client.user.setActivity('your tweets | Mention me to setup!', { type: 'WATCHING' })
+        const globaltwit = require('./twitter-function.js')
+        globaltwit(twitter_client, client, config, debug, functiondate, functiontime)
+    } else {
         var twitter_params = { screen_name: config.twitter_name };
         var old_avatar = undefined
         var old_tweets = undefined
@@ -61,10 +57,6 @@ client.on('ready', () => {
         var old_name = undefined
         const twit = require('./twitter-function.js')
         twit(twitter_client, twitter_params, client, config, debug, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets)
-    } else {
-        client.user.setActivity('your tweets | Mention me to setup!', { type: 'WATCHING' })
-        const globaltwit = require('./twitter-function.js')
-        globaltwit(twitter_client, client, config, debug, functiondate, functiontime)
     }
 
    }catch(err){
