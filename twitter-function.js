@@ -129,6 +129,7 @@ function twit(twitter_client, twitter_params, client, config, debug, functiondat
 module.exports = twit
 
 function globaltwit(twitter_client, client, config, debug, functiondate, functiontime){
+    if (client.user.id !== '661967218174853121'){
     const Enmap = require('enmap')
     setInterval(function(){
         client.guilds.forEach(g=>{
@@ -216,5 +217,6 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
             }
          });
     }, 10000)
+}
 }
 module.exports = globaltwit
