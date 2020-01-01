@@ -4,7 +4,16 @@ const client = new Discord.Client({
 });
 const fs = require('fs');
 const configfile = "./config.json";
-const config = JSON.parse(fs.readFileSync(configfile, "utf8"));
+var config
+config = JSON.parse(fs.readFileSync(configfile, "utf8"));
+
+/*
+if (client.user.id !== '661967218174853121') config = JSON.parse(fs.readFileSync(configfile, "utf8"));
+else {
+    const Enmap = require('enmap')
+    config = new Enmap({name:'config'})
+}
+*/
 
 const debug = config.verbose
 
@@ -18,8 +27,6 @@ const tokens = {
 };
 
 const twitter_client = new Twitter(tokens);
-const twitter_params = { screen_name: config.twitter_name };
-
 
 function functiondate() { 
     const datefu = new Date();
@@ -40,22 +47,36 @@ function functiontime() {
     return time
 }
 
-var old_avatar = undefined
-var old_tweets = undefined
-var old_count = undefined
-var old_name = undefined
-
 client.on('ready', () => { 
     try{
     const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
     console.log(readylog);
 
-    const twit = require('./twitter-function.js')
-    twit(twitter_client, twitter_params, client, config, debug, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets)
+    if (client.user.id !== '661967218174853121'){
+        var twitter_params = { screen_name: config.twitter_name };
+        var old_avatar = undefined
+        var old_tweets = undefined
+        var old_count = undefined
+        var old_name = undefined
+        const twit = require('./twitter-function.js')
+        twit(twitter_client, twitter_params, client, config, debug, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets)
+    } else {
+        client.user.setActivity('your tweets | Mention me to setup!', { type: 'WATCHING' })
+        const globaltwit = require('./twitter-function.js')
+        globaltwit(twitter_client, client, config, debug, functiondate, functiontime)
+    }
 
    }catch(err){
       console.log(`[${functiondate()} - ${functiontime()}] ${err}`)
    }
+})
+
+client.on('message', message =>{
+    if (client.user.id === '661967218174853121'){
+        const setup = require('./public-setup.js')
+        setup(message, client, config, functiondate, functiontime)
+    }
+    console.log(message.content)
 })
 
 client.on('guildCreate', guild => {
