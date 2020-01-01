@@ -51,8 +51,8 @@ client.on('ready', () => {
     console.log(readylog);
 
     const twit = require('./twitter-function.js')
-    twit(twitter_client, twitter_params, client, config, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets)
-    
+    twit(twitter_client, twitter_params, client, config, debug, functiondate(), functiontime(), old_avatar, old_count, old_name, old_tweets)
+
    }catch(err){
       console.log(`[${functiondate()} - ${functiontime()}] ${err}`)
    }
