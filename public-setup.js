@@ -10,7 +10,9 @@ function setup(message, client, config, functiondate, functiontime){
             collector.on('collect', m => {
                 if (m.content.toLowerCase() == 'yes'){
                     db = new Enmap({name:'db_'+message.guild.id})
-                    message.channel.send('Here we go! First, send me your Twitter account name *(it will be something like @GreepTheSheep)*')
+                    db.set('retweet', true)
+                    db.set('reply', false)
+                    message.channel.send('Here we go! First, send me your Twitter account name *(it will be something like @GreepTheSheep)* **[Please respect the cases]**')
                     const collector2 = message.channel.createMessageCollector(filter, {time: 60000, max: 1});
                     collector2.on('collect', m => {
                         message.channel.send(`Ok, so your Twitter account URL will be https://twitter.com/${m.content.replace('@','')} ? (\`yes\` or \`no\`)`)
@@ -61,7 +63,7 @@ function setup(message, client, config, functiondate, functiontime){
         embed.setAuthor(client.user.username, client.user.displayAvatarURL)
         .setTitle('Configuration menu')
         .setDescription('The prefix is mention, list of configs must be:\n\n\`retweet\` (de)activate retweets\n\`reply\` (de)activate replies\n\nTo change username and channel, redo the config by just mentionning me')
-        .addField('Any questions?', '[Join support server](https://discord.gg/3qzcz4e)\n[Follow the creator on Twitter](https://twitter.com/GreepTheSheep)')
+        .addField('Any questions?', '[Join support server](https://discord.gg/3qzcz4e)\n[Invite the bot in your server](https://discordapp.com/api/oauth2/authorize?client_id=661967218174853121&permissions=322624&scope=bot)\n[Follow the creator on Twitter](https://twitter.com/GreepTheSheep)')
         .setFooter(`${client.user.tag}, created by Greep#3022`)
         message.channel.send(embed)
     }
@@ -88,6 +90,26 @@ function setup(message, client, config, functiondate, functiontime){
                 message.channel.send('Replies was deactivated')
             }
         } else return message.react('❌')
+    }
+
+    // Owner only part
+    if (message.content == '<@661967218174853121> ginfo' || message.content == '<@!661967218174853121> ginfo'){
+        if(message.member.id == '330030648456642562'){
+            db = new Enmap({name:'db_'+message.guild.id})
+            message.channel.send(`\`\`\`Guild: ${message.guild.id} - ${message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.has('retweet') ? 'Yes' : 'No'}\nReplies: ${db.has('reply') ? 'Yes' : 'No'}\`\`\``)
+        } else return
+    }
+    if (message.content == '<@661967218174853121> globalinfo' || message.content == '<@!661967218174853121> globalinfo'){
+        if(message.member.id == '330030648456642562'){
+            var array = []
+            var gcount = 0
+            client.guilds.forEach(g=>{
+                gcount++
+                db = new Enmap({name:'db_'+g.id})
+                array.push(`Guild: ${g.id} - ${g.name} -- Twitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}`)
+            })
+            message.channel.send(`\`\`\`${array.join('\n')}\nTotal: ${gcount}\`\`\``)
+        }else return
     }
 }
 module.exports = setup

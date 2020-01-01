@@ -215,6 +215,6 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                 db.set('old_tweets', tweets[0].id)
             }
          });
-    }, 30000)
+    }, 10000)
 }
 module.exports = globaltwit
