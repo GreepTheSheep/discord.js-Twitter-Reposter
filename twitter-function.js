@@ -149,7 +149,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                 
                 let embed = new Discord.RichEmbed
 
-                if (tweets[0].retweeted === true && config.retweet === true || tweets[0].text.startsWith('RT') && config.retweet === true) {
+                if (tweets[0].retweeted === true && db.get('retweet') === true || tweets[0].text.startsWith('RT') && db.get('retweet') === true) {
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}`)
                     embed   .setColor(`#${tweets[0].retweeted_status.user.profile_sidebar_border_color}`)
                             .setAuthor(`Retweet\n${tweets[0].retweeted_status.user.name} (@${tweets[0].retweeted_status.user.screen_name})`, tweets[0].retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
@@ -160,11 +160,11 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                     if (db.has('channel_id')) client.channels.get(db.get('channel_id')).send(embed)
                     else return
                 }
-                else if (tweets[0].retweeted === true && config.retweet === false || tweets[0].text.startsWith('RT') && config.retweet === false) {
+                else if (tweets[0].retweeted === true && db.get('retweet') === false || tweets[0].text.startsWith('RT') && db.get('retweet') === false) {
                     if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
                 } 
                 else if (tweets[0].retweeted === false || !tweets[0].text.startsWith('RT')) {
-                    if (config.reply === false){
+                    if (db.get('reply') === false){
                         if (tweets[0].in_reply_to_status_id === null) {
                             if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Simple tweet`)
                             embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
@@ -177,7 +177,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                         } else if (tweets[0].in_reply_to_status_id !== null){
                             if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Reply to a tweet, but reply option is off`)
                         }
-                    } else if (config.reply === true){
+                    } else if (db.get('reply') === true){
                         if (tweets[0].in_reply_to_status_id === null) {
                             if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Simple tweet`)
                             embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)

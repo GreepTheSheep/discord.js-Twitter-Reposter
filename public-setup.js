@@ -54,16 +54,40 @@ function setup(message, client, config, functiondate, functiontime){
                     message.channel.send(`I have nothing, canceling setup`)
                 }
             });
-        } else return message.reply('You\'re not an administrator of this server. Sorry!')
+        } else return message.reply('You\'re not administrator of this server. Sorry!')
     }
     if (message.content == '<@661967218174853121> help' || message.content == '<@!661967218174853121> help'){
         let embed = new Discord.RichEmbed
         embed.setAuthor(client.user.username, client.user.displayAvatarURL)
         .setTitle('Configuration menu')
-        .setDescription('The prefix is mention, list of configs must be:\n\n\`retweet\` (de)activate retweets\n\`reply\` (de)activate replies\n\`username\` changes Twitter username\n\`channel\` changes channel')
+        .setDescription('The prefix is mention, list of configs must be:\n\n\`retweet\` (de)activate retweets\n\`reply\` (de)activate replies\n\nTo change username and channel, redo the config by just mentionning me')
         .addField('Any questions?', '[Join support server](https://discord.gg/3qzcz4e)\n[Follow the creator on Twitter](https://twitter.com/GreepTheSheep)')
         .setFooter(`${client.user.tag}, created by Greep#3022`)
         message.channel.send(embed)
+    }
+    if (message.content == '<@661967218174853121> retweet' || message.content == '<@!661967218174853121> retweet'){
+        if(message.member.hasPermission("ADMINISTRATOR")){
+            db = new Enmap({name:'db_'+message.guild.id})
+            if (db.get('retweet') == false) {
+                db.set('retweet', true)
+                message.channel.send('Retweets was activated')
+            } else if (db.get('retweet') == true) {
+                db.set('retweet', false)
+                message.channel.send('Retweets was deactivated')
+            }
+        } else return message.react('❌')
+    }
+    if (message.content == '<@661967218174853121> reply' || message.content == '<@!661967218174853121> reply'){
+        if(message.member.hasPermission("ADMINISTRATOR")){
+            db = new Enmap({name:'db_'+message.guild.id})
+            if (db.get('reply') == false) {
+                db.set('reply', true)
+                message.channel.send('Replies was activated')
+            } else if (db.get('reply') == true) {
+                db.set('reply', false)
+                message.channel.send('Replies was deactivated')
+            }
+        } else return message.react('❌')
     }
 }
 module.exports = setup
