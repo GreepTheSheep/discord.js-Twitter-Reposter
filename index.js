@@ -52,7 +52,7 @@ client.on('ready', () => {
 
     const twit = require('./twitter-function.js')
 
-    setInterval( twit(twitter, client, config, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets)
+    setInterval( twit(twitter_client, client, config, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets)
     , 5000)
    }catch(err){
       console.log(`[${functiondate()} - ${functiontime()}] ${err}`)
