@@ -1,3 +1,4 @@
+try{
 const Discord = require('discord.js');
 const client = new Discord.Client({
   fetchAllMembers: true
@@ -76,7 +77,6 @@ client.on('message', message =>{
         const setup = require('./public-setup.js')
         setup(message, client, config, functiondate, functiontime)
     }
-    console.log(message.content)
 })
 
 client.on('guildCreate', guild => {
@@ -104,3 +104,6 @@ client.on('reconnecting', () => {
 })
 
 client.login(config.discord_token)
+}catch(e){
+    console.error(e)
+}
