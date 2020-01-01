@@ -4,12 +4,12 @@ const Enmap = require('enmap')
 function setup(message, client, config, functiondate, functiontime){
     if (message.content == '<@661967218174853121>' || message.content == '<@!661967218174853121>'){
         if(message.member.hasPermission("ADMINISTRATOR")){
+            var db = new Enmap({name:'db_'+message.guild.id})
             message.channel.send('Do you want to setup me? (send `yes` or `no`)')
             const filter = m => message.author == m.author;
             const collector = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
             collector.on('collect', m => {
                 if (m.content.toLowerCase() == 'yes'){
-                    db = new Enmap({name:'db_'+message.guild.id})
                     db.set('retweet', true)
                     db.set('reply', false)
                     message.channel.send('Here we go! First, send me your Twitter account name *(it will be something like @GreepTheSheep)* **[Please respect the cases]**')
