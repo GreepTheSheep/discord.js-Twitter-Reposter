@@ -68,7 +68,7 @@ client.on('ready', () => {
     }
 
    }catch(err){
-      console.log(`[${functiondate()} - ${functiontime()}] ${err}`)
+      console.error(`[${functiondate()} - ${functiontime()}] ${err}`)
    }
 })
 
