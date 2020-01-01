@@ -47,7 +47,7 @@ client.on('ready', () => {
 
     if (client.user.id == '661967218174853121'){
         client.user.setActivity('your tweets | Mention me to setup!', { type: 'WATCHING' })
-        const globaltwit = require('./twitter-function.js')
+        const globaltwit = require('./globaltwit.js')
         globaltwit(twitter_client, client, config, debug, functiondate, functiontime)
     } else {
         var twitter_params = { screen_name: config.twitter_name };
