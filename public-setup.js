@@ -25,7 +25,7 @@ function setup(message, client, config, functiondate, functiontime){
                                     var ch = m.mentions.channels.first()
                                     if (!ch) return message.reply('That\'s not a channel, canceling setup *(please re-mention me to restart the setup)*')
                                     db.set('channel_id', ch.id)
-                                    message.channel.send(`Ok, now all new tweets by ${acc} will be sent in <#${ch.id}>. Thanks for setting me!\n\`Tip: type "@MyTweets config" to see more configs like retweets!\``)
+                                    message.channel.send(`Ok, now all new tweets by ${acc} will be sent in <#${ch.id}>. Thanks for setting me!\n\`Tip: type "@MyTweets help" to see more configs like retweets!\``)
                                 });
                                 collector4.on('end', (collected, reason) => {
                                     if (reason == 'time'){
@@ -56,8 +56,14 @@ function setup(message, client, config, functiondate, functiontime){
             });
         } else return message.reply('You\'re not an administrator of this server. Sorry!')
     }
-    if (message.content == '<@661967218174853121> config' || message.content == '<@!661967218174853121> config'){
-
+    if (message.content == '<@661967218174853121> help' || message.content == '<@!661967218174853121> help'){
+        let embed = new Discord.RichEmbed
+        embed.setAuthor(client.user.username, client.user.displayAvatarURL)
+        .setTitle('Configuration menu')
+        .setDescription('The prefix is mention, list of configs must be:\n\n\`retweet\` (de)activate retweets\n\`reply\` (de)activate replies\n\`username\` changes Twitter username\n\`channel\` changes channel')
+        .addField('Any questions?', '[Join support server](https://discord.gg/3qzcz4e)\n[Follow the creator on Twitter](https://twitter.com/GreepTheSheep)')
+        .setFooter(`${client.user.tag}, created by Greep#3022`)
+        message.channel.send(embed)
     }
 }
 module.exports = setup
