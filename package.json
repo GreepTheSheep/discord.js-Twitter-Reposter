@@ -9,17 +9,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GreepTheSheep/discord.js-Twitter-integration.git"
+    "url": "https://github.com/GreepTheSheep/discord.js-Twitter-Reposter"
   },
   "author": "Greep",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/GreepTheSheep/discord.js-Twitter-integration/issues"
+    "url": "https://github.com/GreepTheSheep/discord.js-Twitter-Reposter/issues"
   },
-  "homepage": "https://github.com/GreepTheSheep/discord.js-Twitter-integration#readme",
+  "homepage": "https://github.com/GreepTheSheep/discord.js-Twitter-Reposter#readme",
   "dependencies": {
     "discord.js": "^11.5.1",
     "fs": "0.0.2",
-    "twitter": "^1.7.1"
+    "twitter": "^1.7.1",
+    "shelljs": "0.8.3",
+    "colors": "1.4.0",
+    "prompt": "1.0.0",
+    "os": "0.1.1",
+    "request": "2.88.0"
   }
 }
