@@ -1,4 +1,4 @@
-function twit(twitter_client, client, config, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets){
+function twit(twitter_client, twitter_params, client, config, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets){
     twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
         if (err) console.log(err);
 
