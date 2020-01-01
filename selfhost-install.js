@@ -13,7 +13,7 @@ title()
 
 async function title() {
     console.log('┌─────────────────────────────────┐')
-    console.log('│       ' + colors.bold(colors.rainbow('The Guiding Lanterns')) + '      │')
+    console.log('│       ' + colors.bold(colors.rainbow('Twitter Reposter')) + '      │')
     console.log('│                                 │')
     console.log('│       Selfhost installation     │')
     console.log('│             By Greep            │')
