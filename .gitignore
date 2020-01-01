@@ -64,3 +64,4 @@ data/*
 bin/*
 
 config.json
+config.json*
