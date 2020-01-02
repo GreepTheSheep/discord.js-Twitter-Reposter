@@ -74,6 +74,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                     }catch(e){
                         if (debug === true) console.error(e)
                         g.channels.get(db.get('channel_id')).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                        .catch(err=>console.error(`Error sending on guild ${g.id} - ${g.name}\n${err}`)
                         db.set('old_tweets', tweets[0].id)
                     }
                 }
