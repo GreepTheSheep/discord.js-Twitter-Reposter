@@ -3,11 +3,12 @@ const Enmap = require('enmap')
 
 function setup(message, client, config, functiondate, functiontime, publics){
     const prefix = `<@!${client.user.id}>`
+    const prefix2 = `<@${client.user.id}>`
     let embed = new Discord.RichEmbed
     embed.setAuthor(client.user.username, client.user.displayAvatarURL)
     embed.setFooter(`${client.user.tag}, created by Greep#3022`)
 
-    if (message.content == prefix){
+    if (message.content == prefix || message.content == prefix2){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == '330030648456642562'){
             var db = new Enmap({name:'db_'+message.guild.id})
             message.channel.send('Do you want to setup me? (send `yes` or `no`)')
@@ -63,13 +64,13 @@ function setup(message, client, config, functiondate, functiontime, publics){
             });
         } else return message.reply('You\'re not administrator of this server. Sorry!')
     }
-    if (message.content.toLowerCase() == prefix + ' help'){
+    if (message.content.toLowerCase() == prefix + ' help' || message.content.toLowerCase() == prefix2 + ' help'){
         embed.setTitle('Configuration menu')
         .setDescription(`The prefix is mention, list of configs must be:\n\n\`@${client.user.tag} retweet\` (de)activate retweets\n\`@${client.user.tag} reply\` (de)activate replies\n\nTo change username and channel, redo the config by just mentionning me : \`@${client.user.tag}\``)
         .addField('Any questions?', `\`@${client.user.tag} info\`: Get some informations and invite the bot to your server`)
         message.channel.send(embed)
     }
-    if (message.content.toLowerCase() == prefix + ' info'){
+    if (message.content.toLowerCase() == prefix + ' info' || message.content.toLowerCase() == prefix2 + ' info'){
 	var nBot = 0
         var array = []
         publics.forEach(id=>{
@@ -85,7 +86,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
         embed.addField('Credits:', client.user.username + ' is created by Greep#3022\n[Follow me on Twitter!](https://twitter.com/GreepTheSheep)', true)
         message.channel.send(embed)
     }
-    if (message.content.toLowerCase() == prefix + ' retweet'){
+    if (message.content.toLowerCase() == prefix + ' retweet' || message.content.toLowerCase() == prefix2 + ' retweet'){
         if(message.member.hasPermission("ADMINISTRATOR")){
             db = new Enmap({name:'db_'+message.guild.id})
             if (db.get('retweet') == false) {
@@ -97,7 +98,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
             }
         } else return message.react('❌')
     }
-    if (message.content.toLowerCase() == prefix + ' reply'){
+    if (message.content.toLowerCase() == prefix + ' reply' || message.content.toLowerCase() == prefix2 + ' reply'){
         if(message.member.hasPermission("ADMINISTRATOR")){
             db = new Enmap({name:'db_'+message.guild.id})
             if (db.get('reply') == false) {
@@ -111,13 +112,13 @@ function setup(message, client, config, functiondate, functiontime, publics){
     }
 
     // Owner only part
-    if (message.content.toLowerCase() == prefix + ' guild'){
+    if (message.content.toLowerCase() == prefix + ' guild' || message.content.toLowerCase() == prefix2 + ' guild'){
         if(message.member.id == '330030648456642562'){
             db = new Enmap({name:'db_'+message.guild.id})
             message.channel.send(`\`\`\`Guild: ${message.guild.id} - ${message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
         } else return
     }
-    if (message.content.toLowerCase() == prefix + ' globalinfo'){
+    if (message.content.toLowerCase() == prefix + ' globalinfo' || message.content.toLowerCase() == prefix2 + ' globalinfo'){
         if(message.member.id == '330030648456642562'){
             var array = []
             var gcount = 0
