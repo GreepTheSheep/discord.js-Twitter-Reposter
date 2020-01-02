@@ -76,7 +76,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
         publics.forEach(id=>{
             nBot++
             if (id != client.user.id) array.push(`- [${client.user.username} ${nBot}](https://discordapp.com/api/oauth2/authorize?client_id=${id}&permissions=322624&scope=bot)`)
-        }
+        })
 
 	embed.setTitle('Informations')
 	.addField('Need help?', '[Join support server](https://discord.gg/3qzcz4e)')
