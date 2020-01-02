@@ -2,7 +2,12 @@ const Discord = require('discord.js')
 const Enmap = require('enmap')
 
 function setup(message, client, config, functiondate, functiontime){
-    if (message.content == '<@661967218174853121>' || message.content == '<@!661967218174853121>'){
+    const prefix = `<@!${client.user.id}>`
+    let embed = new Discord.RichEmbed
+    embed.setAuthor(client.user.username, client.user.displayAvatarURL)
+    embed.setFooter(`${client.user.tag}, created by Greep#3022`)
+
+    if (message.content == prefix){
         if(message.member.hasPermission("ADMINISTRATOR")){
             var db = new Enmap({name:'db_'+message.guild.id})
             message.channel.send('Do you want to setup me? (send `yes` or `no`)')
@@ -58,16 +63,21 @@ function setup(message, client, config, functiondate, functiontime){
             });
         } else return message.reply('You\'re not administrator of this server. Sorry!')
     }
-    if (message.content == '<@661967218174853121> help' || message.content == '<@!661967218174853121> help'){
-        let embed = new Discord.RichEmbed
-        embed.setAuthor(client.user.username, client.user.displayAvatarURL)
-        .setTitle('Configuration menu')
-        .setDescription('The prefix is mention, list of configs must be:\n\n\`retweet\` (de)activate retweets\n\`reply\` (de)activate replies\n\nTo change username and channel, redo the config by just mentionning me')
-        .addField('Any questions?', '[Join support server](https://discord.gg/3qzcz4e)\n[Invite the bot in your server](https://discordapp.com/api/oauth2/authorize?client_id=661967218174853121&permissions=322624&scope=bot)\n[Follow the creator on Twitter](https://twitter.com/GreepTheSheep)')
-        .setFooter(`${client.user.tag}, created by Greep#3022`)
+    if (message.content.toLowerCase() == prefix + ' help'){
+        embed.setTitle('Configuration menu')
+        .setDescription(`The prefix is mention, list of configs must be:\n\n\`@${client.user.tag} retweet\` (de)activate retweets\n\`@${client.user.tag} reply\` (de)activate replies\n\nTo change username and channel, redo the config by just mentionning me : \`@${client.user.tag}\``)
+        .addField('Any questions?', `\`@${client.user.tag} info\`: Get some informations and invite the bot to your server`)
         message.channel.send(embed)
     }
-    if (message.content == '<@661967218174853121> retweet' || message.content == '<@!661967218174853121> retweet'){
+    if (message.content.toLowerCase() == prefix + ' info'){
+	embed.setTitle('Informations')
+	.addField('Need help?', '[Join support server](https://discord.gg/3qzcz4e)')
+        .addField('Problems?', '[Open an issue on GitHub](https://github.com/GreepTheSheep/discord.js-Twitter-Reposter/issues/new/choose)', true)
+	.addField('Invite the bot to your server', '[Invite me!](https://discordapp.com/api/oauth2/authorize?client_id=661967218174853121&permissions=322624&scope=bot)', true)
+    	.addField('Credits:', client.user.username + ' is created by Greep#3022\n[Follow me on Twitter!](https://twitter.com/GreepTheSheep)', true)
+        message.channel.send(embed)
+    }
+    if (message.content.toLowerCase() == prefix + ' retweet'){
         if(message.member.hasPermission("ADMINISTRATOR")){
             db = new Enmap({name:'db_'+message.guild.id})
             if (db.get('retweet') == false) {
@@ -79,7 +89,7 @@ function setup(message, client, config, functiondate, functiontime){
             }
         } else return message.react('❌')
     }
-    if (message.content == '<@661967218174853121> reply' || message.content == '<@!661967218174853121> reply'){
+    if (message.content.toLowerCase() == prefix + ' reply'){
         if(message.member.hasPermission("ADMINISTRATOR")){
             db = new Enmap({name:'db_'+message.guild.id})
             if (db.get('reply') == false) {
@@ -93,22 +103,22 @@ function setup(message, client, config, functiondate, functiontime){
     }
 
     // Owner only part
-    if (message.content == '<@661967218174853121> ginfo' || message.content == '<@!661967218174853121> ginfo'){
+    if (message.content.toLowerCase() == prefix + ' guild'){
         if(message.member.id == '330030648456642562'){
             db = new Enmap({name:'db_'+message.guild.id})
             message.channel.send(`\`\`\`Guild: ${message.guild.id} - ${message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
         } else return
     }
-    if (message.content == '<@661967218174853121> globalinfo' || message.content == '<@!661967218174853121> globalinfo'){
+    if (message.content.toLowerCase() == prefix + ' globalinfo'){
         if(message.member.id == '330030648456642562'){
             var array = []
             var gcount = 0
             client.guilds.forEach(g=>{
                 gcount++
                 db = new Enmap({name:'db_'+g.id})
-                array.push(`Guild: ${g.id} - ${g.name} -- Twitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}`)
+                array.push(`- Guild: ${g.id} - ${g.name} -- Twitter: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}`)
             })
-            message.channel.send(`\`\`\`${array.join('\n')}\nTotal: ${gcount}\`\`\``)
+            message.channel.send(`\`\`\`${array.join('\n')}\`\`\`Total: ${gcount}`)
         }else return
     }
 }
