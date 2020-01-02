@@ -56,7 +56,6 @@ function setup(message, client, config, functiondate, functiontime, publics){
                     });
                 } else if (m.content.toLowerCase() == 'no') return message.channel.send('okay, canceling setup')
                 else return message.channel.send('That\'s not a good answer, canceling setup')
-        [Invite me!](https://discordapp.com/api/oauth2/authorize?client_id=661967218174853121&permissions=322624&scope=bot)    });
             collector.on('end', (collected, reason) => {
                 if (reason == 'time'){
                     message.channel.send(`I have nothing, canceling setup`)
