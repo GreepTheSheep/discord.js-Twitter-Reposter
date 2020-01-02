@@ -1,14 +1,14 @@
 const Discord = require('discord.js')
 const Enmap = require('enmap')
 
-function setup(message, client, config, functiondate, functiontime){
+function setup(message, client, config, functiondate, functiontime, publics){
     const prefix = `<@!${client.user.id}>`
     let embed = new Discord.RichEmbed
     embed.setAuthor(client.user.username, client.user.displayAvatarURL)
     embed.setFooter(`${client.user.tag}, created by Greep#3022`)
 
     if (message.content == prefix){
-        if(message.member.hasPermission("ADMINISTRATOR")){
+        if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == '330030648456642562'){
             var db = new Enmap({name:'db_'+message.guild.id})
             message.channel.send('Do you want to setup me? (send `yes` or `no`)')
             const filter = m => message.author == m.author;
@@ -55,7 +55,7 @@ function setup(message, client, config, functiondate, functiontime){
                     });
                 } else if (m.content.toLowerCase() == 'no') return message.channel.send('okay, canceling setup')
                 else return message.channel.send('That\'s not a good answer, canceling setup')
-            });
+        [Invite me!](https://discordapp.com/api/oauth2/authorize?client_id=661967218174853121&permissions=322624&scope=bot)    });
             collector.on('end', (collected, reason) => {
                 if (reason == 'time'){
                     message.channel.send(`I have nothing, canceling setup`)
@@ -70,11 +70,19 @@ function setup(message, client, config, functiondate, functiontime){
         message.channel.send(embed)
     }
     if (message.content.toLowerCase() == prefix + ' info'){
+	var nBot = 0
+        var array = []
+        publics.forEach(id=>{
+            nBot++
+            if (id != client.user.id) array.push(`- [${client.user.username} ${nBot}](https://discordapp.com/api/oauth2/authorize?client_id=${id}&permissions=322624&scope=bot)`)
+        }
+
 	embed.setTitle('Informations')
 	.addField('Need help?', '[Join support server](https://discord.gg/3qzcz4e)')
         .addField('Problems?', '[Open an issue on GitHub](https://github.com/GreepTheSheep/discord.js-Twitter-Reposter/issues/new/choose)', true)
 	.addField('Invite the bot to your server', '[Invite me!](https://discordapp.com/api/oauth2/authorize?client_id=661967218174853121&permissions=322624&scope=bot)', true)
-    	.addField('Credits:', client.user.username + ' is created by Greep#3022\n[Follow me on Twitter!](https://twitter.com/GreepTheSheep)', true)
+    	if (publics.size > 1) embed.addField('Want multiples accounts?', array.join('\n'), true);
+        embed.addField('Credits:', client.user.username + ' is created by Greep#3022\n[Follow me on Twitter!](https://twitter.com/GreepTheSheep)', true)
         message.channel.send(embed)
     }
     if (message.content.toLowerCase() == prefix + ' retweet'){

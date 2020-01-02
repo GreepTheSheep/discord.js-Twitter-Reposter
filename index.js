@@ -4,9 +4,8 @@ const client = new Discord.Client({
   fetchAllMembers: true
 });
 const fs = require('fs');
-const configfile = "./config.json";
-var config
-config = JSON.parse(fs.readFileSync(configfile, "utf8"));
+const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+const publics = JSON.parse(fs.readFileSync("./public-bot-list.json", "utf8"));
 
 const debug = config.verbose
 
@@ -45,7 +44,7 @@ client.on('ready', () => {
     const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
     console.log(readylog);
 
-    if (client.user.id == '661967218174853121'){
+    if (publics.includes(client.user.id)){
         client.user.setActivity('your Twitter feed | Mention me to setup!', { type: 'WATCHING' })
         const globaltwit = require('./globaltwit.js')
         globaltwit(twitter_client, client, config, debug, functiondate, functiontime)
@@ -65,9 +64,9 @@ client.on('ready', () => {
 })
 
 client.on('message', message =>{
-    if (client.user.id === '661967218174853121'){
+    if (publics.includes(client.user.id)){
         const setup = require('./public-setup.js')
-        setup(message, client, config, functiondate, functiontime)
+        setup(message, client, config, functiondate, functiontime, publics)
     }
 })
 
