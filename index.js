@@ -71,11 +71,20 @@ client.on('message', message =>{
 })
 
 client.on('guildCreate', guild => {
+    if (publics.includes(client.user.id)){
+        const Enmap = require('enmap')
+        const db = new Enmap({name:'db_' + guild.id})
+    }
     const botjoinguildlog = `${client.user.username} joined __${guild.name}__\n*ID: ${guild.id}*`
     console.log(`[${functiondate(0)} - ${functiontime(0)}]\n${botjoinguildlog}`)
 })
 
 client.on('guildDelete', guild => {
+    if (publics.includes(client.user.id)){
+        const Enmap = require('enmap')
+        const db = new Enmap({name:'db_' + guild.id})
+        db.destroy()
+    }
     const botleftguildlog = `${client.user.username} left __${guild.name}__\n*ID: ${guild.id}*`
     console.log(`[${functiondate(0)} - ${functiontime(0)}]\n${botleftguildlog}`)
 })
