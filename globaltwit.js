@@ -13,7 +13,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                 if (err) console.log(err);
 
                 if (db.has('old_tweets') && db.get('old_tweets') === tweets[0].id) {
-                    if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] no new tweets`)
+                    if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()} - guild ${g.id} ] no new tweets`)
                 }
                 if (db.has('old_tweets') && db.get('old_tweets') !== tweets[0].id) {
                     try{
