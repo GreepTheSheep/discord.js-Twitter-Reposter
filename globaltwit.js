@@ -3,8 +3,8 @@ const Enmap = require('enmap')
 
 function globaltwit(twitter_client, client, config, debug, functiondate, functiontime){
     setInterval(function(){
-        client.guilds.forEach(g=>{
-            db = new Enmap({name:'db_'+g.id})
+        client.guilds.forEach(async g=>{
+            var db = new Enmap({name:'db_'+g.id})
             if (!db.get('channel_id')) return
             var twitter_params = { screen_name: db.has('twitter_name') ? db.get('twitter_name') : undefined}
             if (twitter_params.screen_name === undefined) return
