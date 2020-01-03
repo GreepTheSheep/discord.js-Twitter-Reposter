@@ -16,7 +16,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
             const collector = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
             collector.on('collect', m => {
                 if (m.content.toLowerCase() == 'yes'){
-                    db.destroy()
+                    db.deleteAll()
                     db.set('retweet', true)
                     db.set('reply', false)
                     message.channel.send('Here we go! First, send me your Twitter account name *(it will be something like @GreepTheSheep)* **[Please respect the cases]**')
@@ -114,7 +114,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
     if (message.content.toLowerCase() == prefix + ' reset' || message.content.toLowerCase() == prefix2 + ' reset'){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == '330030648456642562'){
             db = new Enmap({name:'db_'+message.guild.id})
-            db.destroy()
+            db.deleteAll()
             message.channel.send(`The server database has been deleted, the bot is ready for a new setup`)
         } else return
     }
