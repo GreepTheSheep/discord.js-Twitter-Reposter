@@ -84,6 +84,6 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                 }
              })
         });
-    }, 15000)
+    }, 60000)
 }
 module.exports = globaltwit
