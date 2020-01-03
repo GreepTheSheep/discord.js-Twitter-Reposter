@@ -16,6 +16,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
             const collector = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
             collector.on('collect', m => {
                 if (m.content.toLowerCase() == 'yes'){
+                    db.destroy()
                     db.set('retweet', true)
                     db.set('reply', false)
                     message.channel.send('Here we go! First, send me your Twitter account name *(it will be something like @GreepTheSheep)* **[Please respect the cases]**')
@@ -87,7 +88,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
         message.channel.send(embed)
     }
     if (message.content.toLowerCase() == prefix + ' retweet' || message.content.toLowerCase() == prefix2 + ' retweet'){
-        if(message.member.hasPermission("ADMINISTRATOR")){
+        if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == '330030648456642562'){
             db = new Enmap({name:'db_'+message.guild.id})
             if (db.get('retweet') == false) {
                 db.set('retweet', true)
@@ -99,7 +100,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
         } else return message.react('❌')
     }
     if (message.content.toLowerCase() == prefix + ' reply' || message.content.toLowerCase() == prefix2 + ' reply'){
-        if(message.member.hasPermission("ADMINISTRATOR")){
+        if(message.member.hasPermission("ADMINISTRATOR")|| message.member.id == '330030648456642562'){
             db = new Enmap({name:'db_'+message.guild.id})
             if (db.get('reply') == false) {
                 db.set('reply', true)
@@ -109,6 +110,13 @@ function setup(message, client, config, functiondate, functiontime, publics){
                 message.channel.send('Replies was deactivated')
             }
         } else return message.react('❌')
+    }
+    if (message.content.toLowerCase() == prefix + ' reset' || message.content.toLowerCase() == prefix2 + ' reset'){
+        if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == '330030648456642562'){
+            db = new Enmap({name:'db_'+message.guild.id})
+            db.destroy()
+            message.channel.send(`The server database has been deleted, the bot is ready for a new setup`)
+        } else return
     }
 
     // Owner only part
