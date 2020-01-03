@@ -90,6 +90,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
     if (message.content.toLowerCase() == prefix + ' retweet' || message.content.toLowerCase() == prefix2 + ' retweet'){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == '330030648456642562'){
             db = new Enmap({name:'db_'+message.guild.id})
+            db.delete('old_tweets')
             if (db.get('retweet') == false) {
                 db.set('retweet', true)
                 message.channel.send('Retweets was activated')
@@ -102,6 +103,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
     if (message.content.toLowerCase() == prefix + ' reply' || message.content.toLowerCase() == prefix2 + ' reply'){
         if(message.member.hasPermission("ADMINISTRATOR")|| message.member.id == '330030648456642562'){
             db = new Enmap({name:'db_'+message.guild.id})
+            db.delete('old_tweets')
             if (db.get('reply') == false) {
                 db.set('reply', true)
                 message.channel.send('Replies was activated')
