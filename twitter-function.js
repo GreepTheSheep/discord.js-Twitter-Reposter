@@ -63,42 +63,32 @@ function twit(twitter_client, twitter_params, client, config, debug, functiondat
                 
                 let embed = new Discord.RichEmbed
 
-                if (tweets[0].retweeted === true && config.retweet === true || tweets[0].text.startsWith('RT') && config.retweet === true) {
-                    if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}`)
-                    embed   .setColor(`#${tweets[0].retweeted_status.user.profile_sidebar_border_color}`)
-                            .setAuthor(`Retweet\n${tweets[0].retweeted_status.user.name} (@${tweets[0].retweeted_status.user.screen_name})`, tweets[0].retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                            .setDescription(tweets[0].retweeted_status.text)
-                            .setTimestamp(tweets[0].retweeted_status.created_at)
-                            .setThumbnail('https://img.icons8.com/color/96/000000/retweet.png')
-                    if (tweets[0].retweeted_status.entities.media) embed.setImage(tweets[0].retweeted_status.entities.media[0].media_url_https)
-                    client.channels.get(config.channel_id).send(embed)
-                }
-                else if (tweets[0].retweeted === true && config.retweet === false || tweets[0].text.startsWith('RT') && config.retweet === false) {
-                    if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
-                } 
-                else if (tweets[0].retweeted === false || !tweets[0].text.startsWith('RT')) {
-                    if (config.reply === false){
-                        if (tweets[0].in_reply_to_status_id === null) {
-                            if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Simple tweet`)
-                            embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
-                                .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                                .setDescription(tweets[0].text)
-                                .setTimestamp(tweets[0].created_at)
-                                if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                                client.channels.get(config.channel_id).send(embed)
-                        } else if (tweets[0].in_reply_to_status_id !== null){
+                if (tweets[0].retweeted === true || tweets[0].text.startsWith('RT')) {
+                    if (config.retweet === true){
+                        if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}`)
+                        embed   .setColor(`#${tweets[0].retweeted_status.user.profile_sidebar_border_color}`)
+                                .setAuthor(`Retweet\n${tweets[0].retweeted_status.user.name} (@${tweets[0].retweeted_status.user.screen_name})`, tweets[0].retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                                .setDescription(tweets[0].retweeted_status.text)
+                                .setTimestamp(tweets[0].retweeted_status.created_at)
+                                .setThumbnail('https://img.icons8.com/color/96/000000/retweet.png')
+                        if (tweets[0].retweeted_status.entities.media) embed.setImage(tweets[0].retweeted_status.entities.media[0].media_url_https)
+                        if (client.channels.find(c=>c.id == config.channel_id)) client.channels.find(c=>c.id == config.channel_id).send(embed)
+                    } else {
+                        if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
+                    }
+                } else if (tweets[0].retweeted === false || !tweets[0].text.startsWith('RT')) {
+                    if (tweets[0].in_reply_to_status_id === null) {
+                        if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Simple tweet`)
+                        embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
+                            .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                            .setDescription(tweets[0].text)
+                            .setTimestamp(tweets[0].created_at)
+                            if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
+                            if (client.channels.find(c=>c.id == config.channel_id)) client.channels.find(c=>c.id == config.channel_id).send(embed)
+                    } else if (tweets[0].in_reply_to_status_id !== null){
+                        if (config.reply === false){
                             if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Reply to a tweet, but reply option is off`)
-                        }
-                    } else if (config.reply === true){
-                        if (tweets[0].in_reply_to_status_id === null) {
-                            if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Simple tweet`)
-                            embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
-                                .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                                .setDescription(tweets[0].text)
-                                .setTimestamp(tweets[0].created_at)
-                                if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                                client.channels.get(config.channel_id).send(embed)
-                        } else if (tweets[0].in_reply_to_status_id !== null){
+                        } else {
                             if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] Reply to a tweet`)
                             embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
                                 .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})\nReply to ${tweets[0].entities.user_mentions[0].name} (@${tweets[0].entities.user_mentions[0].screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
@@ -106,15 +96,14 @@ function twit(twitter_client, twitter_params, client, config, debug, functiondat
                                 .setTimestamp(tweets[0].created_at)
                                 .setThumbnail('https://cdn1.iconfinder.com/data/icons/messaging-3/48/Reply-512.png')
                             if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                                client.channels.get(config.channel_id).send(embed)
+                            if (client.channels.find(c=>c.id == config.channel_id)) client.channels.find(c=>c.id == config.channel_id).send(embed)
                         }
                     }
                 }
-
-            
                 old_tweets = tweets[0].id
                 }catch(e){
                     client.channels.get(config.channel_id).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                    .catch(err=>console.error(err))
                     old_tweets = tweets[0].id
                     if (debug === true) console.log(e)
                 }
