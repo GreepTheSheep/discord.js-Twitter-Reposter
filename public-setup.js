@@ -79,7 +79,8 @@ function setup(message, client, config, functiondate, functiontime, publics){
             if (id != client.user.id) array.push(`- [${client.user.username} ${nBot}](https://discordapp.com/api/oauth2/authorize?client_id=${id}&permissions=322624&scope=bot)`)
         })
 
-	embed.setTitle('Informations')
+    embed.setTitle('Informations')
+    .addField('Shard' `${client.shard.id + 1}/${client.shards.total}`)
 	.addField('Need help?', '[Join support server](https://discord.gg/3qzcz4e)')
         .addField('Problems?', '[Open an issue on GitHub](https://github.com/GreepTheSheep/discord.js-Twitter-Reposter/issues/new/choose)', true)
 	.addField('Invite the bot to your server', '[Invite me!](https://discordapp.com/api/oauth2/authorize?client_id=661967218174853121&permissions=322624&scope=bot)', true)

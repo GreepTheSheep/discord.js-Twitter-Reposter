@@ -1,7 +1,7 @@
 module.exports = {
   apps : [{
     name: 'Twitter-Discord',
-    script: 'index.js',
+    script: 'shard.js',
 
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
     args: 'one two',
@@ -22,7 +22,7 @@ module.exports = {
       user : 'node',
       host : '212.83.163.1',
       ref  : 'origin/master',
-      repo : 'git@github.com:repo.git',
+      repo : 'git@github.com:GreepTheSheep/discord.js-Twitter-Reposter.git',
       path : '/var/www/production',
       'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production'
     }
