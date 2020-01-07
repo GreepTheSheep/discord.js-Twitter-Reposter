@@ -140,10 +140,10 @@ async function setup(message, client, config, functiondate, functiontime, public
                     gu = client.guilds.find(g=> g.id == m.content)
                     if (gu) db = new Enmap({name:'db_'+m.content})
                     else if (!gu) client.shard.broadcastEval(`
-                        if (this.guilds.has('${m.content}')){
-                            '${db = new Enmap({name:'db_'+m.content})}'
+                        if (this.guilds.has(${m.content})){
+                            ${db = new Enmap({name:'db_'+m.content})}
                         } else {
-                            '${db = new Enmap({name:'db_'+message.guild.id})}'
+                            ${db = new Enmap({name:'db_'+message.guild.id})}
                         }
                     `)
                 }
@@ -170,7 +170,7 @@ async function setup(message, client, config, functiondate, functiontime, public
             var totalServ = 0
             values.forEach((value) => {
                 totalServ = totalServ + value[1]
-                array.push(`• SHARD #${value[0] + 1} | Servers: ${value[1]}`)
+                array.push(`• SHARD #${value[0] + 1} | Guilds: ${value[1]}`)
             });
             message.channel.send(`\`\`\`${array.join('\n')}\`\`\`• Total guilds: ${totalServ}. Total shards: ${client.shard.count}`);
 
