@@ -128,6 +128,7 @@ async function setup(message, client, config, functiondate, functiontime, public
         if(message.member.id == config.owner_id){
             const awaitmsg = await message.channel.send('awaitng guild id...')
             var db
+            const filter = m => message.author == m.author;
             const collectorguild = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
             collectorguild.on('collect', m => {
                 awaitmsg.delete()
