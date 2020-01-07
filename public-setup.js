@@ -134,12 +134,9 @@ async function setup(message, client, config, functiondate, functiontime, public
             collectorguild.on('collect', m => {
                 awaitmsg.delete()
                 m.delete()
-                client.shard.broadcastEval(`
-                        var gu
-                        gu = client.guilds.find(g=> g.id == ${m.content})
-                        if (gu) db = new Enmap({name:'db_'+${m.content}})
-                        else if (!gu) db = new Enmap({name:'db_'+${message.guild.id}})
-                `)
+                var gu = client.guilds.find(g=> g.id == m.content)
+                if (gu) db = new Enmap({name:'db_'+m.content})
+                else if (!gu) db = new Enmap({name:'db_'+message.guild.id})
                 message.channel.send(`\`\`\`Guild: ${gu ? gu.id : message.guild.id} - ${gu ? gu.name :  message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nShard: ${db.has('shard_id') ? db.get('shard_id') + ` / ${client.shard.count}`: 'Shard data empty'}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
                 });
                 collector4.on('end', (collected, reason) => {
