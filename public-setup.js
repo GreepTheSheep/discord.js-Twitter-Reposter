@@ -9,7 +9,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
     embed.setFooter(`${client.user.tag}, created by Greep#3022`)
 
     if (message.content == prefix || message.content == prefix2){
-        if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == '330030648456642562'){
+        if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             var db = new Enmap({name:'db_'+message.guild.id})
             message.channel.send('Do you want to setup me? (send `yes` or `no`)')
             const filter = m => message.author == m.author;
@@ -89,7 +89,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
         message.channel.send(embed)
     }
     if (message.content.toLowerCase() == prefix + ' retweet' || message.content.toLowerCase() == prefix2 + ' retweet'){
-        if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == '330030648456642562'){
+        if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             db = new Enmap({name:'db_'+message.guild.id})
             db.delete('old_tweets')
             if (db.get('retweet') == false) {
@@ -102,7 +102,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
         } else return message.react('❌')
     }
     if (message.content.toLowerCase() == prefix + ' reply' || message.content.toLowerCase() == prefix2 + ' reply'){
-        if(message.member.hasPermission("ADMINISTRATOR")|| message.member.id == '330030648456642562'){
+        if(message.member.hasPermission("ADMINISTRATOR")|| message.member.id == config.owner_id){
             db = new Enmap({name:'db_'+message.guild.id})
             db.delete('old_tweets')
             if (db.get('reply') == false) {
@@ -115,7 +115,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
         } else return message.react('❌')
     }
     if (message.content.toLowerCase() == prefix + ' reset' || message.content.toLowerCase() == prefix2 + ' reset'){
-        if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == '330030648456642562'){
+        if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             db = new Enmap({name:'db_'+message.guild.id})
             db.deleteAll()
             message.channel.send(`The server database has been deleted, the bot is ready for a new setup`)
@@ -124,13 +124,13 @@ function setup(message, client, config, functiondate, functiontime, publics){
 
     // Owner only part
     if (message.content.toLowerCase() == prefix + ' guild' || message.content.toLowerCase() == prefix2 + ' guild'){
-        if(message.member.id == '330030648456642562'){
+        if(message.member.id == config.owner_id){
             db = new Enmap({name:'db_'+message.guild.id})
             message.channel.send(`\`\`\`Guild: ${message.guild.id} - ${message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
         } else return
     }
     if (message.content.toLowerCase() == prefix + ' globalinfo' || message.content.toLowerCase() == prefix2 + ' globalinfo'){
-        if(message.member.id == '330030648456642562'){
+        if(message.member.id == config.owner_id){
             var array = []
             var gcount = 0
             client.guilds.forEach(g=>{

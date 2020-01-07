@@ -153,6 +153,13 @@ async function config(){
             required: true,
             message: colors.red('Please enter your Twitter account name')
           },
+          owner_id: {
+            description: colors.white(colors.underline('Enter your User ID')),
+            pattern: /^[0-9]+$/,
+            type: 'string',
+            required: true,
+            message: colors.red('Please enter your User ID')
+          },
           channel_id: {
             description: colors.white(colors.underline('Enter the Channel ID where I repost your tweets: ')),
             pattern: /^[0-9]+$/,
@@ -189,7 +196,7 @@ async function config(){
             "verbose": false,
             "retweet": rt,
             "reply": rp,
-
+            "owner_id": result.owner_id,
             "discord_token" : result.token,
             "twitter_name": result.twitter_name.replace('@', ''),
             "consumer_key": result.consumer_key,

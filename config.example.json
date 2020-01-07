@@ -4,6 +4,7 @@
     "retweet": true,
     "reply": false,
 
+    "owner_id": "YOUR USER ID",
     "discord_token" : "YOUR DISCORD BOT TOKEN",
     "twitter_name" : "YOUR TWITTER ACCOUNT NAME WITHOUT THE @",
     "consumer_key": "TWITTER CONSUMER KEY",
