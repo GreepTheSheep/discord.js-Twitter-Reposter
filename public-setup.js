@@ -158,7 +158,7 @@ async function setup(message, client, config, functiondate, functiontime, public
             `);
             var array = [];
             var totalServ = 0
-            var totalShardList = 0
+            var totalShardList = 1
             values.forEach((value) => {
                 totalServ = totalServ + value[1]
                 totalShardList = totalShardList++
