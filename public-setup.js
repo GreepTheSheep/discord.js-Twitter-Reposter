@@ -135,17 +135,11 @@ async function setup(message, client, config, functiondate, functiontime, public
             if(message.member.id == config.owner_id){
                     var array = [];
                     var gcount = 0;
-                    client.guilds.forEach(g=>{
-                        let values = await client.shard.broadcastEval(`
-                        [
-                            this.shard.id,
-                            this.g.id,
-                            this.g.name
-                        ]
-                        `)
+                    let guilds = await client.shard.broadcastEval(`this.guilds`)
+                    guilds.forEach(g=>{
                         gcount++;
-                        db = new Enmap({name:'db_'+values[1]});
-                        array.push(`• Shard ${values[0] + 1} / ${client.shard.count} - Guild: ${values[1]} - ${values[2]} -- Twitter: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}`);
+                        db = new Enmap({name:'db_'+g.id});
+                        array.push(`• Guild: ${g.id} - ${g.name} -- Twitter: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}`);
                     })
                 
                     if (array.join('\n').length > 2000) return fs.writeFile('./logs/globalinfo.txt', `${array.join('\n')}\n\nTotal guilds: ${gcount}`, 'utf8', (err) => {
