@@ -158,12 +158,13 @@ async function setup(message, client, config, functiondate, functiontime, public
             `);
             var array = [];
             var totalServ = 0
+            var totalShardList = 0
             values.forEach((value) => {
                 totalServ = totalServ + value[1]
+                totalShardList = totalShardList++
                 array.push(`• SHARD #${value[0] + 1} | Guilds: ${value[1]}`)
             });
-            message.channel.send(`\`\`\`${array.join('\n')}\`\`\`• Total guilds: ${totalServ}. Total shards: ${client.shard.count}`);
-
+            message.channel.send(`\`\`\`css\n${array.join('\n')}\`\`\`• Total guilds: ${totalServ}. Total shards: ${client.shard.count}${totalShardList == client.shard.count ? ' (all online)' : ` (${totalShardList} online, ${client.shard.count - totalShardList} offline)`}`);
         }else return
     }
 }
