@@ -135,25 +135,21 @@ async function setup(message, client, config, functiondate, functiontime, public
             if(message.member.id == config.owner_id){
                 var array = [];
                 var gcount = 0;
-                    let guilds = () => await client.shard.broadcastEval(`function(){
-                        client.guilds.forEach(g=>{
-                            gcount++;
-                            db = new Enmap({name:'db_'+g.id});
-                            array.push(\`• Guild: ${g.id} - ${g.name} -- Twitter: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\`);
-                        })
-                        return array.join('\n')
-                    }`)
+                client.guilds.forEach(g=>{
+                    gcount++;
+                    db = new Enmap({name:'db_'+g.id});
+                    array.push(`• Guild: ${g.id} - ${g.name} -- Twitter: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}`);
+                })
                 
-                    if (array.join('\n').length > 2000) return fs.writeFile('./logs/globalinfo.txt', `${array.join('\n')}\n\nTotal guilds: ${gcount}`, 'utf8', (err) => {
-                        if (err) return function(){
-                            console.log(err);
-                            message.reply(`FS error: ${err}`)
-                        }
-                        const attachment = new Discord.Attachment('./logs/globalinfo.txt')
-                        message.reply('Output is more than 2000 characters, see attachment', attachment)
-                        .then(m=>message.channel.stopTyping(true))
-                    })
-                    msg.channel.send(`\`\`\`${guilds('\n')}\`\`\`Total: ${gcount}`)
+                if (array.join('\n').length > 2000) return fs.writeFile('./logs/globalinfo.txt', `${array.join('\n')}\n\nTotal guilds: ${gcount}`, 'utf8', (err) => {
+                    if (err) return function(){
+                        console.log(err);
+                        message.reply(`FS error: ${err}`)
+                    }
+                    const attachment = new Discord.Attachment('./logs/globalinfo.txt')
+                    return message.reply('Output is more than 2000 characters, see attachment', attachment)
+                })
+                msg.channel.send(`\`\`\`${guilds('\n')}\`\`\`Total: ${gcount}`)
 
             }else return
         } catch (error) {
