@@ -137,9 +137,9 @@ async function setup(message, client, config, functiondate, functiontime, public
                 if (m.content == 'this') db = new Enmap({name:'db_'+message.guild.id})
                 else {
                     var gu
-                    gu = client.guilds.find(g=> g.id == m.content)
+                    gu = /*client.guilds.find(g=> g.id == m.content)
                     if (gu) db = new Enmap({name:'db_'+m.content})
-                    else if (!gu) client.shard.broadcastEval(`
+                    else if (!gu)*/ client.shard.broadcastEval(`
                         if (this.guilds.has(${m.content})){
                             ${db = new Enmap({name:'db_'+m.content})}
                         } else {
