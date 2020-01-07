@@ -91,7 +91,7 @@ async function setup(message, client, config, functiondate, functiontime, public
     }
     if (message.content.toLowerCase() == prefix + ' retweet' || message.content.toLowerCase() == prefix2 + ' retweet'){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
-            db = new Enmap({name:'db_'+message.guild.id})
+            var db = new Enmap({name:'db_'+message.guild.id})
             db.delete('old_tweets')
             if (db.get('retweet') == false) {
                 db.set('retweet', true)
@@ -117,7 +117,7 @@ async function setup(message, client, config, functiondate, functiontime, public
     }
     if (message.content.toLowerCase() == prefix + ' reset' || message.content.toLowerCase() == prefix2 + ' reset'){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
-            db = new Enmap({name:'db_'+message.guild.id})
+            var db = new Enmap({name:'db_'+message.guild.id})
             db.deleteAll()
             message.channel.send(`The server database has been deleted, the bot is ready for a new setup`)
         } else return
@@ -126,35 +126,46 @@ async function setup(message, client, config, functiondate, functiontime, public
     // Owner only part
     if (message.content.toLowerCase() == prefix + ' guild' || message.content.toLowerCase() == prefix2 + ' guild'){
         if(message.member.id == config.owner_id){
-            db = new Enmap({name:'db_'+message.guild.id})
-            message.channel.send(`\`\`\`Guild: ${message.guild.id} - ${message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nShard ${client.shard.id + 1} / ${client.shard.count}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
+            const awaitmsg = await message.channel.send('awaitng guild id...')
+            var db
+            const collectorguild = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
+            collectorguild.on('collect', m => {
+                awaitmsg.delete()
+                m.delete()
+                if (m.content == 'this') db = new Enmap({name:'db_'+message.guild.id})
+                else {
+                    var gu = client.guilds.find(g=> g.id == m.content)
+                    if (!gu) db = new Enmap({name:'db_'+message.guild.id})
+                    else if (gu) db = new Enmap({name:'db_'+m.content})
+                }
+                message.channel.send(`\`\`\`Guild: ${gu ? gu.id : message.guild.id} - ${gu ? gu.name :  message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nShard ${client.shard.id + 1} / ${client.shard.count}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
+                });
+                collector4.on('end', (collected, reason) => {
+                    if (reason == 'time'){
+                        awaitmsg.delete()
+                        db = new Enmap({name:'db_'+message.guild.id})
+                        message.channel.send(`\`\`\`Guild: ${message.guild.id} - ${message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nShard ${client.shard.id + 1} / ${client.shard.count}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
+                    }
+                });
         } else return
     }
     if (message.content.toLowerCase() == prefix + ' globalinfo' || message.content.toLowerCase() == prefix2 + ' globalinfo'){
-        try {
-            if(message.member.id == config.owner_id){
-                var array = [];
-                var gcount = 0;
-                client.guilds.forEach(g=>{
-                    gcount++;
-                    db = new Enmap({name:'db_'+g.id});
-                    array.push(`• Guild: ${g.id} - ${g.name} -- Twitter: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}`);
-                })
-                
-                if (array.join('\n').length > 2000) return fs.writeFile('./logs/globalinfo.txt', `${array.join('\n')}\n\nTotal guilds: ${gcount}`, 'utf8', (err) => {
-                    if (err) return function(){
-                        console.log(err);
-                        message.reply(`FS error: ${err}`)
-                    }
-                    const attachment = new Discord.Attachment('./logs/globalinfo.txt')
-                    message.reply('Output is more than 2000 characters, see attachment', attachment)
-                })
-                msg.channel.send(`\`\`\`${array.join('\n')}\`\`\`Total: ${gcount}`)
+        if(message.member.id == config.owner_id){
+            let values = await client.shard.broadcastEval(`
+                [
+                    this.shard.id,
+                    this.guilds.size
+                ]
+            `);
+            var array = [];
+            var totalServ = 0
+            values.forEach((value) => {
+                totalServ + value[1]
+                array.push(`• SHARD #${value[0] + 1} | Servers: ${value[1]}`)
+            });
+            message.channel.send(`\`\`\`${array.join('\n')}\`\`\`Total serveurs: ${totalServ}. Total shards: ${client.shard.count}`);
 
-            }else return
-        } catch (error) {
-           console.error(error) 
-        }
+        }else return
     }
 }
 module.exports = setup
