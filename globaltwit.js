@@ -5,6 +5,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
     setInterval(function(){
         client.guilds.forEach(async g=>{
             var db = new Enmap({name:'db_'+g.id})
+            db.set('shard_id', client.shard.id + 1)
             if (!db.get('channel_id')) return
             var twitter_params = { screen_name: db.has('twitter_name') ? db.get('twitter_name') : undefined}
             if (twitter_params.screen_name === undefined) return
