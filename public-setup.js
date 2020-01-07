@@ -2,7 +2,7 @@ const Discord = require('discord.js')
 const Enmap = require('enmap')
 const fs = require('fs')
 
-function setup(message, client, config, functiondate, functiontime, publics){
+async function setup(message, client, config, functiondate, functiontime, publics){
     const prefix = `<@!${client.user.id}>`
     const prefix2 = `<@${client.user.id}>`
     let embed = new Discord.RichEmbed
@@ -133,25 +133,32 @@ function setup(message, client, config, functiondate, functiontime, publics){
     if (message.content.toLowerCase() == prefix + ' globalinfo' || message.content.toLowerCase() == prefix2 + ' globalinfo'){
         try {
             if(message.member.id == config.owner_id){
-                client.shard.broadcastEval(`
                     var array = [];
                     var gcount = 0;
                     client.guilds.forEach(g=>{
+                        let values = await client.shard.broadcastEval(`
+                        [
+                            this.shard.id,
+                            this.g.id,
+                            this.g.name
+                        ]
+                        `)
                         gcount++;
-                        db = new Enmap({name:'db_'+g.id});
-                        array.push(\`Shard ${client.shard.id + 1} / ${client.shard.count} - Guild: ${g.id} - ${g.name} -- Twitter: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\`);
+                        db = new Enmap({name:'db_'+values[1]});
+                        array.push(`• Shard ${values[0] + 1} / ${client.shard.count} - Guild: ${values[1]} - ${values[2]} -- Twitter: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}`);
                     })
-                `)
-                if (array.join('\n').length > 2000) return fs.writeFile('./logs/globalinfo.txt', `${array.join('\n')}\n\nTotal guilds: ${gcount}`, 'utf8', (err) => {
-                    if (err) return function(){
-                        console.log(err);
-                        message.reply(`FS error: ${err}`)
-                    }
-                    const attachment = new Discord.Attachment('./logs/globalinfo.txt')
-                    message.reply('Output is more than 2000 characters, see attachment', attachment)
-                    .then(m=>message.channel.stopTyping(true))
-                })
-                message.channel.send(`\`\`\`${array.join('\n')}\`\`\`Total: ${gcount}`)
+                
+                    if (array.join('\n').length > 2000) return fs.writeFile('./logs/globalinfo.txt', `${array.join('\n')}\n\nTotal guilds: ${gcount}`, 'utf8', (err) => {
+                        if (err) return function(){
+                            console.log(err);
+                            message.reply(`FS error: ${err}`)
+                        }
+                        const attachment = new Discord.Attachment('./logs/globalinfo.txt')
+                        message.reply('Output is more than 2000 characters, see attachment', attachment)
+                        .then(m=>message.channel.stopTyping(true))
+                    })
+                    msg.channel.send(`\`\`\`${array.join('\n')}\`\`\`Total: ${gcount}`)
+
             }else return
         } catch (error) {
            console.error(error) 

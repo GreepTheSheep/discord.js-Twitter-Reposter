@@ -9,3 +9,7 @@ const shard = new ShardingManager('./index.js', {
 shard.spawn();
 
 shard.on('launch', shard => console.log(`[SHARD] Shard ${shard.id + 1}`));
+
+shard.on('message', (shard, message) => {
+	console.log(`Shard[${shard.id}] : ${message._eval} : ${message._result}`);
+});
