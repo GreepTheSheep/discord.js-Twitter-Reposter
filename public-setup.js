@@ -135,7 +135,7 @@ async function setup(message, client, config, functiondate, functiontime, public
             if(message.member.id == config.owner_id){
                     var array = [];
                     var gcount = 0;
-                    let guilds = await client.shard.broadcastEval(`this.guilds`)
+                    let guilds = await client.shard.fetchClientValues(`guilds`)
                     guilds.forEach(g=>{
                         gcount++;
                         db = new Enmap({name:'db_'+g.id});
