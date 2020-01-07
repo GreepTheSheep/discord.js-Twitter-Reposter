@@ -147,9 +147,9 @@ async function setup(message, client, config, functiondate, functiontime, public
                         message.reply(`FS error: ${err}`)
                     }
                     const attachment = new Discord.Attachment('./logs/globalinfo.txt')
-                    return message.reply('Output is more than 2000 characters, see attachment', attachment)
+                    message.reply('Output is more than 2000 characters, see attachment', attachment)
                 })
-                msg.channel.send(`\`\`\`${guilds('\n')}\`\`\`Total: ${gcount}`)
+                msg.channel.send(`\`\`\`${array.join('\n')}\`\`\`Total: ${gcount}`)
 
             }else return
         } catch (error) {
