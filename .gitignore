@@ -65,3 +65,5 @@ bin/*
 
 config.json
 config.json*
+
+logs/*

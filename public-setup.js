@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const Enmap = require('enmap')
+const fs = require('fs')
 
 function setup(message, client, config, functiondate, functiontime, publics){
     const prefix = `<@!${client.user.id}>`
@@ -80,7 +81,7 @@ function setup(message, client, config, functiondate, functiontime, publics){
         })
 
     embed.setTitle('Informations')
-    .addField('Shard', `${client.shard.id + 1}/${client.shard.count + 1}`, true)
+    .addField('Shard', `${client.shard.id + 1} / ${client.shard.count}`, true)
 	.addField('Need help?', '[Join support server](https://discord.gg/3qzcz4e)', true)
         .addField('Problems?', '[Open an issue on GitHub](https://github.com/GreepTheSheep/discord.js-Twitter-Reposter/issues/new/choose)', true)
 	.addField('Invite the bot to your server', '[Invite me!](https://discordapp.com/api/oauth2/authorize?client_id=661967218174853121&permissions=322624&scope=bot)', true)
@@ -126,17 +127,26 @@ function setup(message, client, config, functiondate, functiontime, publics){
     if (message.content.toLowerCase() == prefix + ' guild' || message.content.toLowerCase() == prefix2 + ' guild'){
         if(message.member.id == config.owner_id){
             db = new Enmap({name:'db_'+message.guild.id})
-            message.channel.send(`\`\`\`Guild: ${message.guild.id} - ${message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
+            message.channel.send(`\`\`\`Guild: ${message.guild.id} - ${message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nShard ${client.shard.id + 1} / ${client.shard.count}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
         } else return
     }
     if (message.content.toLowerCase() == prefix + ' globalinfo' || message.content.toLowerCase() == prefix2 + ' globalinfo'){
         if(message.member.id == config.owner_id){
             var array = []
             var gcount = 0
-            client.guilds.forEach(g=>{
+            client.shard.broadcastEval(client.guilds.forEach(g=>{
                 gcount++
                 db = new Enmap({name:'db_'+g.id})
-                array.push(`- Guild: ${g.id} - ${g.name} -- Twitter: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}`)
+                array.push(`Shard ${client.shard.id + 1} / ${client.shard.count} - Guild: ${g.id} - ${g.name} -- Twitter: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}`)
+            }))
+            if (array.join('\n').length > 2000) return fs.writeFile('./logs/globalinfo.txt', `${array.join('\n')}\n\nTotal guilds: ${gcount}`, 'utf8', (err) => {
+                if (err) return function(){
+                    console.log(err);
+                    message.reply(`FS error: ${err}`)
+                }
+                const attachment = new Discord.Attachment('./logs/globalinfo.txt')
+                message.reply('Output is more than 2000 characters, see attachment', attachment)
+                .then(m=>message.channel.stopTyping(true))
             })
             message.channel.send(`\`\`\`${array.join('\n')}\`\`\`Total: ${gcount}`)
         }else return
