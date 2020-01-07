@@ -35,6 +35,7 @@ async function setup(message, client, config, functiondate, functiontime, public
                                     var ch = m.mentions.channels.first()
                                     if (!ch) return message.reply('That\'s not a channel, canceling setup *(please re-mention me to restart the setup)*')
                                     db.set('channel_id', ch.id)
+                                    db.set('shard_id', client.shard.id + 1)
                                     message.channel.send(`Ok, now all new tweets by ${acc} will be sent in <#${ch.id}>. Thanks for setting me!\n\`Tip: type "@MyTweets help" to see more configs like retweets!\``)
                                 });
                                 collector4.on('end', (collected, reason) => {
@@ -135,17 +136,24 @@ async function setup(message, client, config, functiondate, functiontime, public
                 m.delete()
                 if (m.content == 'this') db = new Enmap({name:'db_'+message.guild.id})
                 else {
-                    var gu = client.guilds.find(g=> g.id == m.content)
-                    if (!gu) db = new Enmap({name:'db_'+message.guild.id})
-                    else if (gu) db = new Enmap({name:'db_'+m.content})
+                    var gu
+                    gu = client.guilds.find(g=> g.id == m.content)
+                    if (gu) db = new Enmap({name:'db_'+m.content})
+                    else if (!gu) client.shard.broadcastEval(`
+                        if (this.guilds.has('${m.content}')){
+                            '${db = new Enmap({name:'db_'+m.content})}'
+                        } else {
+                            '${db = new Enmap({name:'db_'+message.guild.id})}'
+                        }
+                    `)
                 }
-                message.channel.send(`\`\`\`Guild: ${gu ? gu.id : message.guild.id} - ${gu ? gu.name :  message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nShard ${client.shard.id + 1} / ${client.shard.count}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
+                message.channel.send(`\`\`\`Guild: ${gu ? gu.id : message.guild.id} - ${gu ? gu.name :  message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nShard: ${db.has('shard_id') ? db.get('shard_id') + ` / ${client.shard.count}`: 'Shard data empty'}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
                 });
                 collector4.on('end', (collected, reason) => {
                     if (reason == 'time'){
                         awaitmsg.delete()
                         db = new Enmap({name:'db_'+message.guild.id})
-                        message.channel.send(`\`\`\`Guild: ${message.guild.id} - ${message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nShard ${client.shard.id + 1} / ${client.shard.count}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
+                        message.channel.send(`\`\`\`Guild: ${message.guild.id} - ${message.guild.name}\nChannel: ${db.has('channel_id') ? db.get('channel_id') + ' - #' + client.channels.get(db.get('channel_id')).name : 'No channel set'}\nShard: ${db.has('shard_id') ? db.get('shard_id') + ` / ${client.shard.count}`: 'Shard data empty'}\nTwitter username: ${db.has('twitter_name') ? '@'+db.get('twitter_name') : 'No name set'}\nRetweet: ${db.get('retweet') ? 'Yes' : 'No'}\nReplies: ${db.get('reply') ? 'Yes' : 'No'}\`\`\``)
                     }
                 });
         } else return
@@ -161,10 +169,10 @@ async function setup(message, client, config, functiondate, functiontime, public
             var array = [];
             var totalServ = 0
             values.forEach((value) => {
-                totalServ + value[1]
+                totalServ = totalServ + value[1]
                 array.push(`• SHARD #${value[0] + 1} | Servers: ${value[1]}`)
             });
-            message.channel.send(`\`\`\`${array.join('\n')}\`\`\`Total serveurs: ${totalServ}. Total shards: ${client.shard.count}`);
+            message.channel.send(`\`\`\`${array.join('\n')}\`\`\`• Total guilds: ${totalServ}. Total shards: ${client.shard.count}`);
 
         }else return
     }
