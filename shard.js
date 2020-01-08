@@ -6,7 +6,7 @@ const shard = new ShardingManager('./index.js', {
   autoSpawn: true
 });
 
-shard.spawn();
+shard.spawn().catch(e=>console.error(e));
 
 shard.on('launch', shard => console.log(`[SHARD] Shard ${shard.id + 1}`));
 
