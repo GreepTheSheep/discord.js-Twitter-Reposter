@@ -6,6 +6,7 @@ const client = new Discord.Client({
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
 const publics = JSON.parse(fs.readFileSync("./public-bot-list.json", "utf8"));
+if (client.shard.count == 0) client.shard.send = (m) => console.log(m) 
 
 const debug = config.verbose
 
@@ -42,7 +43,7 @@ function functiontime() {
 client.on('ready', () => { 
     try{
     const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
-    console.log(readylog);
+    client.shard.send(readylog);
 
     if (publics.includes(client.user.id)){
         client.user.setActivity('your Twitter feed | Mention me to setup!', { type: 'WATCHING' })
@@ -59,7 +60,7 @@ client.on('ready', () => {
     }
 
    }catch(err){
-      console.error(`[${functiondate()} - ${functiontime()}] ${err}`)
+        client.shard.send(`[${functiondate()} - ${functiontime()}] ${err}`)
    }
 })
 
@@ -76,7 +77,7 @@ client.on('guildCreate', guild => {
         const db = new Enmap({name:'db_' + guild.id})
     }
     const botjoinguildlog = `${client.user.username} joined __${guild.name}__\n*ID: ${guild.id}*`
-    console.log(`[${functiondate(0)} - ${functiontime(0)}]\n${botjoinguildlog}`)
+    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}]\n${botjoinguildlog}`)
 })
 
 client.on('guildDelete', guild => {
@@ -86,7 +87,7 @@ client.on('guildDelete', guild => {
         db.destroy()
     }
     const botleftguildlog = `${client.user.username} left __${guild.name}__\n*ID: ${guild.id}*`
-    console.log(`[${functiondate(0)} - ${functiontime(0)}]\n${botleftguildlog}`)
+    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}]\n${botleftguildlog}`)
 })
 
 client.on('disconnect', event => {
@@ -94,16 +95,16 @@ client.on('disconnect', event => {
     if (event === '1000') eventcodemsg = 'Normal closure'
     if (event === '1001') eventcodemsg = 'Can\'t connect to WebSocket'
     const eventmsg = `Bot down : code ${event}: "${eventcodemsg}"`
-    console.log(`[${functiondate(0)} - ${functiontime(0)}] ` + eventmsg)
+    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ` + eventmsg)
     getlogchannel().send(eventmsg)
 })
 
 client.on('reconnecting', () => {
     const eventmsg = `reconnecting to WebSocket`
-    console.log(`[${functiondate(0)} - ${functiontime(0)}] ` + eventmsg)
+    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ` + eventmsg)
 })
 
 client.login(config.discord_token)
 }catch(e){
-    console.error(e)
+    client.shard.send(e)
 }
