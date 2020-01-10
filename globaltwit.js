@@ -11,7 +11,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
             if (twitter_params.screen_name === undefined) return
 
             twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
-                if (err) console.error(err);
+                if (err) client.shard.send(err);
 
                 if (db.has('old_tweets') && db.get('old_tweets') === tweets[0].id) {
                     if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} ] no new tweets`)
@@ -64,9 +64,9 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                     }
                     db.set('old_tweets', tweets[0].id)
                     }catch(e){
-                        if (debug === true) console.error(e)
+                        if (debug === true) client.shard.send(e)
                         if (g.channels.find(c=>c.id == db.get('channel_id'))) g.channels.find(c=>c.id == db.get('channel_id')).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                        .catch(err=>console.error(`Error sending on guild ${g.id} - ${g.name}\n${err}`))
+                        .catch(err=>client.shard.send(`Error sending on guild ${g.id} - ${g.name}\n${err}`))
                         db.set('old_tweets', tweets[0].id)
                     }
                 }
