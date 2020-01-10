@@ -35,7 +35,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                             if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
                         }
                     } else if (tweets[0].retweeted === false || !tweets[0].text.startsWith('RT')) {
-                        if (tweets[0].in_reply_to_status_id === null) {
+                        if (tweets[0].in_reply_to_status_id == null || tweets[0].in_reply_to_user_id == null) {
                             if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] Simple tweet, id ${tweets[0].id_str}`)
                             embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
                                     .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
@@ -43,7 +43,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                     .setTimestamp(tweets[0].created_at)
                             if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
                             if (g.channels.find(c=>c.id == db.get('channel_id'))) g.channels.find(c=>c.id == db.get('channel_id')).send(embed)
-                        } else if (tweets[0].in_reply_to_status_id !== null){
+                        } else if (tweets[0].in_reply_to_status_id != null || tweets[0].in_reply_to_user_id != null){
                             if (db.get('reply') === false){
                                 if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] Reply to a tweet, but reply option is off`)
                             } else {
@@ -52,8 +52,8 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                     if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] Reply to a tweet, id ${tweets[0].in_reply_to_status_id}`)
                                     db.set('reply_id', tweets[0].in_reply_to_status_id)
                                     embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
-                                            .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})\nReply to ${tweets[0].entities.user_mentions[0].name} (@${tweets[0].entities.user_mentions[0].screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                                            .setDescription(tweets[0].text.replace(`@${tweets[0].entities.user_mentions[0].screen_name}`, ""))
+                                            .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})\nReply to ${tweets[0].entities.user_mentions[0].name} (@${tweets[0].in_reply_to_screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                                            .setDescription(tweets[0].text.replace(`@${tweets[0].in_reply_to_screen_name}`, ""))
                                             .setTimestamp(tweets[0].created_at)
                                             .setThumbnail('https://cdn1.iconfinder.com/data/icons/messaging-3/48/Reply-512.png')
                                     if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
