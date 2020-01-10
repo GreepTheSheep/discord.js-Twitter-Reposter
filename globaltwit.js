@@ -60,7 +60,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                     }
                     db.set('old_tweets', tweets[0].id)
                     }catch(e){
-                        if (debug === true) client.shard.send(e)
+                        if (debug === true) client.shard.send(`[ERROR: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] ` + e + `\n${tweets[0]}`)
                         if (g.channels.find(c=>c.id == db.get('channel_id'))) g.channels.find(c=>c.id == db.get('channel_id')).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                         .catch(err=>client.shard.send(`Error sending on guild ${g.id} - ${g.name}\n${err}`))
                         db.set('old_tweets', tweets[0].id)
