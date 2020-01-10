@@ -91,7 +91,7 @@ function twit(twitter_client, twitter_params, client, config, debug, functiondat
                         } else {
                             if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] Reply to a tweet`)
                             embed.setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
-                            embed.setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})\nReply to ${tweets[0].entities.user_mentions[0].name} (@${tweets[0].in_reply_to_screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                            embed.setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})\nReply to @${tweets[0].in_reply_to_screen_name}`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                             embed.setDescription(tweets[0].text.replace(`@${tweets[0].in_reply_to_screen_name}`, ""))
                             embed.setTimestamp(tweets[0].created_at)
                             embed.setThumbnail('https://cdn1.iconfinder.com/data/icons/messaging-3/48/Reply-512.png')
