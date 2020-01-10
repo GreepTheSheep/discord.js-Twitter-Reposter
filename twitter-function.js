@@ -63,6 +63,8 @@ function twit(twitter_client, twitter_params, client, config, debug, functiondat
                 
                 let embed = new Discord.RichEmbed
 
+                tweets[0].text.replace('&amp;', '&')
+
                 if (tweets[0].retweeted === true || tweets[0].text.startsWith('RT')) {
                     if (config.retweet === true){
                         if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}`)

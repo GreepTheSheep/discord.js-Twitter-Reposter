@@ -21,6 +21,8 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                 
                         let embed = new Discord.RichEmbed
 
+                        tweets[0].text.replace('&amp;', '&')
+
                     if (tweets[0].retweeted === true || tweets[0].text.startsWith('RT')) {
                         if (db.get('retweet') === true){
                             if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] Retweet from @${tweets[0].retweeted_status.user.screen_name}`)
