@@ -105,7 +105,8 @@ function twit(twitter_client, twitter_params, client, config, debug, functiondat
                     client.channels.get(config.channel_id).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                     .catch(err=>client.shard.send(err))
                     old_tweets = tweets[0].id
-                    if (debug === true) client.shard.send(`[ERROR: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] ` + e + `\n${tweets[0]}`)
+                    if (debug === true) client.shard.send(`[ERROR: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] ` + e)
+                    if (debug === true) client.shard.send(tweets[0])
                 }
             }
             if (!old_tweets) {
