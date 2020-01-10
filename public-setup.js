@@ -6,12 +6,12 @@ async function setup(message, client, config, functiondate, functiontime, public
     const prefix = `<@!${client.user.id}>`
     const prefix2 = `<@${client.user.id}>`
     let embed = new Discord.RichEmbed
+    var db = new Enmap({name:'db_'+message.guild.id})
     embed.setAuthor(client.user.username, client.user.displayAvatarURL)
     embed.setFooter(`${client.user.tag}, created by Greep#3022`)
 
     if (message.content == prefix || message.content == prefix2){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
-            var db = new Enmap({name:'db_'+message.guild.id})
             message.channel.send('Do you want to setup me? (send `yes` or `no`)')
             const filter = m => message.author == m.author;
             const collector = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
@@ -69,7 +69,7 @@ async function setup(message, client, config, functiondate, functiontime, public
     }
     if (message.content.toLowerCase() == prefix + ' help' || message.content.toLowerCase() == prefix2 + ' help'){
         embed.setTitle('Configuration menu')
-        .setDescription(`The prefix is mention, list of configs must be:\n\n\`@${client.user.tag} retweet\` ${db.get('retweet') ? 'Enable' : 'Disable'} retweets from the twitter account set up in the channel\n\`@${client.user.tag} reply\` ${db.get('reply') ? 'Enable' : 'Disable'} replies from the twitter account set up in the channel\n\nTo change username and channel, redo the config by just mentionning me : \`@${client.user.tag}\``)
+        .setDescription(`The prefix is mention, list of configs must be:\n\n\`@${client.user.tag} retweet\`${db.get('retweet') ? 'Enable' : 'Disable'} retweets from the twitter account set up in the channel\n\`@${client.user.tag} reply\` ${db.get('reply') ? 'Enable' : 'Disable'} replies from the twitter account set up in the channel\n\nTo change username and channel, redo the config by just mentionning me : \`@${client.user.tag}\``)
         .addField('Any questions?', `\`@${client.user.tag} info\`: Get some informations and invite the bot to your server`)
         message.channel.send(embed)
     }
@@ -92,7 +92,6 @@ async function setup(message, client, config, functiondate, functiontime, public
     }
     if (message.content.toLowerCase() == prefix + ' retweet' || message.content.toLowerCase() == prefix2 + ' retweet'){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
-            var db = new Enmap({name:'db_'+message.guild.id})
             db.delete('old_tweets')
             if (!db.has('twitter_name')) return message.reply('The setup is not done, please redo the config by mention me')
             if (db.get('retweet') == false) {
@@ -120,7 +119,6 @@ async function setup(message, client, config, functiondate, functiontime, public
     }
     if (message.content.toLowerCase() == prefix + ' reset' || message.content.toLowerCase() == prefix2 + ' reset'){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
-            var db = new Enmap({name:'db_'+message.guild.id})
             db.deleteAll()
             message.channel.send(`The server database has been deleted, the bot is ready for a new setup`)
         } else return
