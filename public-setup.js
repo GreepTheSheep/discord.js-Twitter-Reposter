@@ -69,7 +69,7 @@ async function setup(message, client, config, functiondate, functiontime, public
     }
     if (message.content.toLowerCase() == prefix + ' help' || message.content.toLowerCase() == prefix2 + ' help'){
         embed.setTitle('Configuration menu')
-        .setDescription(`The prefix is mention, list of configs must be:\n\n\`@${client.user.tag} retweet\`${db.get('retweet') ? 'Enable' : 'Disable'} retweets from the twitter account set up in the channel\n\`@${client.user.tag} reply\` ${db.get('reply') ? 'Enable' : 'Disable'} replies from the twitter account set up in the channel\n\nTo change username and channel, redo the config by just mentionning me : \`@${client.user.tag}\``)
+        .setDescription(`The prefix is mention, list of configs must be:\n\n\`@${client.user.tag} retweet\`: ${db.get('retweet') ? 'Enable' : 'Disable'} retweets from @${db.get('twitter_name')} in the channel <#${message.guild.channels.find(c=>db.get('channel_id')).id}>\n\`@${client.user.tag} reply\`: ${db.get('reply') ? 'Enable' : 'Disable'} replies from @${db.get('twitter_name')} in the channel <#${message.guild.channels.find(c=>db.get('channel_id')).id}>\n\nTo change username and channel, redo the config by just mentionning me : \`@${client.user.tag}\``)
         .addField('Any questions?', `\`@${client.user.tag} info\`: Get some informations and invite the bot to your server`)
         message.channel.send(embed)
     }
@@ -96,10 +96,10 @@ async function setup(message, client, config, functiondate, functiontime, public
             if (!db.has('twitter_name')) return message.reply('The setup is not done, please redo the config by mention me')
             if (db.get('retweet') == false) {
                 db.set('retweet', true)
-                message.channel.send(`Retweets from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).name}>` : ''} was **enabled**`)
+                message.channel.send(`Retweets from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).id}>` : ''} was **enabled**`)
             } else if (db.get('retweet') == true) {
                 db.set('retweet', false)
-                message.channel.send(`Retweets from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).name}>` : ''} was **disabled**`)
+                message.channel.send(`Retweets from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).id}>` : ''} was **disabled**`)
             }
         } else return message.react('❌')
     }
@@ -110,10 +110,10 @@ async function setup(message, client, config, functiondate, functiontime, public
             if (!db.has('twitter_name')) return message.reply('The setup is not done, please redo the config by mention me')
             if (db.get('reply') == false) {
                 db.set('reply', true)
-                message.channel.send(`Replies from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).name}>` : ''} was **enabled**`)
+                message.channel.send(`Replies from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).id}>` : ''} was **enabled**`)
             } else if (db.get('reply') == true) {
                 db.set('reply', false)
-                message.channel.send(`Replies from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).name}>` : ''} was **disabled**`)
+                message.channel.send(`Replies from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).id}>` : ''} was **disabled**`)
             }
         } else return message.react('❌')
     }
