@@ -28,15 +28,15 @@ async function setup(message, client, config, functiondate, functiontime, public
                         const collector3 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
                         collector3.on('collect', m => {
                             if (m.content.toLowerCase() == 'yes'){
-                                db.set('twitter_name', acc.replace('@',''))
                                 message.channel.send(`Ok ${acc.replace('@','')}, now mention the channel where I'll send your tweets`)
                                 const collector4 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
                                 collector4.on('collect', m => {
                                     var ch = m.mentions.channels.first()
                                     if (!ch) return message.reply('That\'s not a channel, canceling setup *(please re-mention me to restart the setup)*')
+                                    db.set('twitter_name', acc.replace('@',''))
                                     db.set('channel_id', ch.id)
                                     db.set('shard_id', client.shard.id + 1)
-                                    message.channel.send(`Ok, now all new tweets by ${acc} will be sent in <#${ch.id}>. Thanks for setting me!\n\`Tip: type "@MyTweets help" to see more configs like retweets!\``)
+                                    message.channel.send(`Ok, now all new tweets by @${acc.replace('@','')} will be sent in <#${ch.id}>. Thanks for setting me!\n\`Tip: type "@MyTweets help" to see more configs like retweets!\``)
                                 });
                                 collector4.on('end', (collected, reason) => {
                                     if (reason == 'time'){
@@ -69,7 +69,7 @@ async function setup(message, client, config, functiondate, functiontime, public
     }
     if (message.content.toLowerCase() == prefix + ' help' || message.content.toLowerCase() == prefix2 + ' help'){
         embed.setTitle('Configuration menu')
-        .setDescription(`The prefix is mention, list of configs must be:\n\n\`@${client.user.tag} retweet\` (de)activate retweets\n\`@${client.user.tag} reply\` (de)activate replies\n\nTo change username and channel, redo the config by just mentionning me : \`@${client.user.tag}\``)
+        .setDescription(`The prefix is mention, list of configs must be:\n\n\`@${client.user.tag} retweet\` ${db.get('retweet') ? 'Enable' : 'Disable'} retweets from the twitter account set up in the channel\n\`@${client.user.tag} reply\` ${db.get('reply') ? 'Enable' : 'Disable'} replies from the twitter account set up in the channel\n\nTo change username and channel, redo the config by just mentionning me : \`@${client.user.tag}\``)
         .addField('Any questions?', `\`@${client.user.tag} info\`: Get some informations and invite the bot to your server`)
         message.channel.send(embed)
     }
@@ -94,12 +94,13 @@ async function setup(message, client, config, functiondate, functiontime, public
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             var db = new Enmap({name:'db_'+message.guild.id})
             db.delete('old_tweets')
+            if (!db.has('twitter_name')) return message.reply('The setup is not done, please redo the config by mention me')
             if (db.get('retweet') == false) {
                 db.set('retweet', true)
-                message.channel.send('Retweets was activated')
+                message.channel.send(`Retweets from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).name}>` : ''} was **enabled**`)
             } else if (db.get('retweet') == true) {
                 db.set('retweet', false)
-                message.channel.send('Retweets was deactivated')
+                message.channel.send(`Retweets from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).name}>` : ''} was **disabled**`)
             }
         } else return message.react('❌')
     }
@@ -107,12 +108,13 @@ async function setup(message, client, config, functiondate, functiontime, public
         if(message.member.hasPermission("ADMINISTRATOR")|| message.member.id == config.owner_id){
             db = new Enmap({name:'db_'+message.guild.id})
             db.delete('old_tweets')
+            if (!db.has('twitter_name')) return message.reply('The setup is not done, please redo the config by mention me')
             if (db.get('reply') == false) {
                 db.set('reply', true)
-                message.channel.send('Replies was activated')
+                message.channel.send(`Replies from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).name}>` : ''} was **enabled**`)
             } else if (db.get('reply') == true) {
                 db.set('reply', false)
-                message.channel.send('Replies was deactivated')
+                message.channel.send(`Replies from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).name}>` : ''} was **disabled**`)
             }
         } else return message.react('❌')
     }
