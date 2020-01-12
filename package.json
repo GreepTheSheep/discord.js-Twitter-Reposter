@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/GreepTheSheep/discord.js-Twitter-Reposter#readme",
   "dependencies": {
-    "better-sqlite-pool": "^0.2.2",
+    "better-sqlite-pool": "^0.2.3",
     "better-sqlite3": "5.4.3",
     "colors": "1.4.0",
     "discord.js": "^11.5.1",
