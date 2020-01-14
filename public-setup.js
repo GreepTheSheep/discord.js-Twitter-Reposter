@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const Enmap = require('enmap')
+const shell = require('shelljs')
 const fs = require('fs')
 
 async function setup(message, client, config, functiondate, functiontime, publics){
@@ -165,6 +166,19 @@ async function setup(message, client, config, functiondate, functiontime, public
                 array.push(`• SHARD #${value[0] + 1} | Guilds: ${value[1]}`)
             });
             message.channel.send(`\`\`\`css\n${array.join('\n')}\`\`\`• Total guilds: ${totalServ}. Total shards: ${client.shard.count}${totalShardList == client.shard.count ? ' (all online)' : ` (${totalShardList} online, ${client.shard.count - totalShardList} offline)`}`);
+        }else return
+    }
+    if (message.content.toLowerCase() == prefix + ' update' || message.content.toLowerCase() == prefix2 + ' update'){
+        if(message.member.id == config.owner_id){
+            try {
+                message.channel.startTyping()
+                shell.exec('pm2 stop ecosystem.config.js && git pull && npm install && pm2 start ecosystem.config.js', {silent:true}, function(code, stdout, stderr) {
+                    message.reply(`Output:\n\`\`\`${stdout}${stderr}\`\`\``).then(m=>message.channel.stopTyping(true));
+                });
+            } catch (err) {
+                message.reply(`EVAL **__ERROR__**\n\`\`\`xl\n'pm2 stop GL && git pull && npm install && pm2 start GL'\`\`\``);
+                message.channel.stopTyping(true)
+            }
         }else return
     }
 }
