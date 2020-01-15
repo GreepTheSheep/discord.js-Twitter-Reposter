@@ -172,7 +172,7 @@ async function setup(message, client, config, functiondate, functiontime, public
         if(message.member.id == config.owner_id){
             try {
                 message.channel.startTyping()
-                shell.exec('pm2 stop ecosystem.config.js && git pull && npm install && pm2 start ecosystem.config.js', {silent:true}, function(code, stdout, stderr) {
+                shell.exec('git pull && npm install && pm2 reload ecosystem.config.js', {silent:true}, function(code, stdout, stderr) {
                     message.reply(`Output:\n\`\`\`${stdout}${stderr}\`\`\``).then(m=>message.channel.stopTyping(true));
                 });
             } catch (err) {
