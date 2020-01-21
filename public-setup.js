@@ -70,7 +70,7 @@ async function setup(message, client, config, functiondate, functiontime, public
     }
     if (message.content.toLowerCase() == prefix + ' help' || message.content.toLowerCase() == prefix2 + ' help'){
         embed.setTitle('Configuration menu')
-        .setDescription(`The prefix is mention, list of configs must be:\n\n\`@${client.user.tag} retweet\`: ${db.get('retweet') ? 'Enable' : 'Disable'} retweets from @${db.get('twitter_name')} in the channel <#${message.guild.channels.find(c=>db.get('channel_id')).id}>\n\`@${client.user.tag} reply\`: ${db.get('reply') ? 'Enable' : 'Disable'} replies from @${db.get('twitter_name')} in the channel <#${message.guild.channels.find(c=>db.get('channel_id')).id}>\n\nTo change username and channel, redo the config by just mentionning me : \`@${client.user.tag}\``)
+        .setDescription(`The prefix is mention, list of configs must be:\n\n\`@${client.user.tag} retweet\`: ${db.get('retweet') ? 'Disable' : 'Enable'} retweets from @${db.get('twitter_name')} in the channel <#${message.guild.channels.find(c=>db.get('channel_id')).id}>\n\`@${client.user.tag} reply\`: ${db.get('reply') ? 'Disable' : 'Enable'} replies from @${db.get('twitter_name')} in the channel <#${message.guild.channels.find(c=>db.get('channel_id')).id}>\n\nTo change username and channel, redo the config by just mentionning me : \`@${client.user.tag}\``)
         .addField('Any questions?', `\`@${client.user.tag} info\`: Get some informations and invite the bot to your server`)
         message.channel.send(embed)
     }
