@@ -149,7 +149,7 @@ async function setup(message, client, config, functiondate, functiontime, public
                 });
         } else return
     }
-    if (message.content.toLowerCase() == prefix + ' globalinfo' || message.content.toLowerCase() == prefix2 + ' globalinfo'){
+    if (message.content.toLowerCase() == prefix + ' shards' || message.content.toLowerCase() == prefix2 + ' shards'){
         if(message.member.id == config.owner_id){
             let values = await client.shard.broadcastEval(`
                 [
@@ -178,6 +178,38 @@ async function setup(message, client, config, functiondate, functiontime, public
             } catch (err) {
                 message.reply(`EVAL **__ERROR__**\n\`\`\`xl\n'pm2 stop GL && git pull && npm install && pm2 start GL'\`\`\``);
                 message.channel.stopTyping(true)
+            }
+        }else return
+    }
+    if (message.content.toLowerCase() == prefix + ' glist' || message.content.toLowerCase() == prefix2 + ' glist'){
+        if(message.member.id == config.owner_id){
+            try {
+                message.delete()
+                var glistarray = []
+                client.guilds.forEach(g=>{
+                    db = new Enmap({name:'db_'+g.id})
+                    glistarray.push(`${g.name} (${g.id}) : Shard ${db.get('shard_id')} - ${db.has('twitter_name') ? `Twitter account: @${db.get('twitter_name')} : https://twitter.com/${db.get('twitter_name')} -- Channel ${db.get('channel_id')} #${client.channels.get(db.get('channel_id')).name} -- Retweet: ${db.get('retweet') ? 'Yes' : 'No'} - Replies: ${db.get('reply') ? 'Yes' : 'No'}` : `Nothing set`}`)
+                })
+                let values = await client.shard.broadcastEval(`
+                [
+                    this.shard.id,
+                    this.guilds.size
+                ]
+                `);
+                var totalServ = 0
+                var totalShardList = 1
+                values.forEach((value) => {
+                    totalServ = totalServ + value[1]
+                    totalShardList = totalShardList++
+                });
+                glistarray.push(`\nTotal Guilds: ${totalServ} - Total shards: ${totalShardList}`)
+                var filedata = glistarray.join('\n')
+                fs.writeFileSync('./data/glist.txt', filedata)
+                const attachment = new Discord.Attachment('./data/glist.txt')
+                message.author.send('Here is the list of guilds, ' + message.author.username, attachment)
+            } catch (err) {
+                message.delete();
+                message.author.send('I can\'t get the list, try again')
             }
         }else return
     }
