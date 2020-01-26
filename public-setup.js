@@ -188,7 +188,7 @@ async function setup(message, client, config, functiondate, functiontime, public
                 var glistarray = []
                 client.guilds.forEach(g=>{
                     db = new Enmap({name:'db_'+g.id})
-                    glistarray.push(`${g.name} (${g.id}) : Shard ${db.get('shard_id')} - ${db.has('twitter_name') ? `Twitter account: @${db.get('twitter_name')} : https://twitter.com/${db.get('twitter_name')} -- Channel ${db.get('channel_id')} #${client.channels.get(db.get('channel_id')).name} -- Retweet: ${db.get('retweet') ? 'Yes' : 'No'} - Replies: ${db.get('reply') ? 'Yes' : 'No'}` : `Nothing set`}`)
+                    glistarray.push(`${g.name} (${g.id}) : Shard ${db.get('shard_id')} - ${db.has('twitter_name') ? `Twitter account: @${db.get('twitter_name')} : https://twitter.com/${db.get('twitter_name')} -- Channel ID : ${db.get('channel_id')} -- Retweet: ${db.get('retweet') ? 'Yes' : 'No'} - Replies: ${db.get('reply') ? 'Yes' : 'No'}` : `Nothing set`}`)
                 })
                 let values = await client.shard.broadcastEval(`
                 [
