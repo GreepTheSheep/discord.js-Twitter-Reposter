@@ -190,6 +190,7 @@ async function setup(message, client, config, functiondate, functiontime, public
                     db = new Enmap({name:'db_'+g.id})
                     glistarray.push(`${g.name} (${g.id}) : Shard ${db.get('shard_id')} - ${db.has('twitter_name') ? `Twitter account: @${db.get('twitter_name')} : https://twitter.com/${db.get('twitter_name')} -- Channel ${db.get('channel_id')} #${client.channels.get(db.get('channel_id')).name} -- Retweet: ${db.get('retweet') ? 'Yes' : 'No'} - Replies: ${db.get('reply') ? 'Yes' : 'No'}` : `Nothing set`}`)
                 })
+                /*
                 let values = await client.shard.broadcastEval(`
                 [
                     this.shard.id,
@@ -203,6 +204,7 @@ async function setup(message, client, config, functiondate, functiontime, public
                     totalShardList = totalShardList++
                 });
                 glistarray.push(`\nTotal Guilds: ${totalServ} - Total shards: ${totalShardList}`)
+                */
                 var filedata = glistarray.join('\n')
                 fs.writeFileSync('./data/glist.txt', filedata)
                 const attachment = new Discord.Attachment('./data/glist.txt')
