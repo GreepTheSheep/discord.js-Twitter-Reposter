@@ -1,7 +1,8 @@
 const Discord = require('discord.js')
 const Enmap = require('enmap')
+const wait = require('util').promisify(setTimeout);
 
-function globaltwit(twitter_client, client, config, debug, functiondate, functiontime){
+async function globaltwit(twitter_client, client, config, debug, functiondate, functiontime){
     setInterval(function(){
         client.guilds.forEach(async g=>{
             var db = new Enmap({name:'db_'+g.id})
@@ -75,6 +76,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                 }
              })
         });
-    }, 10000)
+        await wait(1000)
+    }, Number(client.guilds.size) * 1000)
 }
 module.exports = globaltwit
