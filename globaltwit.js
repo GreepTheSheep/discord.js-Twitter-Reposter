@@ -2,7 +2,7 @@ const Discord = require('discord.js')
 const Enmap = require('enmap')
 const wait = require('util').promisify(setTimeout);
 
-async function statusError(client) {
+function statusError(client) {
     var errInt = setInterval(async function(){ 
         client.user.setStatus('dnd')
         await wait(5000)
