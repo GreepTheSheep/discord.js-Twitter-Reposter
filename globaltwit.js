@@ -11,8 +11,8 @@ async function statusError(client) {
 }
 
 function globaltwit(twitter_client, client, config, debug, functiondate, functiontime){
-    try{
     setInterval(async function(){
+        try{
         client.guilds.forEach(async g=>{
             var db = new Enmap({name:'db_'+g.id})
             if (db.get('shard_id') == client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
@@ -92,10 +92,10 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
              })
         });
         await wait(1000)
-    }, Number(client.guilds.size) * 1000)
     } catch (e) {
         client.shard.send('globaltwit function error:' + e);
         statusError(client);
     }
+    }, Number(client.guilds.size) * 1000)
 }
 module.exports = globaltwit
