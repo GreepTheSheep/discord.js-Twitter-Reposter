@@ -2,8 +2,8 @@ const Discord = require('discord.js')
 const Enmap = require('enmap')
 const wait = require('util').promisify(setTimeout);
 
-async function globaltwit(twitter_client, client, config, debug, functiondate, functiontime){
-    setInterval(function(){
+function globaltwit(twitter_client, client, config, debug, functiondate, functiontime){
+    setInterval(async function(){
         client.guilds.forEach(async g=>{
             var db = new Enmap({name:'db_'+g.id})
             if (db.get('shard_id') == client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
