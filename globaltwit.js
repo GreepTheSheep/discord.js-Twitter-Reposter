@@ -2,14 +2,6 @@ const Discord = require('discord.js')
 const Enmap = require('enmap')
 const wait = require('util').promisify(setTimeout);
 
-function statusError(client) {
-    var errInt = setInterval(async function(){ 
-        client.user.setStatus('dnd')
-        await wait(5000)
-        client.user.setStatus('idle')
-    },10000)
-}
-
 function globaltwit(twitter_client, client, config, debug, functiondate, functiontime){
     try{
     setInterval(async function(){
@@ -25,10 +17,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                 if (err) {
                     client.shard.send('Twitter GET request error:');
                     client.shard.send(err);
-                    statusError(client);
                 }
-                if (errInt) clearInterval(errInt)
-                client.user.setStatus('online')
                 
                 if (db.has('old_tweets') && db.get('old_tweets') === tweets[0].id) {
                     if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] no new tweets`)
@@ -95,13 +84,11 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
         await wait(1000)
     } catch (e) {
         client.shard.send('globaltwit interval function error:' + e);
-        statusError(client);
     }
     }, Number(client.guilds.size) * 1000)
     
     } catch (e) {
         client.shard.send('globaltwit function error:' + e);
-        statusError(client);
     }
 }
 module.exports = globaltwit
