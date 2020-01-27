@@ -11,6 +11,7 @@ async function statusError(client) {
 }
 
 function globaltwit(twitter_client, client, config, debug, functiondate, functiontime){
+    try{
     setInterval(async function(){
         try{
         client.guilds.forEach(async g=>{
@@ -93,9 +94,14 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
         });
         await wait(1000)
     } catch (e) {
-        client.shard.send('globaltwit function error:' + e);
+        client.shard.send('globaltwit interval function error:' + e);
         statusError(client);
     }
     }, Number(client.guilds.size) * 1000)
+    
+    } catch (e) {
+        client.shard.send('globaltwit function error:' + e);
+        statusError(client);
+    }
 }
 module.exports = globaltwit
