@@ -17,11 +17,13 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                 if (err) {
                     client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] Twitter GET request error:`);
                     client.shard.send(err);
+                    await wait(1000)
                     return
                 }
                 
                 if (db.has('old_tweets') && db.get('old_tweets') === tweets[0].id) {
                     if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] no new tweets`)
+                    await wait(1000)
                 }
                 if (db.has('old_tweets') && db.get('old_tweets') !== tweets[0].id) {
                     try{
@@ -88,7 +90,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
     }
-    }, Number(client.guilds.size) * 100)
+    }, 2 * 60 * 60) // 2min
     
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit function error:` + e);
