@@ -17,6 +17,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                 if (err) {
                     client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] Twitter GET request error:`);
                     client.shard.send(err);
+                    return
                 }
                 
                 if (db.has('old_tweets') && db.get('old_tweets') === tweets[0].id) {
@@ -67,28 +68,30 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                         }
                     }
                     db.set('old_tweets', tweets[0].id)
+                    await wait(1000)
                     }catch(e){
                         if (debug === true) client.shard.send(`[ERROR: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} (${g.name}) ] ` + e)
                         if (debug === true) client.shard.send(tweets[0])
                         if (g.channels.find(c=>c.id == db.get('channel_id'))) g.channels.find(c=>c.id == db.get('channel_id')).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                         .catch(err=>client.shard.send(`Error sending on guild ${g.id} - ${g.name}\n${err}`))
                         db.set('old_tweets', tweets[0].id)
+                        await wait(1000)
                     }
                 }
                 if (!db.has('old_tweets')) {
                     if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] old_tweets not defined, setting var`)
                     db.set('old_tweets', tweets[0].id)
+                    await wait(1000)
                 }
              })
         });
-        await wait(1000)
     } catch (e) {
-        client.shard.send('globaltwit interval function error:' + e);
+        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
     }
-    }, Number(client.guilds.size) * 10)
+    }, Number(client.guilds.size) * 100)
     
     } catch (e) {
-        client.shard.send('globaltwit function error:' + e);
+        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit function error:` + e);
     }
 }
 module.exports = globaltwit
