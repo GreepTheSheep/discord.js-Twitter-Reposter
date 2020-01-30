@@ -13,7 +13,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
             var twitter_params = { screen_name: db.has('twitter_name') ? db.get('twitter_name') : undefined}
             if (twitter_params.screen_name === undefined) return
 
-            await twitter_client.get('statuses/user_timeline', twitter_params, async (err, tweets) => {
+            twitter_client.get('statuses/user_timeline', twitter_params, async (err, tweets) => {
                 if (err) {
                     client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] Twitter GET request error:`);
                     client.shard.send(err);
@@ -23,7 +23,6 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                 
                 if (db.has('old_tweets') && db.get('old_tweets') === tweets[0].id) {
                     if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] no new tweets`)
-                    await wait(1000)
                 }
                 if (db.has('old_tweets') && db.get('old_tweets') !== tweets[0].id) {
                     try{
@@ -70,30 +69,30 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                         }
                     }
                     db.set('old_tweets', tweets[0].id)
-                    await wait(1000)
                     }catch(e){
                         if (debug === true) client.shard.send(`[ERROR: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} (${g.name}) ] ` + e)
                         if (debug === true) client.shard.send(tweets[0])
                         if (g.channels.find(c=>c.id == db.get('channel_id'))) g.channels.find(c=>c.id == db.get('channel_id')).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                         .catch(err=>client.shard.send(`Error sending on guild ${g.id} - ${g.name}\n${err}`))
                         db.set('old_tweets', tweets[0].id)
-                        await wait(1000)
                     }
                 }
                 if (!db.has('old_tweets')) {
                     if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] old_tweets not defined, setting var`)
                     db.set('old_tweets', tweets[0].id)
-                    await wait(1000)
                 }
+                await wait(1000)
             })
         });
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
+        await wait(1000)
     }
     }, 1 * 60 * 1000) // 1min
     
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit function error:` + e);
+        await wait(1000)
     }
 }
 module.exports = globaltwit
