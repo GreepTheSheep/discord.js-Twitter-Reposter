@@ -15,7 +15,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
 
             await twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
                 if (err) {
-                    client.shard.send('Twitter GET request error:');
+                    client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] Twitter GET request error:`);
                     client.shard.send(err);
                 }
                 
@@ -85,7 +85,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
     } catch (e) {
         client.shard.send('globaltwit interval function error:' + e);
     }
-    }, Number(client.guilds.size) * 1000)
+    }, Number(client.guilds.size) * 10)
     
     } catch (e) {
         client.shard.send('globaltwit function error:' + e);
