@@ -90,7 +90,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
     }
-    }, 2 * 60 * 60) // 2min
+    }, 2 * 60 * 60 * 1000) // 2min
     
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit function error:` + e);
