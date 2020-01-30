@@ -13,7 +13,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
             var twitter_params = { screen_name: db.has('twitter_name') ? db.get('twitter_name') : undefined}
             if (twitter_params.screen_name === undefined) return
 
-            await twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
+            await twitter_client.get('statuses/user_timeline', twitter_params, async (err, tweets) => {
                 if (err) {
                     client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] Twitter GET request error:`);
                     client.shard.send(err);
@@ -83,7 +83,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                     db.set('old_tweets', tweets[0].id)
                     await wait(1000)
                 }
-             })
+            })
         });
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
