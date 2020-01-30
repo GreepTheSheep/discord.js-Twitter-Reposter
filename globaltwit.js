@@ -86,13 +86,11 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
         });
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
-        await wait(1000)
     }
     }, 1 * 60 * 1000) // 1min
     
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit function error:` + e);
-        await wait(1000)
     }
 }
 module.exports = globaltwit
