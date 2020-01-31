@@ -19,28 +19,7 @@ async function title() {
     console.log('│             By Greep            │')
     console.log('└─────────────────────────────────┘')
     console.log(colors.grey(package.repository.url))
-    root_check();
-}
-
-async function root_check(){
-    if (os.type() === 'Linux'){
-        console.log('')
-        console.log('# Checking if user is root...')
-        await wait(2000)
-        shell.exec('whoami',{silent: true}, function(code, stdout, stderr){
-            if (!stdout.includes('root')){
-                console.log(colors.yellow(stdout).replace('\n', ''))
-                console.error(colors.red('----- ERROR: ------'))
-                console.error('You\'re not running as root')
-                console.error('Please retry with sudo or execute with root user')
-                console.error(colors.red('-------------------'))
-                process.exit(2)
-            } else {
-                console.log(colors.green(stdout).replace('\n',''))
-                check_commands()
-            }
-        })
-    } else check_commands()
+    check_commands();
 }
 
 async function check_commands(){
