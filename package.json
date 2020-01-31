@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo no test"
+    "install": "node selfhost-install.js"
   },
   "repository": {
     "type": "git",
