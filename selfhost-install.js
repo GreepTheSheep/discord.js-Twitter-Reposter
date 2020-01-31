@@ -44,7 +44,7 @@ async function check_commands(){
                         process.exit(2)
                     } else {
                         console.log(colors.green('Git succefully installed!'))
-                        install_deps()
+                        config()
                     }
                 })
             } else {
@@ -56,24 +56,6 @@ async function check_commands(){
             }
         } else {
             console.log(colors.green('Git is installed!') + ' Version: ' + stdout.replace('git version ', ''))
-            install_deps()
-        }
-    })
-}
-
-async function install_deps(){
-    console.log('# Installing / upgrading npm dependencies (This might take a while)')
-    await wait(2000)
-    shell.exec('npm install -g pm2 && npm install',{silent: true}, function(code, stdout, stderr){
-        if (code != 0){
-            console.error(colors.red('----- ERROR: ------'))
-            console.error('Can\'t install dependencies')
-            if (os.type() == 'Linux') console.error('Please retry as sudo')
-            else console.log('Check your permissions')
-            console.error('And retry the installation after')
-            console.error(colors.red('-------------------'))
-            process.exit(2)
-        } else {
             config()
         }
     })
