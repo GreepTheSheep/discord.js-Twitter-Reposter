@@ -4,7 +4,7 @@
   "description": "Get informations of a Twitter account & latest posts and sends it to a Discord bot",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node shard.js",
     "install": "node selfhost-install.js"
   },
   "repository": {
