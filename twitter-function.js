@@ -116,6 +116,6 @@ function twit(twitter_client, twitter_params, client, config, debug, functiondat
                 old_tweets = tweets[0].id
             }
          });
-    }, 5000)
+    }, 1000)
 }
 module.exports = twit
