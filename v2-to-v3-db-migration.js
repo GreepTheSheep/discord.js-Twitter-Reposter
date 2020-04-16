@@ -33,8 +33,7 @@ async function discord_login(){
     await wait(1500)
     client.login(config.discord_token).catch(err=>{
         console.error(colors.red('ERROR!'))
-        console.error(colors.red('Unable to connect to ' + err.hostname))
-        console.error(colors.red('Check your internet connexion and retry'))
+        console.error(err)
     })
 
     client.on('ready', async () => {
@@ -42,13 +41,13 @@ async function discord_login(){
         client.user.setStatus('invisible')
         console.log(colors.grey('Checking guilds list...'))
         await wait(500)
-        console.log('\n')
         console.log(colors.blue(`Found ${client.guilds.size} guilds`))
+        confirmation()
     }); 
 }
 
 async function confirmation(){
-    var confirmbool = false
+    await wait(1000)
     var schema = {
         properties: {
           confirm: {
@@ -64,14 +63,13 @@ async function confirmation(){
     prompt.delimiter = '';
     prompt.start();
     prompt.get(schema, function (err, result) {
-        if (result.confirm.toLowerCase().includes('yes')) confirmbool = true
+        if (result.confirm.toLowerCase().includes('no')){
+            console.log(colors.italic('Exiting...'))
+            process.exit(0)
+        } else {
+            migrate()
+        }
     })
-    if (confirmbool == false){
-        console.log(colors.italic('Exiting...'))
-        process.exit(0)
-    } else {
-        migrate()
-    }
 }
 
 async function migrate(){
@@ -80,12 +78,13 @@ async function migrate(){
     client.user.setActivity('Database migration in progress...', { type: 'PLAYING' })
     await wait(1500)
     
-    client.guilds.forEach(guildmigration(g))
+    client.guilds.forEach(g=>guildmigration(g))
 
     end()
 }
 
 async function guildmigration(g){
+    try{
     await wait(500)
     var db = new Enmap({name:'db_'+g.id})
 
@@ -102,11 +101,26 @@ async function guildmigration(g){
         db.set('channel_id', [id])
         channelok = true
     }
+    if (db.get('old_tweets') !== Array || db.get('old_tweets') == String){
+        var old = db.get('old_tweets')
+        db.set('old_tweets', [old])
+    }
+    if (db.get('reply') !== Array || db.get('reply') == String){
+        var rp = db.get('reply')
+        db.set('reply', [rp])
+    }
+    if (db.get('retweet') !== Array || db.get('retweet') == String){
+        var rt = db.get('retweet')
+        db.set('retweet', [rt])
+    }
     if (nameok == true && channelok == true) console.log(colors.green(`✅ ${g.id} (${g.name}) : Twitter account: @${db.get('twitter_name')[0]} -- Channel ID : ${db.get('channel_id')[0]}`))
     else {
         console.error(`🟥 ${g.id} (${g.name}) : ${nameok ? 'Username: OK' : colors.bgRed('Username: Error')} - ${channelok ? 'Channel ID: OK' : colors.bgRed('Channel ID: error')}`)
         console.error('Retrying...')
         guildmigration(g)
+    }
+    } catch (err) {
+        console.error(colors.bgRed(`🟥 ${g.id} (${g.name}) : ${err}`))
     }
 }
 
