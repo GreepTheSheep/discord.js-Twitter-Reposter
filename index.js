@@ -68,8 +68,8 @@ client.on('message', message =>{
     if (message.channel.type === 'dm') return
     if (message.author.bot) return;
     if (publics.includes(client.user.id)){
-        const setup = require('./public-setup.js')
-        setup(message, client, config, functiondate, functiontime, publics)
+        const cmds_index = require('./cmds/cmds-index.js')
+        cmds_index(message, client, config, functiondate, functiontime, publics)
     }
 })
 
