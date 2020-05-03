@@ -4,7 +4,7 @@
 */
 const Discord = require('discord.js')
 
-function settings(message, client, config, functiondate, functiontime, publics, db, prefix, embed) {
+function settings(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed) {
     if (message.content.toLowerCase() == prefix + ' retweet' || message.content.toLowerCase() == prefix2 + ' retweet'){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             db.delete('old_tweets')

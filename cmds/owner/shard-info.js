@@ -1,6 +1,6 @@
 const Discord = require('discord.js')
 
-function shardinfo(message, client, config, functiondate, functiontime, publics, db, prefix, embed) {
+async function shardinfo(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed) {
     if (message.content.toLowerCase() == prefix + ' shards' || message.content.toLowerCase() == prefix2 + ' shards'){
             let values = await client.shard.broadcastEval(`
                 [

@@ -7,7 +7,7 @@ const fs = require('fs');
 const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
 if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
 const debug = config.verbose
-const publicBot = "661967218174853121"
+const publicBot = "706587515771158560"
 
 const Twitter = require('twitter')
 const tokens = {
@@ -68,7 +68,7 @@ client.on('message', message =>{
     if (message.author.bot) return;
     if (client.user.id === publicBot){
         const cmds_index = require('./cmds/cmds-index.js')
-        cmds_index(message, client, config, functiondate, functiontime, publics)
+        cmds_index(message, client, config, functiondate, functiontime, publicBot)
     }
 })
 
