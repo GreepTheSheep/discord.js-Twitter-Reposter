@@ -5,10 +5,9 @@ const client = new Discord.Client({
 });
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
-const publics = JSON.parse(fs.readFileSync("./public-bot-list.json", "utf8"));
-if (client.shard.count == 0) client.shard.send = (m) => console.log(m) 
-
+if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
 const debug = config.verbose
+const publicBot = "661967218174853121"
 
 const Twitter = require('twitter')
 const tokens = {
@@ -45,7 +44,7 @@ client.on('ready', () => {
     const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
     client.shard.send(readylog);
 
-    if (publics.includes(client.user.id)){
+    if (client.user.id === publicBot){
         client.user.setActivity('your Twitter feed | Mention me to setup!', { type: 'WATCHING' })
         const globaltwit = require('./globaltwit.js')
         globaltwit(twitter_client, client, config, debug, functiondate, functiontime)
@@ -67,14 +66,14 @@ client.on('ready', () => {
 client.on('message', message =>{
     if (message.channel.type === 'dm') return
     if (message.author.bot) return;
-    if (publics.includes(client.user.id)){
+    if (client.user.id === publicBot){
         const cmds_index = require('./cmds/cmds-index.js')
         cmds_index(message, client, config, functiondate, functiontime, publics)
     }
 })
 
 client.on('guildCreate', guild => {
-    if (publics.includes(client.user.id)){
+    if (client.user.id === publicBot){
         const Enmap = require('enmap')
         const db = new Enmap({name:'db_' + guild.id})
     }
@@ -83,7 +82,7 @@ client.on('guildCreate', guild => {
 })
 
 client.on('guildDelete', guild => {
-    if (publics.includes(client.user.id)){
+    if (client.user.id === publicBot){
         const Enmap = require('enmap')
         const db = new Enmap({name:'db_' + guild.id})
         db.destroy()
