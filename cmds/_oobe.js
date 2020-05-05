@@ -13,17 +13,15 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
             embed.setColor('#BE534D')
             return message.channel.send(embed)
         }
-        const user_cache = []
+        var user_cache = []
         var counter = 0;
         var cache_twitter_name = db.get('twitter_name')
         var cache_channel_id = db.get('channel_id')
-        console.log(cache_twitter_name)
-        console.log(cache_channel_id)
         db.get('twitter_name').forEach(()=>{
             user_cache.push(`> ${counter+1}. **@${cache_twitter_name[counter]}** on channel <#${cache_channel_id[counter]}>`)            
             counter++
         })
-        embed.setDescription(`**__Hello ${message.author.username}!__**\n\nHere's the list of Twitter accounts linked with this server:\n${user_cache.join('\n')}\nType "${prefix} setup" to add an another account or to modify your account`)
+        embed.setDescription(`**__Hello ${message.author.username}!__**\n\nHere's the list of Twitter accounts linked with this server:\n${user_cache.join('\n')}\n\nType "${prefix} setup" to add an another account or to modify your account`)
         embed.setColor('#068049')
         message.channel.send(embed)
     }
@@ -35,8 +33,6 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
             const bmembed = await message.channel.send(embed)
             const collector = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
             collector.on('collect', async m => {
-                m.delete()
-                bmembed.delete()
                 if (m.content == '1'){ // Create new account
                     if (!db.has('twitter_name')) {
                         db.set('twitter_name', [])
@@ -45,7 +41,11 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                         db.set('reply', [])
                         db.set('retweet', [])
                     }
-                    if (db.get('twitter_name').length == 2) return bm.edit('I\'m sorry, but you have reached the maximun number of accounts for this server')
+                    if (db.get('twitter_name').length == 2) {
+                        embed.setDescription('I\'m sorry, but you have reached the maximun number of accounts for this server')
+                        embed.setColor('#ff0000')
+                        return message.channel.send(embed)
+                    }
                     const bm = await message.channel.send('Here we go! First, send me your Twitter account name *(it will be something like @GreepTheSheep)* **[Please respect the cases]**')
                     const collector2 = message.channel.createMessageCollector(filter, {time: 60000, max: 1});
                     collector2.on('collect', m => {
@@ -59,7 +59,6 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                 bm.edit(`Ok ${acc.replace('@','')}, now mention the channel where I'll send your tweets`)
                                 const collector4 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
                                 collector4.on('collect', m => {
-                                    m.delete()
                                     var ch = m.mentions.channels.first()
                                     if (!ch) return message.reply('That\'s not a channel, canceling setup')
 
@@ -147,7 +146,31 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                         }
                     });
                 } else if (m.content == '2'){
-                    message.channel.send(`Work in progress`)
+                    if (!db.has('twitter_name')) return message.channel.send('You haven\'t linked any Twitter accounts in this server. Please link a Twitter account before continue.');
+                    var user_cache = []
+                    var counter = 0;
+                    var cache_twitter_name = db.get('twitter_name')
+                    var cache_channel_id = db.get('channel_id')
+                    db.get('twitter_name').forEach(()=>{
+                        user_cache.push(`> ${counter+1}. **@${cache_twitter_name[counter]}** on channel <#${cache_channel_id[counter]}>`)            
+                        counter++
+                    })
+                    const bm = await message.channel.send(`Actually, you have ${counter} linked Twitter accounts with this server:\n${user_cache.join('\n')}\n\nPlease select the account you want to edit or type \`cancel\` to cancel setup`)
+                    
+                    const collector = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
+                    collector.on('collect', m => {
+                        m.delete()
+                        if (m.content.toLowerCase == 'cancel') return message.channel.send('Okay, stopping setup.')
+                        if (m.content != [0-9]) return message.channel.send('That\'s not a valid number, canceling setup')
+                        var n = Number(m.content)-1
+                        var text = `\`\`\`Account @${db.get('twitter_name')[n]}\nSet up on the channel #${message.guild.channels.find('id', db.get('channel_id')[n]).name} (${db.get('channel_id')[n]})\n\nPlease choose the number you want to set it up:\n1. ${db.get('retweet')[n] ? 'Enable' : 'Disable'} retweet posting\n2. ${db.get('reply')[n] ? 'Enable' : 'Disable'} reply posting\n3. Change channel\n4. Change Twitter account\n5. Delete account\`\`\``
+                        //
+                    });
+                    collector.on('end', (collected, reason) => {
+                        if (reason == 'time'){
+                            message.channel.send(`Time limit exceeded, canceling setup`)
+                        }
+                    });
                 } else {
                     return message.channel.send(`Not a good answer, canceling setup`)
                 }
