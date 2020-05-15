@@ -59,6 +59,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                 bm.edit(`Ok ${acc.replace('@','')}, now mention the channel where I'll send your tweets`)
                                 const collector4 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
                                 collector4.on('collect', m => {
+                                    m.delete()
                                     var ch = m.mentions.channels.first()
                                     if (!ch) return message.reply('That\'s not a channel, canceling setup')
 
@@ -91,15 +92,15 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                             }
 
                                             var cache_twitter_name = db.get('twitter_name')
-                                            console.log(cache_twitter_name)
+                                            //console.log(cache_twitter_name)
                                             cache_twitter_name.push(acc.replace('@',''))
-                                            console.log(cache_twitter_name)
+                                            //console.log(cache_twitter_name)
                                             db.set('twitter_name', cache_twitter_name)
 
                                             var cache_channel_id = db.get('channel_id')
-                                            console.log(cache_channel_id)
+                                            //console.log(cache_channel_id)
                                             cache_channel_id.push(ch.id)
-                                            console.log(cache_channel_id)
+                                            //console.log(cache_channel_id)
                                             db.set('channel_id', cache_channel_id)
 
                                             var cache_retweet = db.get('retweet')
@@ -161,10 +162,46 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                     collector.on('collect', m => {
                         m.delete()
                         if (m.content.toLowerCase == 'cancel') return message.channel.send('Okay, stopping setup.')
-                        if (m.content != [0-9]) return message.channel.send('That\'s not a valid number, canceling setup')
+                        if (!Number(m.content) || Number(m.content) == NaN) return message.channel.send('That\'s not a valid number, canceling setup')
                         var n = Number(m.content)-1
-                        var text = `\`\`\`Account @${db.get('twitter_name')[n]}\nSet up on the channel #${message.guild.channels.find('id', db.get('channel_id')[n]).name} (${db.get('channel_id')[n]})\n\nPlease choose the number you want to set it up:\n1. ${db.get('retweet')[n] ? 'Enable' : 'Disable'} retweet posting\n2. ${db.get('reply')[n] ? 'Enable' : 'Disable'} reply posting\n3. Change channel\n4. Change Twitter account\n5. Delete account\`\`\``
-                        //
+                        bm.edit(`\`\`\`Account @${db.get('twitter_name')[n]}\nSet up on the channel #${message.guild.channels.find(c=>c.id == db.get('channel_id')[n]).name} (${db.get('channel_id')[n]})\n\nPlease choose the number you want to set it up:\n1. ${db.get('retweet')[n] ? 'Enable' : 'Disable'} retweet posting\n2. ${db.get('reply')[n] ? 'Enable' : 'Disable'} reply posting\n3. Change channel\n4. Change Twitter account\n5. Delete account\`\`\``)
+                        const collector2 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
+                        collector2.on('collect', m => {
+                            m.delete()
+                            if (!Number(m.content) || Number(m.content) == NaN) return message.channel.send('That\'s not a valid number, canceling setup')
+                            if (m.content == '1'){      // retweet
+                                if (db.get('retweet')[n] == false) {
+                                    db.set('retweet', true)
+                                    message.channel.send(`Retweets from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).id}>` : ''} was **enabled**`)
+                                } else if (db.get('retweet') == true) {
+                                    db.set('retweet', false)
+                                    message.channel.send(`Retweets from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).id}>` : ''} was **disabled**`)
+                                }
+                            }
+                            else if (m.content == '2'){ // reply
+
+                            }
+                            else if (m.content == '3'){ // channel
+
+                            }
+                            else if (m.content == '4'){ // Twitter name
+
+                            }
+                            else if (m.content == '5'){ // Delete
+
+                            }
+                            else if (m.content == '6'){ // Admin (owner) panel [show all infos]
+                                if (message.author.id == config.owner_id){
+
+                                } else return bm.edit('Out of range, canceling setup.')
+                            } 
+                            else return bm.edit('Out of range, canceling setup.')
+                        })
+                        collector2.on('end', (collected, reason) => {
+                            if (reason == 'time'){
+                                message.channel.send(`Time limit exceeded, canceling setup`)
+                            }
+                        });
                     });
                     collector.on('end', (collected, reason) => {
                         if (reason == 'time'){
