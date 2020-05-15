@@ -171,15 +171,23 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                             if (!Number(m.content) || Number(m.content) == NaN) return message.channel.send('That\'s not a valid number, canceling setup')
                             if (m.content == '1'){      // retweet
                                 if (db.get('retweet')[n] == false) {
+
                                     db.set('retweet', true)
-                                    message.channel.send(`Retweets from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).id}>` : ''} was **enabled**`)
-                                } else if (db.get('retweet') == true) {
+                                    message.channel.send(`Retweets from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **enabled**`)
+                                } else if (db.get('retweet')[n] == true) {
                                     db.set('retweet', false)
-                                    message.channel.send(`Retweets from @${db.get('twitter_name')} in the channel ${message.guild.channels.find(c=>db.get('channel_id')) ? `<#${message.guild.channels.find(c=>db.get('channel_id')).id}>` : ''} was **disabled**`)
+                                    message.channel.send(`Retweets from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **disabled**`)
                                 }
                             }
                             else if (m.content == '2'){ // reply
-
+                                if (db.get('reply')[n] == false) {
+                                    
+                                    db.set('reply', true)
+                                    message.channel.send(`Replies from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **enabled**`)
+                                } else if (db.get('reply') == true) {
+                                    db.set('reply', false)
+                                    message.channel.send(`Replies from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **disabled**`)
+                                }
                             }
                             else if (m.content == '3'){ // channel
 
