@@ -17,8 +17,8 @@ function cmds_index(message, client, config, functiondate, functiontime, publicB
     const oobe = require('./_oobe.js')
     oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
 
-    const settings = require('./_settings.js')
-    settings(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
+    const reset = require('./reset.js')
+    reset(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
 
     const helpcmd = require('./help.js')
     helpcmd(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
