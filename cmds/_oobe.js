@@ -103,6 +103,10 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                             //console.log(cache_channel_id)
                                             db.set('channel_id', cache_channel_id)
 
+                                            var cache_old_tweets = db.get('old_tweets')
+                                            cache_old_tweets.push(null)
+                                            db.set('old_tweets', cache_old_tweets)
+
                                             var cache_retweet = db.get('retweet')
                                             cache_retweet.push(rt)
                                             db.set('retweet', cache_retweet)
