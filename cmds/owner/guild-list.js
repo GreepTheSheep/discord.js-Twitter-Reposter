@@ -1,4 +1,5 @@
 const Discord = require('discord.js')
+const Enmap = require('enmap')
 
 function guildlist(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed) {
     if (message.content.toLowerCase() == prefix + ' glist' || message.content.toLowerCase() == prefix2 + ' glist'){
