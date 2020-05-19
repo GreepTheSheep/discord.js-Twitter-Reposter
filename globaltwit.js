@@ -30,16 +30,10 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                         return
                     }
                     
-                    if (!old_twt[tweets[0].user.screen_name]) {
-                        if (debug === true) client.shard.send(debug_header + `old_tweets not defined, setting var`)
-                        old_twt[tweets[0].user.screen_name] = {
-                            id: tweets[0].id
-                        }
-                    }
-                    else if (old_twt[tweets[0].user.screen_name].id == tweets[0].id) {
+                    if (old_twt[tweets[0].user.screen_name].id == tweets[0].id) {
                         if (debug === true) client.shard.send(debug_header + `no new tweets`)
                     }
-                    else if (old_twt[tweets[0].user.screen_name].id != tweets[0].id) {
+                    if (old_twt[tweets[0].user.screen_name].id != tweets[0].id) {
                         try{
 
                             let embed = new Discord.RichEmbed
@@ -118,6 +112,12 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                             old_twt[tweets[0].user.screen_name] = {
                                 id: tweets[0].id
                             }
+                        }
+                    }
+                    if (!old_twt[tweets[0].user.screen_name]) {
+                        if (debug === true) client.shard.send(debug_header + `old_tweets not defined, setting var`)
+                        old_twt[tweets[0].user.screen_name] = {
+                            id: tweets[0].id
                         }
                     }
                     g_acc_in_twitter++
