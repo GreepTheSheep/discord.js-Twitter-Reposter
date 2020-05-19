@@ -4,7 +4,7 @@
   "description": "Get informations of a Twitter account & latest posts and sends it to a Discord bot",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node shard.js",
     "install": "node selfhost-install.js"
   },
   "repository": {
@@ -21,7 +21,7 @@
     "better-sqlite-pool": "^0.2.3",
     "better-sqlite3": "5.4.3",
     "colors": "1.4.0",
-    "discord.js": "^11.5.1",
+    "discord.js": "^11.6.1",
     "enmap": "^5.2.4",
     "fs": "0.0.2",
     "os": "0.1.1",
