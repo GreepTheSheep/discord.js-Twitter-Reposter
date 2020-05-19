@@ -9,7 +9,7 @@ function cmds_index(message, client, config, functiondate, functiontime, publicB
     embed.setAuthor(client.user.username, client.user.displayAvatarURL)
     embed.setFooter(`${client.user.tag}, created by Greep#3022`)
 
-    if (message.client.id == config.owner_id){
+    if (message.author.id == config.owner_id){
         const ownercmds = require('./owner/owner-index.js')
         ownercmds(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
     }
