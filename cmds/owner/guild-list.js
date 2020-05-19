@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const Enmap = require('enmap')
+const fs = require('fs')
 
 function guildlist(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed) {
     if (message.content.toLowerCase() == prefix + ' glist' || message.content.toLowerCase() == prefix2 + ' glist'){
@@ -17,7 +18,7 @@ async function tryfunction(message, client, config, functiondate, functiontime, 
     var glistarray = []
     client.guilds.forEach(g=>{
         db = new Enmap({name:'db_'+g.id})
-        glistarray.push(`${g.name} (${g.id}) : Shard ${db.get('shard_id')} - ${db.has('twitter_name') ? `Twitter account: @${db.get('twitter_name')} : https://twitter.com/${db.get('twitter_name')} -- Channel ID : ${db.get('channel_id')} -- Retweet: ${db.get('retweet') ? 'Yes' : 'No'} - Replies: ${db.get('reply') ? 'Yes' : 'No'}` : `Nothing set`}`)
+        glistarray.push(`${g.name} (${g.id}) : Shard ${db.get('shard_id')} - ${db.has('twitter_name') ? `Twitter account: ${db.get('twitter_name')} -- Channel ID : ${db.get('channel_id')} -- Retweet: ${db.get('retweet') ? 'Yes' : 'No'} - Replies: ${db.get('reply') ? 'Yes' : 'No'}` : `Nothing set`}`)
     })
     let values = await client.shard.broadcastEval(`
         [

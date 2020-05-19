@@ -4,6 +4,8 @@ const wait = require('util').promisify(setTimeout);
 
 function globaltwit(twitter_client, client, config, debug, functiondate, functiontime){
     try{
+    var g_acc = 0
+    var g_acc_in_twitter = 0
     setInterval(async function(){
         try{
         client.guilds.forEach(async g=>{
@@ -11,8 +13,9 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
             if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
             var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
             if (twitter_accounts === undefined) return
-            var g_acc = 0
-            var g_acc_in_twitter = 0
+            g_acc = 0
+            g_acc_in_twitter = 0
+            
             twitter_accounts.forEach(async account=>{
                 if (!db.get('channel_id')[g_acc]) return
                 var twitter_params = { screen_name: account}
@@ -55,7 +58,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                         avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
                                         embeds: [embed]
                                     })
-                                }
+                                } else return
                             } else {
                                 if (debug === true) client.shard.send(debug_header + `Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
                             }
@@ -75,7 +78,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                         avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
                                         embeds: [embed]
                                     })
-                                }
+                                } else return
                             } else if (tweets[0].in_reply_to_status_id != null || tweets[0].in_reply_to_user_id != null){
                                 if (db.get('reply')[g_acc_in_twitter] === false){
                                     if (debug === true) client.shard.send(debug_header + `Reply to a tweet, but reply option is off`)
@@ -95,7 +98,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                             avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
                                             embeds: [embed]
                                         })
-                                    }
+                                    } else return
                                 }
                             }
                         }
