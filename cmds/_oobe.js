@@ -41,7 +41,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                         db.set('reply', [])
                         db.set('retweet', [])
                     }
-                    if (db.get('twitter_name').length == 2 && db.get('premium') == false) {
+                    if (db.get('twitter_name').length == 2 && !db.get('premium')) {
                         embed.setDescription('I\'m sorry, but you have reached the maximun number of accounts for this server\n\n[Get premium and remove this limit](https://patreon.com/Greep)')
                         embed.setColor('#ff0000')
                         return message.channel.send(embed)

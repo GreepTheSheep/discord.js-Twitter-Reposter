@@ -8,6 +8,7 @@ function cmds_index(message, client, config, functiondate, functiontime, publicB
     var db = new Enmap({name:'db_'+message.guild.id})
     embed.setAuthor(client.user.username, client.user.displayAvatarURL)
     embed.setFooter(`${client.user.tag}, created by Greep#3022`)
+    if (!db.has('premium')) db.set('premium', false)
 
     if (message.author.id == config.owner_id){
         const ownercmds = require('./owner/owner-index.js')

@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const Enmap = require('enmap')
 
-function premium(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed){
+async function premium(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed){
     if (message.content.toLowerCase() == prefix + ' premium' || message.content.toLowerCase() == prefix2 + ' premium'){
         const awaitmsg = await message.channel.send('awaitng guild id...')
         var db
@@ -20,7 +20,7 @@ function premium(message, client, config, functiondate, functiontime, publicBot,
             }
             
             });
-        collector4.on('end', (collected, reason) => {
+        collectorguild.on('end', (collected, reason) => {
             if (reason == 'time'){
                 message.reply('time\'s up')
             }
