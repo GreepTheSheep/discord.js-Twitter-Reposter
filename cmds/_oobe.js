@@ -25,7 +25,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
         embed.setColor('#068049')
         message.channel.send(embed)
     }
-    if (message.content == prefix + ' setup' || message.content == prefix2 + ' setup' || message.content == prefix + ' oobe' || message.content == prefix2 + ' oobe'){
+    else if (message.content == prefix + ' setup' || message.content == prefix2 + ' setup' || message.content == prefix + ' oobe' || message.content == prefix2 + ' oobe'){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             const filter = m => message.author == m.author;
             embed.setDescription(`**__Hello ${message.author.username}!__**\n\nPlease make your choice by typing the number: \`\`\`1 - Link new account to this server\n2 - Modify an linked account\`\`\``)
