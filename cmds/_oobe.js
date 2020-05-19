@@ -23,6 +23,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
             counter++
         })
         embed.setDescription(`**__Hello ${message.author.username}!__**\n\nHere's the list of Twitter accounts linked with this server:\n${user_cache.join('\n')}\n\nType "${prefix} setup" to add an another account or to modify your account`)
+        embed.addField('Premium status:', `Premium status is ${db.get('premium') ? '**__enabled__** 🎉' : 'disabled.\n[Get premium here](https://patreon.com/Greep)'}`)
         embed.setColor('#068049')
         message.channel.send(embed)
     }
