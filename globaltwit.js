@@ -12,12 +12,15 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
             var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
             if (twitter_accounts === undefined) return
             var g_acc = 0
-            twitter_accounts.forEach(async ()=>{
+            twitter_accounts.forEach(async account=>{
                 if (!db.get('channel_id')[g_acc]) return
-                var twitter_params = { screen_name: db.get('twitter_name')[g_acc]}
+                var twitter_params = { screen_name: account}
 
-                twitter_client.get('statuses/user_timeline', twitter_params, async (err, tweets) => {
-                    var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${g_acc} : ${twitter_params.screen_name} - Channel #${client.channels.get(db.get('channel_id')[g_acc].name)} ] `
+                await twitter_client.get('statuses/user_timeline', twitter_params, async (err, tweets) => {
+                    var cache_channel_id = db.get('channel_id')
+                    client.shard.send(cache_channel_id)
+                    client.shard.send(g_acc)
+                    var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${g_acc} : ${account} - Channel ${cache_channel_id[g_acc]} ] `
                     if (err) {
                         client.shard.send(debug_header + `Twitter GET request error:`);
                         client.shard.send(err);
@@ -44,7 +47,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                         .setTimestamp(tweets[0].retweeted_status.created_at)
                                         .setThumbnail('https://img.icons8.com/color/96/000000/retweet.png')
                                 if (tweets[0].retweeted_status.entities.media) embed.setImage(tweets[0].retweeted_status.entities.media[0].media_url_https)
-                                if (g.channels.find(c=>c.id == db.get('channel_id')[g_acc])) g.channels.find(c=>c.id == db.get('channel_id')[g_acc]).send(embed)
+                                if (g.channels.find(c=>c.id == cache_channel_id[g_acc])) g.channels.find(c=>c.id == cache_channel_id[g_acc]).send(embed)
                             } else {
                                 if (debug === true) client.shard.send(debug_header + `Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
                             }
@@ -56,7 +59,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                         .setDescription(tweets[0].text)
                                         .setTimestamp(tweets[0].created_at)
                                 if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                                if (g.channels.find(c=>c.id == db.get('channel_id')[g_acc])) g.channels.find(c=>c.id == db.get('channel_id')[g_acc]).send(embed)
+                                if (g.channels.find(c=>c.id == cache_channel_id[g_acc])) g.channels.find(c=>c.id == cache_channel_id[g_acc]).send(embed)
                             } else if (tweets[0].in_reply_to_status_id != null || tweets[0].in_reply_to_user_id != null){
                                 if (db.get('reply')[g_acc] === false){
                                     if (debug === true) client.shard.send(debug_header + `Reply to a tweet, but reply option is off`)
@@ -68,7 +71,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                             .setTimestamp(tweets[0].created_at)
                                             .setThumbnail('https://cdn1.iconfinder.com/data/icons/messaging-3/48/Reply-512.png')
                                     if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                                    if (g.channels.find(c=>c.id == db.get('channel_id')[g_acc])) g.channels.find(c=>c.id == db.get('channel_id')[g_acc]).send(embed)
+                                    if (g.channels.find(c=>c.id == cache_channel_id[g_acc])) g.channels.find(c=>c.id == cache_channel_id[g_acc]).send(embed)
                                 }
                             }
                         }
@@ -78,7 +81,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                         }catch(e){
                             if (debug === true) client.shard.send(`ERROR: ${debug_header}` + e)
                             if (debug === true) client.shard.send(tweets[0])
-                            if (g.channels.find(c=>c.id == db.get('channel_id')[g_acc])) g.channels.find(c=>c.id == db.get('channel_id')[g_acc]).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                            if (g.channels.find(c=>c.id == cache_channel_id[g_acc])) g.channels.find(c=>c.id == cache_channel_id[g_acc]).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                             .catch(err=>client.shard.send(`Error sending on guild ${g.id} - ${g.name}\n${err}`))
                             db.set('old_tweets', tweets[0].id)
                         }
