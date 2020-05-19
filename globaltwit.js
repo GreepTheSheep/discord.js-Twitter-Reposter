@@ -8,7 +8,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
         try{
         client.guilds.forEach(async g=>{
             var db = new Enmap({name:'db_'+g.id})
-            if (db.get('shard_id') == client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
+            if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
             var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
             if (twitter_accounts === undefined) return
             var g_acc = 0
@@ -17,15 +17,16 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                 var twitter_params = { screen_name: db.get('twitter_name')[g_acc]}
 
                 twitter_client.get('statuses/user_timeline', twitter_params, async (err, tweets) => {
+                    var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${g_acc} : ${twitter_params.screen_name} - Channel #${client.channels.get(db.get('channel_id')[g_acc].name)} ] `
                     if (err) {
-                        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] Twitter GET request error:`);
+                        client.shard.send(debug_header + `Twitter GET request error:`);
                         client.shard.send(err);
                         await wait(1000)
                         return
                     }
                     
                     if (db.has('old_tweets') && db.get('old_tweets')[g_acc] === tweets[0].id) {
-                        if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] no new tweets`)
+                        if (debug === true) client.shard.send(debug_header + `no new tweets`)
                     }
                     if (db.has('old_tweets') && db.get('old_tweets')[g_acc] !== tweets[0].id) {
                         try{
@@ -36,7 +37,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
     
                         if (tweets[0].retweeted === true || tweets[0].text.startsWith('RT')) {
                             if (db.get('retweet')[g_acc] === true){
-                                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} (${g.name}) ] Retweet from @${tweets[0].retweeted_status.user.screen_name}`)
+                                if (debug === true) client.shard.send(debug_header + `Retweet from @${tweets[0].retweeted_status.user.screen_name}`)
                                 embed   .setColor(`#${tweets[0].retweeted_status.user.profile_sidebar_border_color}`)
                                         .setAuthor(`Retweet\n${tweets[0].retweeted_status.user.name} (@${tweets[0].retweeted_status.user.screen_name})`, tweets[0].retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                                         .setDescription(tweets[0].retweeted_status.text)
@@ -45,11 +46,11 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                 if (tweets[0].retweeted_status.entities.media) embed.setImage(tweets[0].retweeted_status.entities.media[0].media_url_https)
                                 if (g.channels.find(c=>c.id == db.get('channel_id')[g_acc])) g.channels.find(c=>c.id == db.get('channel_id')[g_acc]).send(embed)
                             } else {
-                                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} (${g.name}) ] Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
+                                if (debug === true) client.shard.send(debug_header + `Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
                             }
                         } else if (tweets[0].retweeted === false || !tweets[0].text.startsWith('RT')) {
                             if (tweets[0].in_reply_to_status_id == null || tweets[0].in_reply_to_user_id == null) {
-                                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} (${g.name}) ] Simple tweet, id ${tweets[0].id_str}`)
+                                if (debug === true) client.shard.send(debug_header + `Simple tweet, id ${tweets[0].id_str}`)
                                 embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
                                         .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                                         .setDescription(tweets[0].text)
@@ -58,9 +59,9 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                 if (g.channels.find(c=>c.id == db.get('channel_id')[g_acc])) g.channels.find(c=>c.id == db.get('channel_id')[g_acc]).send(embed)
                             } else if (tweets[0].in_reply_to_status_id != null || tweets[0].in_reply_to_user_id != null){
                                 if (db.get('reply')[g_acc] === false){
-                                    if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} (${g.name}) ] Reply to a tweet, but reply option is off`)
+                                    if (debug === true) client.shard.send(debug_header + `Reply to a tweet, but reply option is off`)
                                 } else {
-                                    if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} (${g.name}) ] Reply to a tweet, id ${tweets[0].in_reply_to_status_id}`)
+                                    if (debug === true) client.shard.send(debug_header + `Reply to a tweet, id ${tweets[0].in_reply_to_status_id}`)
                                     embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
                                             .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})\nReply to @${tweets[0].in_reply_to_screen_name}`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                                             .setDescription(tweets[0].text.replace(`@${tweets[0].in_reply_to_screen_name}`, ""))
@@ -72,13 +73,10 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                             }
                         }
                         var cache_old_tweets = db.get('old_tweets')
-
-                        // rewrite old_tweet at pos g_acc here :thinking:
-
-
-                        db.set('old_tweets', tweets[0].id)
+                        cache_old_tweets[g_acc] = tweets[0].id
+                        db.set('old_tweets', cache_old_tweets)
                         }catch(e){
-                            if (debug === true) client.shard.send(`[ERROR: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} (${g.name}) ] ` + e)
+                            if (debug === true) client.shard.send(`ERROR: ${debug_header}` + e)
                             if (debug === true) client.shard.send(tweets[0])
                             if (g.channels.find(c=>c.id == db.get('channel_id')[g_acc])) g.channels.find(c=>c.id == db.get('channel_id')[g_acc]).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                             .catch(err=>client.shard.send(`Error sending on guild ${g.id} - ${g.name}\n${err}`))
@@ -86,7 +84,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                         }
                     }
                     if (!db.has('old_tweets')) {
-                        if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] old_tweets not defined, setting var`)
+                        if (debug === true) client.shard.send(debug_header + `old_tweets not defined, setting var`)
                         db.set('old_tweets', tweets[0].id)
                     }
                     await wait(1000)
