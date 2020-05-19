@@ -10,6 +10,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
     if (message.content == prefix || message.content == prefix2){
         if (!db.has('twitter_name') || !db.has('channel_id')) {
             embed.setDescription(`**__Hello ${message.author.username}!__**\n\n__You haven't linked any Twitter accounts with this server.__\nPlease type "${prefix} setup" to start the setup`)
+            embed.addField('Premium status:', 'Premium status is ' + db.get('premium') ? '**__enabled__** 🎉' : 'disabled.\n[Get premium here](https://patreon.com/Greep)')
             embed.setColor('#BE534D')
             return message.channel.send(embed)
         }
