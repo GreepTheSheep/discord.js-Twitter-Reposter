@@ -1,4 +1,5 @@
 const Discord = require('discord.js')
+const shell = require('shelljs')
 
 function update(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed) {
     if (message.content.toLowerCase() == prefix + ' update' || message.content.toLowerCase() == prefix2 + ' update'){
