@@ -6,6 +6,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
     try{
     var g_acc = 0
     var g_acc_in_twitter = 0
+    var old_twt = {}
     setInterval(async function(){
         try{
         client.guilds.forEach(async g=>{
@@ -15,7 +16,6 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
             if (twitter_accounts === undefined) return
             g_acc = 0
             g_acc_in_twitter = 0
-            var old_twt = {}
             twitter_accounts.forEach(async account=>{
                 if (!db.get('channel_id')[g_acc]) return
                 var twitter_params = { screen_name: account}
