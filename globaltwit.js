@@ -22,7 +22,6 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
 
                 await twitter_client.get('statuses/user_timeline', twitter_params, async (err, tweets) => {
                     var cache_channel_id = db.get('channel_id')
-                    var cache_old_tweets = db.get('old_tweets')
                     var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${g_acc_in_twitter} : ${account} - Channel ${cache_channel_id[g_acc_in_twitter]} ] `
                     if (err) {
                         client.shard.send(debug_header + `Twitter GET request error:`);
@@ -31,10 +30,16 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                         return
                     }
                     
-                    if (db.has('old_tweets') && cache_old_tweets[g_acc_in_twitter] == tweets[0].id) {
+                    if (!old_twt[tweets[0].user.screen_name]) {
+                        if (debug === true) client.shard.send(debug_header + `old_tweets not defined, setting var`)
+                        old_twt[tweets[0].user.screen_name] = {
+                            id: tweets[0].id
+                        }
+                    }
+                    else if (old_twt[tweets[0].user.screen_name].id == tweets[0].id) {
                         if (debug === true) client.shard.send(debug_header + `no new tweets`)
                     }
-                    if (db.has('old_tweets') && cache_old_tweets[g_acc_in_twitter] != tweets[0].id) {
+                    else if (old_twt[tweets[0].user.screen_name].id != tweets[0].id) {
                         try{
 
                             let embed = new Discord.RichEmbed
@@ -102,20 +107,18 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                 }
                             }
                         }
-                        cache_old_tweets[g_acc_in_twitter] = tweets[0].id
-                        db.set('old_tweets', cache_old_tweets)
+                        old_twt[tweets[0].user.screen_name] = {
+                            id: tweets[0].id
+                        }
                         }catch(e){
                             if (debug === true) client.shard.send(`ERROR: ${debug_header}` + e)
                             if (debug === true) client.shard.send(tweets[0])
                             if (g.channels.some(c=>c.id == cache_channel_id[g_acc_in_twitter])) g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter]).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                             .catch(err=>client.shard.send(`Error sending on guild ${g.id} - ${g.name}\n${err}`))
-                            db.set('old_tweets', tweets[0].id)
+                            old_twt[tweets[0].user.screen_name] = {
+                                id: tweets[0].id
+                            }
                         }
-                    }
-                    if (!db.has('old_tweets')) {
-                        if (debug === true) client.shard.send(debug_header + `old_tweets not defined, setting var`)
-                        cache_old_tweets[g_acc_in_twitter] = tweets[0].id
-                        db.set('old_tweets', cache_old_tweets)
                     }
                     g_acc_in_twitter++
                 })

@@ -38,7 +38,6 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                     if (!db.has('twitter_name')) {
                         db.set('twitter_name', [])
                         db.set('channel_id', [])
-                        db.set('old_tweets', [])
                         db.set('reply', [])
                         db.set('retweet', [])
                     }
@@ -108,10 +107,6 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                             .then(wh=>{
                                                 client.shard.send(`Created webhook ${wh.name} on channel ${wh.channelID}`)
                                             })
-
-                                            var cache_old_tweets = db.get('old_tweets')
-                                            cache_old_tweets.push(null)
-                                            db.set('old_tweets', cache_old_tweets)
 
                                             var cache_retweet = db.get('retweet')
                                             cache_retweet.push(rt)
@@ -240,19 +235,16 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                 });
                             }
                             else if (m.content == '5'){ // Delete
-                                var cache_old_tweets = db.get('old_tweets')
                                 var cache_reply = db.get('reply')
                                 var cache_retweet = db.get('retweet')
 
                                 cache_twitter_name.splice(n,1)
                                 cache_channel_id.splice(n,1)
-                                cache_old_tweets.splice(n,1)
                                 cache_reply.splice(n,1)
                                 cache_retweet.splice(n,1)
 
                                 db.set('twitter_name', cache_twitter_name)
                                 db.set('channel_id', cache_channel_id)
-                                db.set('old_tweets', cache_old_tweets)
                                 db.set('reply', cache_reply)
                                 db.set('retweet', cache_retweet)
 
