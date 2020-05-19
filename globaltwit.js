@@ -30,10 +30,10 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                         return
                     }
                     
-                    if (old_twt[tweets[0].user.screen_name].id == tweets[0].id) {
+                    if (old_twt[tweets[0].user.screen_name] && old_twt[tweets[0].user.screen_name].id == tweets[0].id) {
                         if (debug === true) client.shard.send(debug_header + `no new tweets`)
                     }
-                    if (old_twt[tweets[0].user.screen_name].id != tweets[0].id) {
+                    if (old_twt[tweets[0].user.screen_name] && old_twt[tweets[0].user.screen_name].id != tweets[0].id) {
                         try{
 
                             let embed = new Discord.RichEmbed
