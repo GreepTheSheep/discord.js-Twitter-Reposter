@@ -45,7 +45,7 @@ client.on('ready', () => {
     client.shard.send(readylog);
 
     if (client.user.id === publicBot){
-        client.user.setActivity('your Twitter feed | Mention me to setup!', { type: 'WATCHING' })
+        client.user.setActivity('your Twitter feed | Mention me to setup! | [VERSION 3 OPEN BETA]', { type: 'WATCHING' })
         const globaltwit = require('./globaltwit.js')
         globaltwit(twitter_client, client, config, debug, functiondate, functiontime)
     } else {

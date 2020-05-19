@@ -14,6 +14,9 @@ function ownercmds(message, client, config, functiondate, functiontime, publicBo
     const update = require('./update.js')
     update(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
 
+    const premium = require('./premium.js')
+    premium(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
+
 }
 
 module.exports = ownercmds
