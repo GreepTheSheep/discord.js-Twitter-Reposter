@@ -4,7 +4,7 @@
 */
 const Discord = require('discord.js')
 
-function reset(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed) {
+async function settings(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed) {   
     if (message.content.toLowerCase() == prefix + ' reset' || message.content.toLowerCase() == prefix2 + ' reset'){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             db.deleteAll()
@@ -13,4 +13,4 @@ function reset(message, client, config, functiondate, functiontime, publicBot, d
     }
 }
 
-module.exports = reset
+module.exports = settings

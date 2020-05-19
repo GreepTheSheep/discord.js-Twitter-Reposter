@@ -103,6 +103,11 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                             //console.log(cache_channel_id)
                                             db.set('channel_id', cache_channel_id)
 
+                                            ch.createWebhook(`${client.user.username}`)
+                                            .then(wh=>{
+                                                client.shard.send(`Created webhook ${wh.name} on channel ${wh.channelID}`)
+                                            })
+
                                             var cache_old_tweets = db.get('old_tweets')
                                             cache_old_tweets.push(null)
                                             db.set('old_tweets', cache_old_tweets)
@@ -206,6 +211,10 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                     if (!ch) return bm.edit('That\'s not really a channel, canceling setup')
                                     cache_channel_id[n] = ch.id
                                     db.set('channel_id', cache_channel_id)
+                                    ch.createWebhook(`${client.user.username}`)
+                                    .then(wh=>{
+                                        client.shard.send(`Created webhook ${wh.name} on channel ${wh.channelID}`)
+                                    })
                                     bm.edit(`The new channel for @${db.get('twitter_name')[n]} is now on <#${ch.id}>`)
                                 });
                                 collector3.on('end', (collected, reason) => {

@@ -47,7 +47,15 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                         .setTimestamp(tweets[0].retweeted_status.created_at)
                                         .setThumbnail('https://img.icons8.com/color/96/000000/retweet.png')
                                 if (tweets[0].retweeted_status.entities.media) embed.setImage(tweets[0].retweeted_status.entities.media[0].media_url_https)
-                                if (g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter])) g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter]).send(embed)
+                                if (g.channels.some(c=>c.id == cache_channel_id[g_acc_in_twitter])) {
+                                    var webhooks = await g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter]).fetchWebhooks()
+                                    var webhook = webhooks.first()
+                                    webhook.send('', {
+                                        username: tweets[0].user.name,
+                                        avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                        embeds: [embed]
+                                    })
+                                }
                             } else {
                                 if (debug === true) client.shard.send(debug_header + `Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
                             }
@@ -59,7 +67,15 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                         .setDescription(tweets[0].text)
                                         .setTimestamp(tweets[0].created_at)
                                 if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                                if (g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter])) g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter]).send(embed)
+                                if (g.channels.some(c=>c.id == cache_channel_id[g_acc_in_twitter])) {
+                                    var webhooks = await g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter]).fetchWebhooks()
+                                    var webhook = webhooks.first()
+                                    webhook.send('', {
+                                        username: tweets[0].user.name,
+                                        avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                        embeds: [embed]
+                                    })
+                                }
                             } else if (tweets[0].in_reply_to_status_id != null || tweets[0].in_reply_to_user_id != null){
                                 if (db.get('reply')[g_acc_in_twitter] === false){
                                     if (debug === true) client.shard.send(debug_header + `Reply to a tweet, but reply option is off`)
@@ -71,7 +87,15 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                             .setTimestamp(tweets[0].created_at)
                                             .setThumbnail('https://cdn1.iconfinder.com/data/icons/messaging-3/48/Reply-512.png')
                                     if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                                    if (g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter])) g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter]).send(embed)
+                                    if (g.channels.some(c=>c.id == cache_channel_id[g_acc_in_twitter])) {
+                                        var webhooks = await g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter]).fetchWebhooks()
+                                        var webhook = webhooks.first()
+                                        webhook.send('', {
+                                            username: tweets[0].user.name,
+                                            avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                            embeds: [embed]
+                                        })
+                                    }
                                 }
                             }
                         }
@@ -80,7 +104,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                         }catch(e){
                             if (debug === true) client.shard.send(`ERROR: ${debug_header}` + e)
                             if (debug === true) client.shard.send(tweets[0])
-                            if (g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter])) g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter]).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
+                            if (g.channels.some(c=>c.id == cache_channel_id[g_acc_in_twitter])) g.channels.find(c=>c.id == cache_channel_id[g_acc_in_twitter]).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                             .catch(err=>client.shard.send(`Error sending on guild ${g.id} - ${g.name}\n${err}`))
                             db.set('old_tweets', tweets[0].id)
                         }
