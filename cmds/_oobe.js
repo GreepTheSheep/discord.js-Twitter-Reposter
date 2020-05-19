@@ -168,25 +168,29 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                         const collector2 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
                         collector2.on('collect', m => {
                             m.delete()
-                            if (!Number(m.content) || Number(m.content) == NaN) return message.channel.send('That\'s not a valid number, canceling setup')
+                            if (!Number(m.content) || Number(m.content) == NaN) return bm.edit('That\'s not a valid number, canceling setup')
                             if (m.content == '1'){      // retweet
-                                if (db.get('retweet')[n] == false) {
-
-                                    db.set('retweet', true)
-                                    message.channel.send(`Retweets from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **enabled**`)
-                                } else if (db.get('retweet')[n] == true) {
-                                    db.set('retweet', false)
-                                    message.channel.send(`Retweets from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **disabled**`)
+                                var cache_rt = db.get('retweet')
+                                if (cache_rt == false) {
+                                    cache_rt[n] == true
+                                    db.set('retweet', cache_rt)
+                                    bm.edit(`Retweets from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **enabled**`)
+                                } else if (cache_rt == true) {
+                                    cache_rt[n] == false
+                                    db.set('retweet', cache_rt)
+                                    bm.edit(`Retweets from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **disabled**`)
                                 }
                             }
                             else if (m.content == '2'){ // reply
-                                if (db.get('reply')[n] == false) {
-                                    
-                                    db.set('reply', true)
-                                    message.channel.send(`Replies from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **enabled**`)
-                                } else if (db.get('reply') == true) {
-                                    db.set('reply', false)
-                                    message.channel.send(`Replies from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **disabled**`)
+                                var cache_rp = db.get('reply')
+                                if (cache_rp[n] == false) {
+                                    cache_rp[n] = true
+                                    db.set('reply', cache_rp)
+                                    bm.edit(`Replies from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **enabled**`)
+                                } else if (cache_rp[n] == true) {
+                                    cache_rp[n] = false 
+                                    db.set('reply', cache_rp)
+                                    bm.edit(`Replies from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **disabled**`)
                                 }
                             }
                             else if (m.content == '3'){ // channel
@@ -196,13 +200,25 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
 
                             }
                             else if (m.content == '5'){ // Delete
+                                var cache_old_tweets = db.get('old_tweets')
+                                var cache_reply = db.get('reply')
+                                var cache_retweet = db.get('retweet')
 
+                                cache_twitter_name.splice(n,1)
+                                cache_channel_id.splice(n,1)
+                                cache_old_tweets.splice(n,1)
+                                cache_reply.splice(n,1)
+                                cache_retweet.splice(n,1)
+
+                                db.set('twitter_name', cache_twitter_name)
+                                db.set('channel_id', cache_channel_id)
+                                db.set('old_tweets', cache_old_tweets)
+                                db.set('reply', cache_reply)
+                                db.set('retweet', cache_retweet)
+
+                                bm.edit('Account deleted.')
+                                
                             }
-                            else if (m.content == '6'){ // Admin (owner) panel [show all infos]
-                                if (message.author.id == config.owner_id){
-
-                                } else return bm.edit('Out of range, canceling setup.')
-                            } 
                             else return bm.edit('Out of range, canceling setup.')
                         })
                         collector2.on('end', (collected, reason) => {
