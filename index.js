@@ -71,6 +71,8 @@ client.on('ready', () => {
         const actfunction = new Promise(async function(resolve, reject) {
             client.user.setActivity(`${client.user.username} is loading...`, { type: 'WATCHING' })
             await wait(60*1000)
+            let actmsg = randomItem(actmsgs);
+            client.user.setActivity(actmsg, { type: 'WATCHING' })
             setInterval(function() {
                 let actmsg = randomItem(actmsgs);
                 client.user.setActivity(actmsg, { type: 'WATCHING' })
