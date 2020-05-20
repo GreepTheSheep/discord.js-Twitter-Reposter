@@ -21,6 +21,9 @@ function cmds_index(message, client, config, functiondate, functiontime, publicB
     const settings = require('./sets.js')
     settings(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
 
+    const gdpr = require('./gdpr.js')
+    gdpr(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
+
     const helpcmd = require('./help.js')
     helpcmd(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
 }
