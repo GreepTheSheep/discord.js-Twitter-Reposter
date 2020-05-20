@@ -10,7 +10,7 @@ async function gdpr(message, client, config, functiondate, functiontime, publicB
             fs.writeFileSync('./data/gdpr.txt', gdpr_data)
             const attachment = new Discord.Attachment('./data/gdpr.txt')
             message.channel.send(attachment)
-        }
+        } else message.channel.send('Admin only command')
     }
 }
 

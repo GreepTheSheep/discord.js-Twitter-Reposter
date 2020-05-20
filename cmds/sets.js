@@ -9,7 +9,7 @@ async function settings(message, client, config, functiondate, functiontime, pub
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             db.deleteAll()
             message.channel.send(`The server database has been deleted, the bot is ready for a new setup`)
-        } else return
+        } else message.channel.send('Admin only command')
     }
 }
 

@@ -3,7 +3,7 @@ const Discord = require('discord.js')
 function helpcmd(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed) {
     if (message.content.toLowerCase() == prefix + ' help' || message.content.toLowerCase() == prefix2 + ' help'){
         embed.setTitle('Configuration menu')
-        .setDescription(`The prefix is mention.\n\nTo change settings, redo the config by just mentionning me : \`@${client.user.tag} setup\`\n\n\`@${client.user.tag} reset\` - Reset the database. WARNING: no confirmation`)
+        .setDescription(`The prefix is mention.\n\nTo change settings, redo the config by just mentionning me : \`@${client.user.tag} setup\`\n\n\`@${client.user.tag} reset\` - Reset the database. WARNING: no confirmation\n\`@${client.user.tag} gdpr\`Export data for your server on .txt file`)
         .addField('Any questions?', `\`@${client.user.tag} info\`: Get some informations and invite the bot to your server`)
         message.channel.send(embed)
     }
