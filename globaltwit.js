@@ -12,6 +12,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
         client.guilds.forEach(async g=>{
             var db = new Enmap({name:'db_'+g.id})
             if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
+            if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
             var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
             if (twitter_accounts === undefined) return
             g_acc = 0
@@ -115,7 +116,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                     }
                     if (!old_twt[tweets[0].user.screen_name]) {
                         if (debug === true) client.shard.send(debug_header + `old_tweets not defined, setting var`)
-                        old_twt[account.name] = {
+                        old_twt[tweets[0].user.screen_name] = {
                             id: tweets[0].id
                         }
                     }
@@ -127,7 +128,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
     }
-    }, 60 * 1000) // 60 sec
+    }, 30 * 1000) // 30 sec
     
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit function error:` + e);
