@@ -18,7 +18,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
             g_acc = 0
             g_acc_in_twitter = 0
             twitter_accounts.forEach(async account=>{
-                if (!db.get('twitter_name')[g_acc]) return
+                if (!account.name) return
                 var twitter_params = { screen_name: account.name}
 
                 await twitter_client.get('statuses/user_timeline', twitter_params, async (err, tweets) => {
@@ -51,6 +51,11 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                 if (tweets[0].retweeted_status.entities.media) embed.setImage(tweets[0].retweeted_status.entities.media[0].media_url_https)
                                 if (g.channels.some(c=>c.id == account.channel)) {
                                     var webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                    if (!webhooks) g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
+                                    .then(async wh=>{
+                                        client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
+                                        webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                    })
                                     var webhook = webhooks.first()
                                     webhook.send('', {
                                         username: tweets[0].user.name,
@@ -71,6 +76,11 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                 if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
                                 if (g.channels.some(c=>c.id == account.channel)) {
                                     var webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                    if (!webhooks) g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
+                                    .then(async wh=>{
+                                        client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
+                                        webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                    })
                                     var webhook = webhooks.first()
                                     webhook.send('', {
                                         username: tweets[0].user.name,
@@ -91,6 +101,11 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                     if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
                                     if (g.channels.some(c=>c.id == account.channel)) {
                                         var webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                        if (!webhooks) g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
+                                        .then(async wh=>{
+                                            client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
+                                            webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                        })
                                         var webhook = webhooks.first()
                                         webhook.send('', {
                                             username: tweets[0].user.name,
@@ -123,7 +138,8 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                     g_acc_in_twitter++
                 })
                 g_acc++
-            }) 
+            })
+            client.shard.send('')
         });
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
