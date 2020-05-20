@@ -18,7 +18,7 @@ async function tryfunction(message, client, config, functiondate, functiontime, 
     var glistarray = []
     client.guilds.forEach(g=>{
         db = new Enmap({name:'db_'+g.id})
-        glistarray.push(`${g.name} (${g.id}) : Shard ${db.get('shard_id')} - ${db.has('twitter_name') ? `Premium: ${db.get('premium')} - JSON data: ${db.get('twitter_name')}` : `Nothing set`}`)
+        glistarray.push(`${g.name} (${g.id}) : Shard ${db.get('shard_id')} - ${db.has('twitter_name') ? `Premium: ${db.get('premium')} - JSON data: ${JSON.stringify(db.get('twitter_name'))}` : `Nothing set`}`)
     })
     let values = await client.shard.broadcastEval(`
         [
