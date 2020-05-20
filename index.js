@@ -68,7 +68,9 @@ client.on('ready', () => {
         }
         
         client.user.setActivity('', { type: 'WATCHING' })
-        const actfunction = new Promise(function(resolve, reject) {
+        const actfunction = new Promise(async function(resolve, reject) {
+            client.user.setActivity(`${client.user.username} is loading...`, { type: 'WATCHING' })
+            await wait(60*1000)
             setInterval(function() {
                 let actmsg = randomItem(actmsgs);
                 client.user.setActivity(actmsg, { type: 'WATCHING' })
@@ -78,7 +80,7 @@ client.on('ready', () => {
         const globaltwit = require('./globaltwit.js')
         globaltwit(twitter_client, client, config, debug, functiondate, functiontime)
 
-        client.user.setActivity(`${client.user.username} is loading...`).then(()=>wait(1*60*1000).then(actfunction))
+        actfunction
     } else {
         var twitter_params = { screen_name: config.twitter_name };
         var old_avatar = undefined
