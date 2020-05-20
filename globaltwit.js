@@ -54,8 +54,8 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                     if (!webhooks) g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
                                     .then(async wh=>{
                                         client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
-                                        webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
                                     })
+                                    webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
                                     var webhook = webhooks.first()
                                     webhook.send('', {
                                         username: tweets[0].user.name,
@@ -79,8 +79,8 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                     if (!webhooks) g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
                                     .then(async wh=>{
                                         client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
-                                        webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
                                     })
+                                    webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
                                     var webhook = webhooks.first()
                                     webhook.send('', {
                                         username: tweets[0].user.name,
@@ -104,8 +104,8 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                         if (!webhooks) g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
                                         .then(async wh=>{
                                             client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
-                                            webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
                                         })
+                                        webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
                                         var webhook = webhooks.first()
                                         webhook.send('', {
                                             username: tweets[0].user.name,
