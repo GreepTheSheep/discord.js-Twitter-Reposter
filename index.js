@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client({
   fetchAllMembers: true
 });
+const wait = require('util').promisify(setTimeout);
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
 if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
@@ -45,9 +46,39 @@ client.on('ready', () => {
     client.shard.send(readylog);
 
     if (client.user.id === publicBot){
-        client.user.setActivity('your Twitter feed | Mention me to setup! | [VERSION 3 OPEN BETA]', { type: 'WATCHING' })
+        const actmsgs = [
+            'your Twitter feed',
+            'mention me to setup!',
+            'VERSION 3 OPEN BETA',
+            'if all is set up correctly',
+            `if Twitter is not down...`,
+            `funny memes on Twitter`,
+            `${client.guilds.size} servers on shard ${client.shard.id + 1}`,
+            'issues on GitHub',
+            'bots on Twitter',
+            'cute cats images on Twitter',
+            'movies... Wait, I\'m late!',
+            'Elon Musk\'s Twitter feed',
+            'Greep\'s Twitter feed (lol it\'s the creator)',
+            'NASA\'s image of the day'
+        ];
+        
+        function randomItem(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+        
+        client.user.setActivity('', { type: 'WATCHING' })
+        const actfunction = new Promise(function(resolve, reject) {
+            setInterval(function() {
+                let actmsg = randomItem(actmsgs);
+                client.user.setActivity(actmsg, { type: 'WATCHING' })
+            }, 5 * 60 * 1000);
+        });
+
         const globaltwit = require('./globaltwit.js')
         globaltwit(twitter_client, client, config, debug, functiondate, functiontime)
+
+        client.user.setActivity(`${client.user.username} is loading...`).then(()=>wait(1*60*1000).then(actfunction))
     } else {
         var twitter_params = { screen_name: config.twitter_name };
         var old_avatar = undefined
@@ -77,8 +108,8 @@ client.on('guildCreate', guild => {
         const Enmap = require('enmap')
         const db = new Enmap({name:'db_' + guild.id})
     }
-    const botjoinguildlog = `${client.user.username} joined __${guild.name}__\n*ID: ${guild.id}*`
-    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}]\n${botjoinguildlog}`)
+    const botjoinguildlog = `${client.user.username} joined ${guild.name} - ID: ${guild.id}`
+    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botjoinguildlog}`)
 })
 
 client.on('guildDelete', guild => {
@@ -87,8 +118,8 @@ client.on('guildDelete', guild => {
         const db = new Enmap({name:'db_' + guild.id})
         db.destroy()
     }
-    const botleftguildlog = `${client.user.username} left __${guild.name}__\n*ID: ${guild.id}*`
-    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}]\n${botleftguildlog}`)
+    const botleftguildlog = `${client.user.username} left ${guild.name} - ID: ${guild.id}`
+    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
 })
 
 client.on('disconnect', event => {
