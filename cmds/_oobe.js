@@ -17,9 +17,8 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
         var user_cache = []
         var counter = 0;
         var cache_twitter_name = db.get('twitter_name')
-        var cache_channel_id = db.get('channel_id')
         db.get('twitter_name').forEach(()=>{
-            user_cache.push(`> ${counter+1}. **@${cache_twitter_name[counter]}** on channel <#${cache_channel_id[counter]}>`)            
+            user_cache.push(`> ${counter+1}. **@${cache_twitter_name[counter].name}** on channel <#${cache_twitter_name[counter].channel}>`)            
             counter++
         })
         embed.setDescription(`**__Hello ${message.author.username}!__**\n\nHere's the list of Twitter accounts linked with this server:\n${user_cache.join('\n')}\n\nType "${prefix} setup" to add an another account or to modify your account`)
@@ -38,9 +37,6 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                 if (m.content == '1'){ // Create new account
                     if (!db.has('twitter_name')) {
                         db.set('twitter_name', [])
-                        db.set('channel_id', [])
-                        db.set('reply', [])
-                        db.set('retweet', [])
                     }
                     if (db.get('twitter_name').length >= 2 && !db.get('premium')) {
                         embed.setDescription('I\'m sorry, but you have reached the maximun number of accounts for this server\n\n[Get premium and remove this limit](https://patreon.com/Greep)')
@@ -94,28 +90,19 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
 
                                             var cache_twitter_name = db.get('twitter_name')
                                             //console.log(cache_twitter_name)
-                                            cache_twitter_name.push(acc.replace('@',''))
+                                            cache_twitter_name.push({
+                                                name: acc.replace('@',''),
+                                                channel: ch.id,
+                                                reply: rp,
+                                                retweet: rt
+                                            })
                                             //console.log(cache_twitter_name)
                                             db.set('twitter_name', cache_twitter_name)
 
-                                            var cache_channel_id = db.get('channel_id')
-                                            //console.log(cache_channel_id)
-                                            cache_channel_id.push(ch.id)
-                                            //console.log(cache_channel_id)
-                                            db.set('channel_id', cache_channel_id)
-
-                                            ch.createWebhook(`${client.user.username}`)
+                                            ch.createWebhook(client.user.username)
                                             .then(wh=>{
-                                                client.shard.send(`Created webhook ${wh.name} on channel ${wh.channelID}`)
+                                                client.shard.send(`Created webhook ${wh.name} for account @${acc.replace('@','')} on channel ${wh.channelID}`)
                                             })
-
-                                            var cache_retweet = db.get('retweet')
-                                            cache_retweet.push(rt)
-                                            db.set('retweet', cache_retweet)
-
-                                            var cache_reply = db.get('reply')
-                                            cache_reply.push(rp)
-                                            db.set('reply', cache_reply)
                                             
                                             db.set('shard_id', client.shard.id + 1)
 
@@ -157,9 +144,8 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                     var user_cache = []
                     var counter = 0;
                     var cache_twitter_name = db.get('twitter_name')
-                    var cache_channel_id = db.get('channel_id')
                     db.get('twitter_name').forEach(()=>{
-                        user_cache.push(`> ${counter+1}. **@${cache_twitter_name[counter]}** on channel <#${cache_channel_id[counter]}>`)            
+                        user_cache.push(`> ${counter+1}. **@${cache_twitter_name[counter].name}** on channel <#${cache_twitter_name[counter].channel}>`)            
                         counter++
                     })
                     const bm = await message.channel.send(`Actually, you have ${counter} linked Twitter accounts with this server:\n${user_cache.join('\n')}\n\nPlease select the account you want to edit or type \`cancel\` to cancel setup`)
@@ -170,33 +156,31 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                         if (m.content.toLowerCase == 'cancel') return message.channel.send('Okay, stopping setup.')
                         if (!Number(m.content) || Number(m.content) == NaN) return message.channel.send('That\'s not a valid number, canceling setup')
                         var n = Number(m.content)-1
-                        bm.edit(`\`\`\`Account @${db.get('twitter_name')[n]}\nSet up on the channel #${message.guild.channels.find(c=>c.id == db.get('channel_id')[n]).name} (${db.get('channel_id')[n]})\n\nPlease choose the number you want to set it up:\n1. ${db.get('retweet')[n] ? 'Enable' : 'Disable'} retweet posting\n2. ${db.get('reply')[n] ? 'Enable' : 'Disable'} reply posting\n3. Change channel\n4. Change Twitter account\n5. Delete account\`\`\``)
+                        bm.edit(`\`\`\`Account @${db.get('twitter_name')[n].name}\nSet up on the channel #${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).name} (${db.get('twitter_name')[n].channel})\n\nPlease choose the number you want to set it up:\n1. ${db.get('twitter_name')[n].retweet ? 'Enable' : 'Disable'} retweet posting\n2. ${db.get('twitter_name')[n].reply ? 'Enable' : 'Disable'} reply posting\n3. Change channel\n4. Change Twitter account\n5. Delete account\`\`\``)
                         const collector2 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
                         collector2.on('collect', m => {
                             m.delete()
                             if (!Number(m.content) || Number(m.content) == NaN) return bm.edit('That\'s not a valid number, canceling setup')
                             if (m.content == '1'){      // retweet
-                                var cache_rt = db.get('retweet')
-                                if (cache_rt == false) {
-                                    cache_rt[n] == true
-                                    db.set('retweet', cache_rt)
-                                    bm.edit(`Retweets from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **enabled**`)
-                                } else if (cache_rt == true) {
-                                    cache_rt[n] == false
-                                    db.set('retweet', cache_rt)
-                                    bm.edit(`Retweets from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **disabled**`)
+                                if (cache_twitter_name[n].retweet == false) {
+                                    cache_twitter_name[n].retweet  == true
+                                    db.set('twitter_name', cache_twitter_name)
+                                    bm.edit(`Retweets from @${db.get('twitter_name')[n].name} in the channel ${message.guild.channels.some(c=>c.id == db.get('twitter_name')[n].channel) ? `<#${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).id}>` : ''} was **enabled**`)
+                                } else if (cache_twitter_name[n].retweet == true) {
+                                    cache_twitter_name[n].retweet  == false
+                                    db.set('twitter_name', cache_twitter_name)
+                                    bm.edit(`Retweets from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.some(c=>c.id == db.get('twitter_name')[n].channel) ? `<#${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).id}>` : ''} was **disabled**`)
                                 }
                             }
                             else if (m.content == '2'){ // reply
-                                var cache_rp = db.get('reply')
-                                if (cache_rp[n] == false) {
-                                    cache_rp[n] = true
-                                    db.set('reply', cache_rp)
-                                    bm.edit(`Replies from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **enabled**`)
-                                } else if (cache_rp[n] == true) {
-                                    cache_rp[n] = false 
-                                    db.set('reply', cache_rp)
-                                    bm.edit(`Replies from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.find(c=>db.get('channel_id')[n]) ? `<#${message.guild.channels.find(c=>db.get('channel_id')[n]).id}>` : ''} was **disabled**`)
+                                if (cache_twitter_name[n].reply == false) {
+                                    cache_twitter_name[n].reply = true
+                                    db.set('twitter_name', cache_twitter_name)
+                                    bm.edit(`Replies from @${db.get('twitter_name')[n].name} in the channel ${message.guild.channels.some(c=>c.id == db.get('twitter_name')[n].channel) ? `<#${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).id}>` : ''} was **enabled**`)
+                                } else if (cache_twitter_name[n].reply == true) {
+                                    cache_twitter_name[n].reply = false 
+                                    db.set('twitter_name', cache_twitter_name)
+                                    bm.edit(`Replies from @${db.get('twitter_name')[n].name} in the channel ${message.guild.channels.some(c=>c.id == db.get('twitter_name')[n].channel) ? `<#${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).id}>` : ''} was **disabled**`)
                                 }
                             }
                             else if (m.content == '3'){ // channel
@@ -206,13 +190,13 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                     m.delete()
                                     var ch = m.mentions.channels.first()
                                     if (!ch) return bm.edit('That\'s not really a channel, canceling setup')
-                                    cache_channel_id[n] = ch.id
-                                    db.set('channel_id', cache_channel_id)
+                                    cache_twitter_name[n].channel = ch.id
+                                    db.set('twitter_name', cache_twitter_name)
                                     ch.createWebhook(`${client.user.username}`)
                                     .then(wh=>{
-                                        client.shard.send(`Created webhook ${wh.name} on channel ${wh.channelID}`)
+                                        client.shard.send(`Created webhook ${wh.name} for account @${cache_twitter_name[n].name} on channel ${wh.channelID}`)
                                     })
-                                    bm.edit(`The new channel for @${db.get('twitter_name')[n]} is now on <#${ch.id}>`)
+                                    bm.edit(`The new channel for @${db.get('twitter_name')[n].name} is now on <#${ch.id}>`)
                                 });
                                 collector3.on('end', (collected, reason) => {
                                     if (reason == 'time'){
@@ -225,7 +209,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                 const collector3 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
                                 collector3.on('collect', m => {
                                     m.delete()
-                                    cache_twitter_name[n] = m.content.replace('@', '')
+                                    cache_twitter_name[n].name = m.content.replace('@', '')
                                     db.set('twitter_name', cache_twitter_name)
                                     bm.edit(`The new username is now @${m.content.replace('@', '')}`)
                                 });
@@ -236,18 +220,9 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                 });
                             }
                             else if (m.content == '5'){ // Delete
-                                var cache_reply = db.get('reply')
-                                var cache_retweet = db.get('retweet')
-
                                 cache_twitter_name.splice(n,1)
-                                cache_channel_id.splice(n,1)
-                                cache_reply.splice(n,1)
-                                cache_retweet.splice(n,1)
 
                                 db.set('twitter_name', cache_twitter_name)
-                                db.set('channel_id', cache_channel_id)
-                                db.set('reply', cache_reply)
-                                db.set('retweet', cache_retweet)
 
                                 bm.edit('Account deleted.')
                                 
