@@ -51,17 +51,24 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                 if (tweets[0].retweeted_status.entities.media) embed.setImage(tweets[0].retweeted_status.entities.media[0].media_url_https)
                                 if (g.channels.some(c=>c.id == account.channel)) {
                                     var webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
-                                    if (!webhooks) g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
-                                    .then(async wh=>{
-                                        client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
-                                    })
-                                    webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
-                                    var webhook = webhooks.first()
-                                    webhook.send('', {
-                                        username: tweets[0].user.name,
-                                        avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
-                                        embeds: [embed]
-                                    })
+                                        if (!webhooks) g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
+                                        .then(async wh=>{
+                                            client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
+                                            webhook.send('', {
+                                                username: tweets[0].user.name,
+                                                avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                                embeds: [embed]
+                                            })
+                                        })
+                                        else {
+                                            webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                            var webhook = webhooks.first()
+                                            webhook.send('', {
+                                                username: tweets[0].user.name,
+                                                avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                                embeds: [embed]
+                                            })
+                                        }
                                 } else return
                             } else {
                                 if (debug === true) client.shard.send(debug_header + `Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
@@ -76,17 +83,24 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                 if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
                                 if (g.channels.some(c=>c.id == account.channel)) {
                                     var webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
-                                    if (!webhooks) g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
-                                    .then(async wh=>{
-                                        client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
-                                    })
-                                    webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
-                                    var webhook = webhooks.first()
-                                    webhook.send('', {
-                                        username: tweets[0].user.name,
-                                        avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
-                                        embeds: [embed]
-                                    })
+                                        if (!webhooks) g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
+                                        .then(async wh=>{
+                                            client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
+                                            webhook.send('', {
+                                                username: tweets[0].user.name,
+                                                avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                                embeds: [embed]
+                                            })
+                                        })
+                                        else {
+                                            webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                            var webhook = webhooks.first()
+                                            webhook.send('', {
+                                                username: tweets[0].user.name,
+                                                avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                                embeds: [embed]
+                                            })
+                                        }
                                 } else return
                             } else if (tweets[0].in_reply_to_status_id != null || tweets[0].in_reply_to_user_id != null){
                                 if (account.reply === false){
@@ -104,14 +118,21 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                         if (!webhooks) g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
                                         .then(async wh=>{
                                             client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
+                                            webhook.send('', {
+                                                username: tweets[0].user.name,
+                                                avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                                embeds: [embed]
+                                            })
                                         })
-                                        webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
-                                        var webhook = webhooks.first()
-                                        webhook.send('', {
-                                            username: tweets[0].user.name,
-                                            avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
-                                            embeds: [embed]
-                                        })
+                                        else {
+                                            webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                            var webhook = webhooks.first()
+                                            webhook.send('', {
+                                                username: tweets[0].user.name,
+                                                avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                                embeds: [embed]
+                                            })
+                                        }
                                     } else return
                                 }
                             }
