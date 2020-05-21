@@ -163,24 +163,24 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                             if (!Number(m.content) || Number(m.content) == NaN) return bm.edit('That\'s not a valid number, canceling setup')
                             if (m.content == '1'){      // retweet
                                 if (cache_twitter_name[n].retweet == false) {
-                                    cache_twitter_name[n].retweet  == true
+                                    cache_twitter_name[n].retweet = true
                                     db.set('twitter_name', cache_twitter_name)
-                                    bm.edit(`Retweets from @${db.get('twitter_name')[n].name} in the channel ${message.guild.channels.some(c=>c.id == db.get('twitter_name')[n].channel) ? `<#${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).id}>` : ''} was **enabled**`)
+                                    bm.edit(`Retweets from @${cache_twitter_name[n].name} in the channel ${message.guild.channels.some(c=>c.id == cache_twitter_name[n].channel) ? `<#${message.guild.channels.find(c=>c.id == cache_twitter_name[n].channel).id}>` : ''} was **enabled**`)
                                 } else if (cache_twitter_name[n].retweet == true) {
-                                    cache_twitter_name[n].retweet  == false
+                                    cache_twitter_name[n].retweet = false
                                     db.set('twitter_name', cache_twitter_name)
-                                    bm.edit(`Retweets from @${db.get('twitter_name')[n]} in the channel ${message.guild.channels.some(c=>c.id == db.get('twitter_name')[n].channel) ? `<#${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).id}>` : ''} was **disabled**`)
+                                    bm.edit(`Retweets from @${cache_twitter_name[n].name} in the channel ${message.guild.channels.some(c=>c.id == cache_twitter_name[n].channel) ? `<#${message.guild.channels.find(c=>c.id == cache_twitter_name[n].channel).id}>` : ''} was **disabled**`)
                                 }
                             }
                             else if (m.content == '2'){ // reply
                                 if (cache_twitter_name[n].reply == false) {
                                     cache_twitter_name[n].reply = true
                                     db.set('twitter_name', cache_twitter_name)
-                                    bm.edit(`Replies from @${db.get('twitter_name')[n].name} in the channel ${message.guild.channels.some(c=>c.id == db.get('twitter_name')[n].channel) ? `<#${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).id}>` : ''} was **enabled**`)
+                                    bm.edit(`Replies from @${cache_twitter_name[n].name} in the channel ${message.guild.channels.some(c=>c.id == cache_twitter_name[n].channel) ? `<#${message.guild.channels.find(c=>c.id == cache_twitter_name[n].channel).id}>` : ''} was **enabled**`)
                                 } else if (cache_twitter_name[n].reply == true) {
                                     cache_twitter_name[n].reply = false 
                                     db.set('twitter_name', cache_twitter_name)
-                                    bm.edit(`Replies from @${db.get('twitter_name')[n].name} in the channel ${message.guild.channels.some(c=>c.id == db.get('twitter_name')[n].channel) ? `<#${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).id}>` : ''} was **disabled**`)
+                                    bm.edit(`Replies from @${cache_twitter_name[n].name} in the channel ${message.guild.channels.some(c=>c.id == cache_twitter_name[n].channel) ? `<#${message.guild.channels.find(c=>c.id == cache_twitter_name[n].channel).id}>` : ''} was **disabled**`)
                                 }
                             }
                             else if (m.content == '3'){ // channel
