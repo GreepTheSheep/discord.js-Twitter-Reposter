@@ -25,8 +25,8 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                     var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${g_acc_in_twitter} : ${account.name} - Channel ${account.channel} ] `
                     if (err) {
                         client.shard.send(debug_header + `Twitter GET request error: ` + err.message);
-                        if (err.code == 89) process.exit(1)
                         client.shard.send(err);
+                        process.exit(err.code)
                         return
                     }
                     
@@ -162,7 +162,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
     }
-    }, 100) // 0.1 sec
+    }, 30 * 1000) // 30 sec
     
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit function error:` + e);
