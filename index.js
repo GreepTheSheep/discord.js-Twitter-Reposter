@@ -10,7 +10,7 @@ if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
 const debug = config.verbose
 const publicBot = "706587515771158560"
 
-const Twitter = require('twitter')
+const Twitter = require('twit')
 const tokens = {
     consumer_key:        config.consumer_key,
     consumer_secret:     config.consumer_secret,
