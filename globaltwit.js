@@ -162,7 +162,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
     }
-    }, client.guilds.size <= 60 ? client.guilds.size * 1000 : 60 * 1000) // 60 sec if bot < 60 servers, else the number of servers is the cooldown in sec
+    }, 40 * 1000) // 40 sec
     
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit function error:` + e);
