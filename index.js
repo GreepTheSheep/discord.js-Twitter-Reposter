@@ -8,7 +8,7 @@ const fs = require('fs');
 const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
 if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
 const debug = config.verbose
-const publicBot = "706587515771158560"
+const publicBot = "661967218174853121"
 
 const Twitter = require('twit')
 const tokens = {
