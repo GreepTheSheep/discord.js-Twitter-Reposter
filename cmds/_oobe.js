@@ -230,9 +230,8 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                         db.set('twitter_name', cache_twitter_name)
                                         bm.edit('Your embed slide color is now randomized')
                                     } else if (m.content.length == 6 || m.content.startsWith('#') && m.content.length == 7){
-                                        if (m.content.startsWith('#')) m.content.replace('#','')
-                                        
-                                        cache_twitter_name[n].embed_color = '#' + m.content
+                                        if (!m.content.startsWith('#')) cache_twitter_name[n].embed_color = '#' + m.content
+                                        else cache_twitter_name[n].embed_color = m.content
                                         db.set('twitter_name', cache_twitter_name)
                                         bm.edit('Your embed slide color is now set to \`#' + m.content + '\`')
                                     } else return bm.edit('That\'s not valid, please retry later')
