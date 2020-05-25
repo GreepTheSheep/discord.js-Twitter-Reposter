@@ -43,7 +43,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                         if (tweets[0].retweeted === true || tweets[0].text.startsWith('RT')) {
                             if (account.retweet === true){
                                 if (debug === true) client.shard.send(debug_header + `Retweet from @${tweets[0].retweeted_status.user.screen_name}`)
-                                embed   .setColor(`#${account.embed_color ? account.embed_color : 'RANDOM'}`)
+                                embed   .setColor(account.embed_color ? account.embed_color : 'RANDOM')
                                         .setAuthor(`Retweet\n${tweets[0].retweeted_status.user.name} (@${tweets[0].retweeted_status.user.screen_name})`, tweets[0].retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                                         .setDescription(tweets[0].retweeted_status.text)
                                         .setTimestamp(tweets[0].retweeted_status.created_at)
@@ -75,7 +75,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                         } else if (tweets[0].retweeted === false || !tweets[0].text.startsWith('RT')) {
                             if (tweets[0].in_reply_to_status_id == null || tweets[0].in_reply_to_user_id == null) {
                                 if (debug === true) client.shard.send(debug_header + `Simple tweet, id ${tweets[0].id_str}`)
-                                embed   .setColor(`#${account.embed_color ? account.embed_color : 'RANDOM'}`)
+                                embed   .setColor(account.embed_color ? account.embed_color : 'RANDOM')
                                         .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                                         .setDescription(tweets[0].text)
                                         .setTimestamp(tweets[0].created_at)
@@ -105,7 +105,7 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                     if (debug === true) client.shard.send(debug_header + `Reply to a tweet, but reply option is off`)
                                 } else {
                                     if (debug === true) client.shard.send(debug_header + `Reply to a tweet, id ${tweets[0].in_reply_to_status_id}`)
-                                    embed   .setColor(`#${account.embed_color ? account.embed_color : 'RANDOM'}`)
+                                    embed   .setColor(account.embed_color ? account.embed_color : 'RANDOM')
                                             .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})\nReply to @${tweets[0].in_reply_to_screen_name}`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
                                             .setDescription(tweets[0].text.replace(`@${tweets[0].in_reply_to_screen_name}`, ""))
                                             .setTimestamp(tweets[0].created_at)
