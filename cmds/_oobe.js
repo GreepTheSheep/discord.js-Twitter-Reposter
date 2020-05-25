@@ -26,10 +26,9 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
         embed.setColor('#068049')
         message.channel.send(embed)
     }
-    else if (message.content.startsWith(prefix + ' setup') || message.content.startsWith(prefix2 + ' setup') || message.content.startsWith(prefix + ' oobe') || message.content.startsWith(prefix2 + ' oobe')){
+    else if (message.content.toLowerCase().startsWith(prefix + ' setup') || message.content.toLowerCase().startsWith(prefix2 + ' setup') || message.content.toLowerCase().startsWith(prefix + ' oobe') || message.content.toLowerCase().startsWith(prefix2 + ' oobe')){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             const args = message.content.split(' ').slice(2);
-            client.shard.send(args)
             if (args.length < 1) oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
             else {
                 const oobe_advanced = require('./oobe-advanced.js')
