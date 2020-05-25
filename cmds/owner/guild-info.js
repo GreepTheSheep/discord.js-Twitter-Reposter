@@ -13,13 +13,13 @@ async function guildinfo(message, client, config, functiondate, functiontime, pu
             var gu = client.guilds.find(g=> g.id == m.content)
             if (gu) db = new Enmap({name:'db_'+m.content})
             else if (!gu) db = new Enmap({name:'db_'+message.guild.id})
-            message.channel.send(`\`\`\`Premium: ${db.get('premium')}\nShard ${db.get('shard_id')}\n\n${db.get('twitter_name')}\`\`\``)
+            message.channel.send(`\`\`\`Premium: ${db.get('premium')}\nShard ${db.get('shard_id')}\n\n${JSON.stringify(db.get('twitter_name'))}\`\`\``)
             });
         collector4.on('end', (collected, reason) => {
             if (reason == 'time'){
                 awaitmsg.delete()
                 db = new Enmap({name:'db_'+message.guild.id})
-                message.channel.send(`\`\`\`Premium: ${db.get('premium')}\nShard ${db.get('shard_id')}\n\n${db.get('twitter_name')}\`\`\``)
+                message.channel.send(`\`\`\`Premium: ${db.get('premium')}\nShard ${db.get('shard_id')}\n\n${JSON.stringify(db.get('twitter_name'))}\`\`\``)
             }
         });
     }
