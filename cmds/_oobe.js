@@ -231,7 +231,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                         bm.edit('Your embed slide color is now randomized')
                                     } else if (m.content.length == 6 || m.content.startsWith('#') && m.content.length == 7){
                                         if (m.content.startsWith('#')) m.content.replace('#','')
-                                        if (!Number(m.content) || Number(m.content) == NaN) return bm.edit('This is not a valid number')
+                                        
                                         cache_twitter_name[n].embed_color = '#' + m.content
                                         db.set('twitter_name', cache_twitter_name)
                                         bm.edit('Your embed slide color is now set to \`#' + m.content + '\`')
