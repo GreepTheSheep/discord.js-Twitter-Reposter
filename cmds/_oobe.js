@@ -94,7 +94,8 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                                 name: acc.replace('@',''),
                                                 channel: ch.id,
                                                 reply: rp,
-                                                retweet: rt
+                                                retweet: rt,
+                                                embed_color: 'RANDOM'
                                             })
                                             //console.log(cache_twitter_name)
                                             db.set('twitter_name', cache_twitter_name)
@@ -156,7 +157,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                         if (m.content.toLowerCase == 'cancel') return message.channel.send('Okay, stopping setup.')
                         if (!Number(m.content) || Number(m.content) == NaN) return message.channel.send('That\'s not a valid number, canceling setup')
                         var n = Number(m.content)-1
-                        bm.edit(`\`\`\`Account @${db.get('twitter_name')[n].name}\nSet up on the channel #${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).name} (${db.get('twitter_name')[n].channel})\n\nPlease choose the number you want to set it up:\n1. ${db.get('twitter_name')[n].retweet ? 'Enable' : 'Disable'} retweet posting\n2. ${db.get('twitter_name')[n].reply ? 'Enable' : 'Disable'} reply posting\n3. Change channel\n4. Change Twitter account\n5. Delete account\`\`\``)
+                        bm.edit(`\`\`\`Account @${db.get('twitter_name')[n].name}\nSet up on the channel #${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).name} (${db.get('twitter_name')[n].channel})\n\nPlease choose the number you want to set it up:\n1. ${db.get('twitter_name')[n].retweet ? 'Enable' : 'Disable'} retweet posting\n2. ${db.get('twitter_name')[n].reply ? 'Enable' : 'Disable'} reply posting\n3. Change channel\n4. Change Twitter account\n5. Change embed slide color\n6. Delete account\`\`\``)
                         const collector2 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
                         collector2.on('collect', m => {
                             m.delete()
@@ -219,7 +220,30 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                                     }
                                 });
                             }
-                            else if (m.content == '5'){ // Delete
+                            else if (m.content == '5'){ // Color
+                                bm.edit(`Set a HTML color code like:\`\`\`#000000 : Black\n#FFFFFF : White\n#FF0000 : Red\n#00FF00 : Green\n#0000FF : Blue\`\`\`or you can type \`RANDOM\`. Take a look at https://html-color-codes.info/ to check your color and get the code`)
+                                const collector3 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
+                                collector3.on('collect', m => {
+                                    m.delete()
+                                    if (m.content.toLowerCase() == 'random'){
+                                        cache_twitter_name[n].embed_color = 'RANDOM'
+                                        db.set('twitter_name', cache_twitter_name)
+                                        bm.edit('Your embed slide color is now randomized')
+                                    } else if (m.content.length == 6 || m.content.startsWith('#') && m.content.length == 7){
+                                        if (m.content.startsWith('#')) m.content.replace('#','')
+                                        if (!Number(m.content) || Number(m.content) == NaN) return bm.edit('This is not a valid number')
+                                        cache_twitter_name[n].embed_color = '#' + m.content
+                                        db.set('twitter_name', cache_twitter_name)
+                                        bm.edit('Your embed slide color is now set to \`#' + m.content + '\`')
+                                    } else return bm.edit('That\'s not valid, please retry later')
+                                });
+                                collector3.on('end', (collected, reason) => {
+                                    if (reason == 'time'){
+                                        message.channel.send(`Time limit exceeded, canceling setup`)
+                                    }
+                                });                                
+                            }
+                            else if (m.content == '6'){ // Delete
                                 cache_twitter_name.splice(n,1)
 
                                 db.set('twitter_name', cache_twitter_name)
