@@ -28,13 +28,13 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
     }
     else if (message.content == prefix + ' setup' || message.content == prefix2 + ' setup' || message.content == prefix + ' oobe' || message.content == prefix2 + ' oobe'){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
-            const args = message.content.split(' ').slice(2);
+            const args = message.content.split(' ')//.slice(2);
             client.shard.send(args)
-            if (args){
+            if (args.length < 1) oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
+            else {
                 const oobe_advanced = require('./oobe-advanced.js')
                 oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args)
-            }
-            else oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
+            } 
         } else {
             return message.reply('you don\'t have sufficient permissions!')
         }
