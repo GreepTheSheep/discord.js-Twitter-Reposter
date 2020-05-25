@@ -42,7 +42,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
 
 async function oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed){
     const filter = m => message.author == m.author;
-            embed.setDescription(`**__Hello ${message.author.username}!__**\n\nPlease make your choice by typing the number: \`\`\`1 - Link new account to this server\n2 - Modify an linked account\`\`\``)
+            embed.setDescription(`**__Hello ${message.author.username}!__**\n\nPlease make your choice by typing the number: \`\`\`1 - Link new account to this server\n2 - Modify an linked account\n3 - Show help about configuration\`\`\``)
             embed.setColor('RANDOM')
             const bmembed = await message.channel.send(embed)
             const collector = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
@@ -281,6 +281,10 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                             message.channel.send(`Time limit exceeded, canceling setup`)
                         }
                     });
+                } else if (m.content == '3'){
+                    embed.setColor('#008800')
+                    embed.setDescription(`For now, there are two systems of setting up a account on this bot: Step by Step or with arguments (for advanced users)\n\nIf you use step by step: just type \`@${client.user.username} setup\` and you're invited to fill up the steps.\n\nIf you use with arguments, here's the help:\n- \`@${client.user.username} setup add [Twitter username] [Channel mention]\` to add the user to a specified channel\n- \`@${client.user.username} setup remove [Twitter username]\` to delete the linked account\n- \`@${client.user.username} setup retweets [Twitter username]\` to activate or desativate retweet posting\n- \`@${client.user.username} setup replies [Twitter username]\` to activate or desativate reply posting\n- \`@${client.user.username} setup color [Twitter username] [HTML color code or 'random']\` change the color of the slidebar`)
+                    message.channel.send(embed)
                 } else {
                     return message.channel.send(`Not a good answer, canceling setup`)
                 }
