@@ -28,7 +28,20 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
     }
     else if (message.content == prefix + ' setup' || message.content == prefix2 + ' setup' || message.content == prefix + ' oobe' || message.content == prefix2 + ' oobe'){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
-            const filter = m => message.author == m.author;
+            const args = message.content.split(/ +/).slice(2);
+            if (args){
+                const oobe_advanced = require('./oobe-advanced.js')
+                oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args)
+            }
+            else oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
+        } else {
+            return message.reply('you don\'t have sufficient permissions!')
+        }
+    }
+}
+
+async function oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed){
+    const filter = m => message.author == m.author;
             embed.setDescription(`**__Hello ${message.author.username}!__**\n\nPlease make your choice by typing the number: \`\`\`1 - Link new account to this server\n2 - Modify an linked account\`\`\``)
             embed.setColor('RANDOM')
             const bmembed = await message.channel.send(embed)
@@ -277,10 +290,6 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
                     message.channel.send(`Time limit exceeded, canceling setup`)
                 }
             })
-        } else {
-            return message.reply('you don\'t have sufficient permissions!')
-        }
-    }
 }
 
-module.exports = oobe
+module.exports = oobe, oobe_stepByStep
