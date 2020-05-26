@@ -296,4 +296,4 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
             })
 }
 
-module.exports = oobe, oobe_stepByStep
+module.exports = oobe
