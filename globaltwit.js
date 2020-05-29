@@ -25,8 +25,16 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                     var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${g_acc_in_twitter} : ${account.name} - Channel ${account.channel} ] `
                     if (err) {
                         client.shard.send(debug_header + `Twitter GET request error: ` + err.message);
-                        client.shard.send(err);
-                        process.exit(err.code)
+                        if (err.code == 34){
+                            twitter_accounts.splice(g_acc_in_twitter,1)
+                            db.set('twitter_name', twitter_accounts)
+                            console.log(`Account @${account.name} for channel ${account.channel} deleted.`)
+                            g.channels.find(c=>c.id == account.channel).send(`Account @${account.name} is not found on Twitter, the account was deleted from the database to prevent errors`)
+                        }
+                        else if (err.code == 80){
+                            console.log(`TWITTER RATE LIMITED`)
+                            process.exit(err.code)
+                        } else process.exit(err.code)
                         return
                     }
                     
