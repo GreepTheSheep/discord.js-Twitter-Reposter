@@ -9,13 +9,13 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
     var old_twt = {}
     setInterval(async function(){
         try{
+        g_acc = 0
         client.guilds.forEach(async g=>{
             var db = new Enmap({name:'db_'+g.id})
             if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
             if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
             var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
             if (twitter_accounts === undefined) return
-            g_acc = 0
             g_acc_in_twitter = 0
             twitter_accounts.forEach(async account=>{
                 if (!account.name) return
@@ -26,10 +26,16 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                     if (err) {
                         client.shard.send(debug_header + `Twitter GET request error: ` + err.message);
                         if (err.code == 34){
-                            twitter_accounts.splice(g_acc_in_twitter,1)
-                            db.set('twitter_name', twitter_accounts)
-                            console.log(`Account @${account.name} for channel ${account.channel} deleted.`)
-                            g.channels.find(c=>c.id == account.channel).send(`Account @${account.name} is not found on Twitter, the account was deleted from the database to prevent errors`)
+                            var n = 0
+                            twitter_accounts.forEach(acc=>{
+                                if (acc.name == account.name){
+                                    twitter_accounts.splice(n,1)
+                                    db.set('twitter_name', twitter_accounts)
+                                    console.log(`Account @${account.name} for channel ${account.channel} deleted.`)
+                                    g.channels.find(c=>c.id == account.channel).send(`Account @${account.name} is not found on Twitter, the account was deleted from the database to prevent errors`)
+                                }
+                                n++
+                            })  
                         }
                         else if (err.code == 80){
                             console.log(`TWITTER RATE LIMITED`)
