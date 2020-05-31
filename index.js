@@ -11,12 +11,13 @@ const debug = config.verbose
 const publicBot = "661967218174853121"
 
 const Twitter = require('twit')
-const tokens = {
+var tokens = {
     consumer_key:        config.consumer_key,
     consumer_secret:     config.consumer_secret,
     access_token:        config.access_token_key,
     access_token_key:    config.access_token_key,
-    access_token_secret: config.access_token_secret
+    access_token_secret: config.access_token_secret,
+    safe: false
 };
 
 const twitter_client = new Twitter(tokens);

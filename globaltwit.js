@@ -1,8 +1,9 @@
 const Discord = require('discord.js')
+const Twitter = require('twit')
 const Enmap = require('enmap')
 const wait = require('util').promisify(setTimeout);
 
-function globaltwit(twitter_client, client, config, debug, functiondate, functiontime){
+function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime){
     try{
     var g_acc = 0
     var g_acc_in_twitter = 0
@@ -31,15 +32,39 @@ function globaltwit(twitter_client, client, config, debug, functiondate, functio
                                 if (acc.name == account.name){
                                     twitter_accounts.splice(n,1)
                                     db.set('twitter_name', twitter_accounts)
-                                    console.log(`Account @${account.name} for channel ${account.channel} deleted.`)
+                                    client.shard.send(`Account @${account.name} for channel ${account.channel} deleted.`)
                                     g.channels.find(c=>c.id == account.channel).send(`Account @${account.name} is not found on Twitter, the account was deleted from the database to prevent errors`)
                                 }
                                 n++
                             })  
                         }
                         else if (err.code == 80){
-                            console.log(`TWITTER RATE LIMITED`)
-                            process.exit(err.code)
+                            if (tokens.safe == false) {
+                                tokens = {
+                                    consumer_key:        config.safe_consumer_key,
+                                    consumer_secret:     config.safe_consumer_secret,
+                                    access_token:        config.safe_access_token_key,
+                                    access_token_key:    config.safe_access_token_key,
+                                    access_token_secret: config.safe_access_token_secret,
+                                    safe: true
+                                }
+                                client.user.setStatus('idle')
+                                client.shard.send(`TWITTER RATE LIMITED, safe mode activated`)
+                            }
+                            else {
+                                tokens = {
+                                    consumer_key:        config.consumer_key,
+                                    consumer_secret:     config.consumer_secret,
+                                    access_token:        config.access_token_key,
+                                    access_token_key:    config.access_token_key,
+                                    access_token_secret: config.access_token_secret,
+                                    safe: false
+                                }
+                                client.user.setStatus('online')
+                                client.shard.send(`TWITTER RATE LIMITED, safe mode desactivated`)
+                            }
+                            twitter_client = new Twitter(tokens);
+                            
                         } else process.exit(err.code)
                         return
                     }
