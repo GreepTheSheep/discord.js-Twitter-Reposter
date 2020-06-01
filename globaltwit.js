@@ -195,10 +195,10 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                     }
                     g_acc_in_twitter++
                 })
+                client.shard.send('\n')
+                await wait(Number(twitter_accounts.length) * 1000)
                 g_acc++
             })
-            client.shard.send('\n')
-            await wait(Number(twitter_accounts.length) * 1000)
         });
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
