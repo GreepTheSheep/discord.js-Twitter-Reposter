@@ -203,7 +203,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
     }
-    }, Number(client.guilds.size) * 30 * 1000) // 30 sec
+    }, 60 * 1000) // 60 sec
     
     } catch (e) {
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit function error:` + e);
