@@ -39,7 +39,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                                 n++
                             })  
                         }
-                        else if (err.code == 80){
+                        else if (err.code == 80 || err.code == 88){
                             if (tokens.safe == false) {
                                 tokens = {
                                     consumer_key:        config.safe_consumer_key,
