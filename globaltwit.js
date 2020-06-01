@@ -25,7 +25,8 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                 await twitter_client.get('statuses/user_timeline', twitter_params, async (err, tweets) => {
                     var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${g_acc_in_twitter} : ${account.name} - Channel ${account.channel} ] `
                     if (err) {
-                        client.shard.send(debug_header + `Twitter GET request error: ` + err.message);
+                        client.shard.send(debug_header + `Twitter GET request error: ` + err.message + ' - ' + err.code);
+                        client.shard.send(err)
                         if (err.code == 34){
                             var n = 0
                             twitter_accounts.forEach(acc=>{
