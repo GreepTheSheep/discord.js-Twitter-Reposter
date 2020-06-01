@@ -81,7 +81,7 @@ client.on('ready', () => {
         });
 
         const globaltwit = require('./globaltwit.js')
-        globaltwit(twitter_client, client, config, debug, functiondate, functiontime)
+        globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime)
 
         actfunction
     } else {
