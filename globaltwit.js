@@ -27,14 +27,14 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                     if (err) {
                         client.shard.send(debug_header + `Twitter GET request error: ` + err.message + ' - ' + err.code);
                         client.shard.send(err)
-                        if (err.code == 34){
+                        if (err.code == 34 || err.code == null){
                             var n = 0
                             twitter_accounts.forEach(acc=>{
                                 if (acc.name == account.name){
                                     twitter_accounts.splice(n,1)
                                     db.set('twitter_name', twitter_accounts)
                                     client.shard.send(`Account @${account.name} for channel ${account.channel} deleted.`)
-                                    g.channels.find(c=>c.id == account.channel).send(`Account @${account.name} is not found on Twitter, the account was deleted from the database to prevent errors`)
+                                    g.channels.find(c=>c.id == account.channel).send(`Account @${account.name} is not found on Twitter, the account was deleted from the database to prevent errors.\nMake sure your account is not deleted!`)
                                 }
                                 n++
                             })  
