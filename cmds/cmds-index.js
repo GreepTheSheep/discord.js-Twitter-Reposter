@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const Enmap = require('enmap')
 
-function cmds_index(message, client, config, functiondate, functiontime, publicBot){
+function cmds_index(message, client, config, functiondate, functiontime, publicBot, dbl){
     const prefix = `<@!${client.user.id}>` 
     const prefix2 = `<@${client.user.id}>`
     let embed = new Discord.RichEmbed
@@ -16,7 +16,7 @@ function cmds_index(message, client, config, functiondate, functiontime, publicB
     }
 
     const oobe = require('./_oobe.js')
-    oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
+    oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl)
 
     const settings = require('./sets.js')
     settings(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
@@ -25,7 +25,7 @@ function cmds_index(message, client, config, functiondate, functiontime, publicB
     gdpr(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
 
     const helpcmd = require('./help.js')
-    helpcmd(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
+    helpcmd(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl)
 }
 
 module.exports = cmds_index

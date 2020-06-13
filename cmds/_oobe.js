@@ -6,7 +6,7 @@
 
 const Discord = require('discord.js')
 
-async function oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed){
+async function oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl){
     if (message.content == prefix || message.content == prefix2){
         if (!db.has('twitter_name')) {
             embed.setDescription(`**__Hello ${message.author.username}!__**\n\n__You haven't linked any Twitter accounts with this server.__\nPlease type "${prefix} setup" to start the setup`)
@@ -29,7 +29,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
     else if (message.content.toLowerCase().startsWith(prefix + ' setup') || message.content.toLowerCase().startsWith(prefix2 + ' setup') || message.content.toLowerCase().startsWith(prefix + ' oobe') || message.content.toLowerCase().startsWith(prefix2 + ' oobe')){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             const args = message.content.split(' ').slice(2);
-            if (args.length < 1) oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
+            if (args.length < 1) oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl)
             else {
                 const oobe_advanced = require('./oobe-advanced.js')
                 oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args)
@@ -40,7 +40,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
     }
 }
 
-async function oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed){
+async function oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl){
     const filter = m => message.author == m.author;
             embed.setDescription(`**__Hello ${message.author.username}!__**\n\nPlease make your choice by typing the number: \`\`\`1 - Link new account to this server\n2 - Modify an linked account\n3 - Show help about configuration\`\`\``)
             embed.setColor('RANDOM')
@@ -51,7 +51,17 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                     if (!db.has('twitter_name')) {
                         db.set('twitter_name', [])
                     }
-                    if (db.get('twitter_name').length >= 2 && !db.get('premium')) {
+                    var maxAccs;
+                    dbl.hasVoted(message.author.id).then(voted => {
+                        const total = message.guild.members.array().length;
+                        const bots = message.guild.members.filter(m => m.user.bot).size; 
+                        const members = total - bots
+
+                        if (voted) maxAccs = 5
+                        else if (!voted && members >= 50) maxAccs = 3
+                        else maxAccs = 2
+                    });
+                    if (db.get('twitter_name').length >= maxAccs && !db.get('premium')) {
                         embed.setDescription('I\'m sorry, but you have reached the maximun number of accounts for this server\n\n[Get premium and remove this limit](https://patreon.com/Greep)')
                         embed.setColor('#ff0000')
                         return message.channel.send(embed)

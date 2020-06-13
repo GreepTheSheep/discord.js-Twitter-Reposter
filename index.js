@@ -6,6 +6,8 @@ const client = new Discord.Client({
 const wait = require('util').promisify(setTimeout);
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+const DBL = require("dblapi.js");
+const dbl = new DBL(config.topgg_token, client);
 if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
 const debug = config.verbose
 const publicBot = "661967218174853121"
@@ -80,6 +82,8 @@ client.on('ready', () => {
             }, 5 * 60 * 1000);
         });
 
+        dbl.postStats(client.guilds.size, client.shards.id, client.shards.total);
+
         const globaltwit = require('./globaltwit.js')
         globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime)
 
@@ -104,7 +108,7 @@ client.on('message', message =>{
     if (message.author.bot) return;
     if (client.user.id === publicBot){
         const cmds_index = require('./cmds/cmds-index.js')
-        cmds_index(message, client, config, functiondate, functiontime, publicBot)
+        cmds_index(message, client, config, functiondate, functiontime, publicBot, dbl)
     }
 })
 
@@ -115,6 +119,7 @@ client.on('guildCreate', guild => {
     }
     const botjoinguildlog = `${client.user.username} joined ${guild.name} - ID: ${guild.id}`
     client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botjoinguildlog}`)
+    dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
 })
 
 client.on('guildDelete', guild => {
@@ -125,6 +130,7 @@ client.on('guildDelete', guild => {
     }
     const botleftguildlog = `${client.user.username} left ${guild.name} - ID: ${guild.id}`
     client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
+    dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
 })
 
 client.on('disconnect', event => {
@@ -138,6 +144,14 @@ client.on('reconnecting', () => {
 })
 
 client.login(config.discord_token)
+
+dbl.on('posted', () => {
+    client.shard.send('Server count posted on top.gg!');
+})
+  
+dbl.on('error', e => {
+    client.shard.send(`top.gg error! ${e}`);
+})
 }catch(e){
     client.shard.send(e)
 }

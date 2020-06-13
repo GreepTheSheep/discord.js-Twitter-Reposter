@@ -21,6 +21,7 @@
     "better-sqlite-pool": "^0.2.3",
     "better-sqlite3": "5.4.3",
     "colors": "1.4.0",
+    "dblapi.js": "^2.4.0",
     "discord.js": "^11.6.1",
     "enmap": "^5.2.4",
     "fs": "0.0.2",
