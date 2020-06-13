@@ -2,6 +2,7 @@ const Discord = require('discord.js')
 const Twitter = require('twit')
 const Enmap = require('enmap')
 const wait = require('util').promisify(setTimeout);
+const fs = require('fs')
 
 function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime){
     try{
@@ -51,6 +52,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                                 }
                                 client.user.setStatus('idle')
                                 client.shard.send(`TWITTER RATE LIMITED, safe mode activated`)
+                                fs.writeFileSync('./data/safemode-logs.txt', fs.readFileSync('./data/safemode-logs.txt') + `[${functiondate()} - ${functiontime()}] Safe mode activated\n`)
                             }
                             else {
                                 tokens = {
@@ -63,6 +65,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                                 }
                                 client.user.setStatus('online')
                                 client.shard.send(`TWITTER RATE LIMITED, safe mode desactivated`)
+                                fs.writeFileSync('./data/safemode-logs.txt', fs.readFileSync('./data/safemode-logs.txt') + `[${functiondate()} - ${functiontime()}] Safe mode desactivated\n\n`)
                             }
                             twitter_client = new Twitter(tokens);
                             
