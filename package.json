@@ -29,6 +29,7 @@
     "prompt": "1.0.0",
     "request": "2.88.0",
     "shelljs": "0.8.3",
-    "twit": "^2.2.11"
+    "twit": "^2.2.11",
+    "twitter-buddy": "^1.0.4"
   }
 }
