@@ -74,11 +74,13 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                         const twit_user = await twitter_client.get('users/show', {screen_name: m.content.replace('@','')})
                         .catch(err=>{
                             client.shard.send(err)
-                            if (err.errors[0].code == 50) {
-                                return message.channel.send(`User @${m.content.replace('@','')} is not found on Twitter`)
+                            if (err.code == 50) {
+                                message.channel.send(`User @${m.content.replace('@','')} is not found on Twitter`)
+                            } else if (err.code == 63) {
+                                message.channel.send(`User @${m.content.replace('@','')} is suspended on Twitter`)
                             } else {
                                 client.shard.send(err.errors)
-                                return message.channel.send(`Error: ${err.errors[0].message}`)
+                                message.channel.send(`Error: ${err.message}`)
                             }
                         });
                         bm.edit(`Ok, so your Twitter account URL will be https://twitter.com/${m.content.replace('@','')} ? (\`yes\` or \`no\`)`)

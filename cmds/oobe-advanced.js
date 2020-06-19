@@ -31,13 +31,16 @@ async function oobe_advanced(message, client, config, functiondate, functiontime
         var twit_user_id
         const twit_user = await twitter_client.get('users/show', {screen_name: args[1].replace('@','')})
         .catch(err=>{
-            client.shard.send(err.errors)
-            if (err.errors[0].code == 50) {
-                return message.channel.send(`User @${args[1].replace('@','')} is not found on Twitter`)
+            client.shard.send(err)
+            if (err.code == 50) {
+                message.channel.send(`User @${m.content.replace('@','')} is not found on Twitter`)
+            } else if (err.code == 63) {
+                message.channel.send(`User @${m.content.replace('@','')} is suspended on Twitter`)
             } else {
-                return message.channel.send(`Error: ${err.errors[0].message}`)
+                client.shard.send(err.errors)
+                message.channel.send(`Error: ${err.message}`)
             }
-        })
+        });
         cache_twitter_name.push({
             name: args[1].replace('@',''),
             twitter_id: twit_user.id_str,
