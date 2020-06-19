@@ -9,7 +9,7 @@ async function helpcmd(message, client, config, functiondate, functiontime, publ
     
     if (message.content.toLowerCase() == prefix + ' info' || message.content.toLowerCase() == prefix2 + ' info'){
         embed.setTitle('Informations')
-        if (twit_send) embed.setDescription(`MAINTENANCE MODE IS ENABLED: ${client.user.username} will not send tweets at the moment.`)
+        if (!twit_send) embed.setDescription(`MAINTENANCE MODE IS ENABLED: ${client.user.username} will not send tweets at the moment.`)
             embed.addField(`${client.user.username} is on Twitter!`, `[Follow on Twitter!](https://twitter.com/MyTweetsDiscord)`)
             .addField('Maximum accounts autorised for non-premium servers:', '- Less than 50 members: 2 accounts\n- More than 50 members: 3 accounts\n- Voted on [top.gg](https://top.gg/bot/'+client.user.id+'/vote): 5 accounts')
             .addField('Have you voted on top.gg?', await dbl.hasVoted(message.author.id) ? 'Yes! You can add 5 accounts maximum on this server!' : 'No, vote on [top.gg](https://top.gg/bot/'+client.user.id+'/vote) and increases the maximum to 5 accounts!')

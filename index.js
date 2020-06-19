@@ -74,10 +74,12 @@ client.on('ready', () => {
             if (!twit_send) {
                 client.user.setStatus('idle')
                 client.user.setActivity(`MAINTENANCE 🛠`, { type: 'WATCHING' })
+                client.shard.send('Maintenance enabled')
             }
             else {
                 client.user.setStatus('online')
                 client.user.setActivity(`${client.user.username} is starting...`, { type: 'WATCHING' })
+                client.shard.send('Maintenance disabled')
             }
             await wait(2*60*1000)
             client.user.setActivity(`${client.guilds.size} servers on shard ${client.shard.id + 1}`, { type: 'WATCHING' })
