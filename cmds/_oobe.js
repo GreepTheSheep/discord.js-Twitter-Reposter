@@ -5,8 +5,9 @@
 */
 
 const Discord = require('discord.js')
+const Twitter = require('twit')
 
-async function oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl){
+async function oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client){
     if (message.content == prefix || message.content == prefix2){
         if (!db.has('twitter_name')) {
             embed.setDescription(`**__Hello ${message.author.username}!__**\n\n__You haven't linked any Twitter accounts with this server.__\nPlease type "${prefix} setup" to start the setup`)
@@ -29,10 +30,10 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
     else if (message.content.toLowerCase().startsWith(prefix + ' setup') || message.content.toLowerCase().startsWith(prefix2 + ' setup') || message.content.toLowerCase().startsWith(prefix + ' oobe') || message.content.toLowerCase().startsWith(prefix2 + ' oobe')){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             const args = message.content.split(' ').slice(2);
-            if (args.length < 1) oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl)
+            if (args.length < 1) oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client)
             else {
                 const oobe_advanced = require('./oobe-advanced.js')
-                oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args)
+                oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, twitter_client)
             } 
         } else {
             return message.reply('you don\'t have sufficient permissions!')
@@ -40,7 +41,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
     }
 }
 
-async function oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl){
+async function oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client){
     const filter = m => message.author == m.author;
             embed.setDescription(`**__Hello ${message.author.username}!__**\n\nPlease make your choice by typing the number: \`\`\`1 - Link new account to this server\n2 - Modify an linked account\n3 - Show help about configuration\`\`\``)
             embed.setColor('RANDOM')
@@ -70,6 +71,18 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                     const collector2 = message.channel.createMessageCollector(filter, {time: 60000, max: 1});
                     collector2.on('collect', m => {
                         m.delete()
+                        var twit_user_id
+                        twitter_client.get('users/show', {screen_name: m.content.replace('@','')})
+                        .then(results => {
+                            twit_user_id = results.id_str
+                        }).catch(err=>{
+                            if (err.errors[0].code == 50) {
+                                return message.channel.send(`User @${m.content.replace('@','')} is not found on Twitter`)
+                            } else {
+                                client.shard.send(err.errors)
+                                return message.channel.send(`Error: ${err.errors[0].message}`)
+                            }
+                        });
                         bm.edit(`Ok, so your Twitter account URL will be https://twitter.com/${m.content.replace('@','')} ? (\`yes\` or \`no\`)`)
                         var acc = m.content;
                         const collector3 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
@@ -115,6 +128,7 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                                             //console.log(cache_twitter_name)
                                             cache_twitter_name.push({
                                                 name: acc.replace('@',''),
+                                                twitter_id: twit_user_id,
                                                 channel: ch.id,
                                                 reply: rp,
                                                 retweet: rt,

@@ -1,4 +1,5 @@
 const Discord = require('discord.js')
+const Twitter = require('twit')
 
 async function oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args){
     if (!db.has('twitter_name')) {
@@ -17,8 +18,21 @@ async function oobe_advanced(message, client, config, functiondate, functiontime
             return message.channel.send(embed)
         }
         if (!args[1]) return message.channel.send('Twitter account username argument missing')
+        var twit_user_id
+        twitter_client.get('users/show', {screen_name: args[1].replace('@','')})
+        .then(results => {
+            twit_user_id = results.id_str
+        }).catch(err=>{
+            if (err.errors[0].code == 50) {
+                return message.channel.send(`User @${args[1].replace('@','')} is not found on Twitter`)
+            } else {
+                client.shard.send(err.errors)
+                return message.channel.send(`Error: ${err.errors[0].message}`)
+            }
+        });
         cache_twitter_name.push({
             name: args[1].replace('@',''),
+            twitter_id: twit_user_id,
             channel: message.mentions.channels.first().id,
             reply: false,
             retweet: true,
