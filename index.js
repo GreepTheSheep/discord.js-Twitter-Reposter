@@ -76,11 +76,11 @@ client.on('ready', () => {
             setInterval(function() {
                 let actmsg = randomItem(actmsgs);
                 client.user.setActivity(actmsg, { type: 'WATCHING' })
-                dbl.postStats(client.guilds.size, client.shards.id, client.shards.total);
+                dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
             }, 5 * 60 * 1000);
         });
 
-        dbl.postStats(client.guilds.size, client.shards.id, client.shards.total);
+        dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
 
         const globaltwit = require('./globaltwit.js')
         globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime)
@@ -117,7 +117,7 @@ client.on('guildCreate', guild => {
     }
     const botjoinguildlog = `${client.user.username} joined ${guild.name} - ID: ${guild.id}`
     client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botjoinguildlog}`)
-    dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
+    dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
 })
 
 client.on('guildDelete', guild => {
@@ -128,7 +128,7 @@ client.on('guildDelete', guild => {
     }
     const botleftguildlog = `${client.user.username} left ${guild.name} - ID: ${guild.id}`
     client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
-    dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
+    dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
 })
 
 client.on('disconnect', event => {
