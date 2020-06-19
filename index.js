@@ -3,20 +3,23 @@ const Discord = require('discord.js');
 const client = new Discord.Client({
   fetchAllMembers: true
 });
+const wait = require('util').promisify(setTimeout);
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
-const publics = JSON.parse(fs.readFileSync("./public-bot-list.json", "utf8"));
-if (client.shard.count == 0) client.shard.send = (m) => console.log(m) 
-
+const DBL = require("dblapi.js");
+const dbl = new DBL(config.topgg_token, client);
+if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
 const debug = config.verbose
+const publicBot = "661967218174853121"
 
-const Twitter = require('twitter')
-const tokens = {
+const Twitter = require('twit')
+var tokens = {
     consumer_key:        config.consumer_key,
     consumer_secret:     config.consumer_secret,
     access_token:        config.access_token_key,
     access_token_key:    config.access_token_key,
-    access_token_secret: config.access_token_secret
+    access_token_secret: config.access_token_secret,
+    safe: false
 };
 
 const twitter_client = new Twitter(tokens);
@@ -45,10 +48,46 @@ client.on('ready', () => {
     const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
     client.shard.send(readylog);
 
-    if (publics.includes(client.user.id)){
-        client.user.setActivity('your Twitter feed | Mention me to setup!', { type: 'WATCHING' })
+    if (client.user.id === publicBot){
+        const actmsgs = [
+            'your Twitter feed',
+            'mention me to setup!',
+            'VERSION 3 OPEN BETA',
+            'if all is set up correctly',
+            `if Twitter is not down...`,
+            `funny memes on Twitter`,
+            `${client.guilds.size} servers on shard ${client.shard.id + 1}`,
+            'issues on GitHub',
+            'bots on Twitter',
+            'cute cats images on Twitter',
+            'movies... Wait, I\'m late!',
+            'Elon Musk\'s Twitter feed',
+            'Greep\'s Twitter feed (lol it\'s the creator)',
+            'NASA\'s image of the day'
+        ];
+        
+        function randomItem(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+        
+        client.user.setActivity('', { type: 'WATCHING' })
+        const actfunction = new Promise(async function(resolve, reject) {
+            client.user.setActivity(`${client.user.username} is loading...`, { type: 'WATCHING' })
+            await wait(2*60*1000)
+            let actmsg = randomItem(actmsgs);
+            client.user.setActivity(actmsg, { type: 'WATCHING' })
+            setInterval(function() {
+                let actmsg = randomItem(actmsgs);
+                client.user.setActivity(actmsg, { type: 'WATCHING' })
+            }, 5 * 60 * 1000);
+        });
+
+        dbl.postStats(client.guilds.size, client.shards.id, client.shards.total);
+
         const globaltwit = require('./globaltwit.js')
-        globaltwit(twitter_client, client, config, debug, functiondate, functiontime)
+        globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime)
+
+        actfunction
     } else {
         var twitter_params = { screen_name: config.twitter_name };
         var old_avatar = undefined
@@ -67,29 +106,31 @@ client.on('ready', () => {
 client.on('message', message =>{
     if (message.channel.type === 'dm') return
     if (message.author.bot) return;
-    if (publics.includes(client.user.id)){
-        const setup = require('./public-setup.js')
-        setup(message, client, config, functiondate, functiontime, publics)
+    if (client.user.id === publicBot){
+        const cmds_index = require('./cmds/cmds-index.js')
+        cmds_index(message, client, config, functiondate, functiontime, publicBot, dbl)
     }
 })
 
 client.on('guildCreate', guild => {
-    if (publics.includes(client.user.id)){
+    if (client.user.id === publicBot){
         const Enmap = require('enmap')
         const db = new Enmap({name:'db_' + guild.id})
     }
-    const botjoinguildlog = `${client.user.username} joined __${guild.name}__\n*ID: ${guild.id}*`
-    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}]\n${botjoinguildlog}`)
+    const botjoinguildlog = `${client.user.username} joined ${guild.name} - ID: ${guild.id}`
+    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botjoinguildlog}`)
+    dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
 })
 
 client.on('guildDelete', guild => {
-    if (publics.includes(client.user.id)){
+    if (client.user.id === publicBot){
         const Enmap = require('enmap')
         const db = new Enmap({name:'db_' + guild.id})
         db.destroy()
     }
-    const botleftguildlog = `${client.user.username} left __${guild.name}__\n*ID: ${guild.id}*`
-    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}]\n${botleftguildlog}`)
+    const botleftguildlog = `${client.user.username} left ${guild.name} - ID: ${guild.id}`
+    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
+    dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
 })
 
 client.on('disconnect', event => {
@@ -103,6 +144,14 @@ client.on('reconnecting', () => {
 })
 
 client.login(config.discord_token)
+
+dbl.on('posted', () => {
+    client.shard.send('Server count posted on top.gg!');
+})
+  
+dbl.on('error', e => {
+    client.shard.send(`top.gg error! ${e}`);
+})
 }catch(e){
     client.shard.send(e)
 }

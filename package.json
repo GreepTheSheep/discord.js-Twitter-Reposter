@@ -1,6 +1,6 @@
 {
   "name": "discord.js-twitter-integration",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Get informations of a Twitter account & latest posts and sends it to a Discord bot",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,7 @@
     "better-sqlite-pool": "^0.2.3",
     "better-sqlite3": "5.4.3",
     "colors": "1.4.0",
+    "dblapi.js": "^2.4.0",
     "discord.js": "^11.6.1",
     "enmap": "^5.2.4",
     "fs": "0.0.2",
@@ -28,6 +29,7 @@
     "prompt": "1.0.0",
     "request": "2.88.0",
     "shelljs": "0.8.3",
-    "twitter": "^1.7.1"
+    "twit": "^2.2.11",
+    "twitter-lite": "latest"
   }
 }
