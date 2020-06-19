@@ -75,13 +75,14 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                         .catch(err=>{
                             client.shard.send(err)
                             if (err.code == 50) {
-                                message.channel.send(`User @${m.content.replace('@','')} is not found on Twitter`)
+                                bm.edit(`User @${m.content.replace('@','')} is not found on Twitter`)
                             } else if (err.code == 63) {
-                                message.channel.send(`User @${m.content.replace('@','')} is suspended on Twitter`)
+                                bm.edit(`User @${m.content.replace('@','')} is suspended on Twitter`)
                             } else {
                                 client.shard.send(err.errors)
-                                message.channel.send(`Error: ${err.message}`)
+                                bm.edit(`Error: ${err.message}`)
                             }
+                            return
                         });
                         bm.edit(`Ok, so your Twitter account URL will be https://twitter.com/${m.content.replace('@','')} ? (\`yes\` or \`no\`)`)
                         var acc = m.content;
