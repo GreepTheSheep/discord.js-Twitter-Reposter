@@ -33,7 +33,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
             if (args.length < 1) oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client)
             else {
                 const oobe_advanced = require('./oobe-advanced.js')
-                oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, twitter_client)
+                oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, dbl, twitter_client)
             } 
         } else {
             return message.reply('you don\'t have sufficient permissions!')
@@ -69,13 +69,10 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                     }
                     const bm = await message.channel.send('Here we go! First, send me your Twitter account name *(it will be something like @GreepTheSheep)* **[Please respect the cases]**')
                     const collector2 = message.channel.createMessageCollector(filter, {time: 60000, max: 1});
-                    collector2.on('collect', m => {
+                    collector2.on('collect', async m => {
                         m.delete()
-                        var twit_user_id
-                        twitter_client.get('users/show', {screen_name: m.content.replace('@','')})
-                        .then(results => {
-                            twit_user_id = results.id_str
-                        }).catch(err=>{
+                        const twit_user = await twitter_client.get('users/show', {screen_name: m.content.replace('@','')})
+                        .catch(err=>{
                             client.shard.send(err)
                             if (err.errors[0].code == 50) {
                                 return message.channel.send(`User @${m.content.replace('@','')} is not found on Twitter`)
@@ -129,7 +126,7 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                                             //console.log(cache_twitter_name)
                                             cache_twitter_name.push({
                                                 name: acc.replace('@',''),
-                                                twitter_id: twit_user_id,
+                                                twitter_id: twit_user.id_str,
                                                 channel: ch.id,
                                                 reply: rp,
                                                 retweet: rt,

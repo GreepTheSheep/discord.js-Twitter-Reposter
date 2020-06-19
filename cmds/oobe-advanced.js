@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const Twitter = require('twit')
 
-async function oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args){
+async function oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, dbl, twitter_client){
     if (!db.has('twitter_name')) {
         db.set('twitter_name', [])
     }
@@ -12,28 +12,35 @@ async function oobe_advanced(message, client, config, functiondate, functiontime
         message.channel.send(embed)
     }
     else if (args[0].toLowerCase() == 'new' || args[0].toLowerCase() == 'add'){
-        if (db.get('twitter_name').length >= 2 && !db.get('premium')) {
+        var maxAccs;
+        dbl.hasVoted(message.author.id).then(voted => {
+            const total = message.guild.members.array().length;
+            const bots = message.guild.members.filter(m => m.user.bot).size; 
+            const members = total - bots
+
+            if (voted) maxAccs = 5
+            else if (!voted && members >= 50) maxAccs = 3
+            else maxAccs = 2
+        });
+        if (db.get('twitter_name').length >= maxAccs && !db.get('premium')) {
             embed.setDescription('I\'m sorry, but you have reached the maximun number of accounts for this server\n\n[Get premium and remove this limit](https://patreon.com/Greep)')
             embed.setColor('#ff0000')
             return message.channel.send(embed)
         }
         if (!args[1]) return message.channel.send('Twitter account username argument missing')
         var twit_user_id
-        twitter_client.get('users/show', {screen_name: args[1].replace('@','')})
-        .then(results => {
-            twit_user_id = results.id_str
-        }).catch(err=>{
-            client.shard.send(err)
+        const twit_user = await twitter_client.get('users/show', {screen_name: args[1].replace('@','')})
+        .catch(err=>{
+            client.shard.send(err.errors)
             if (err.errors[0].code == 50) {
                 return message.channel.send(`User @${args[1].replace('@','')} is not found on Twitter`)
             } else {
-                client.shard.send(err.errors)
                 return message.channel.send(`Error: ${err.errors[0].message}`)
             }
-        });
+        })
         cache_twitter_name.push({
             name: args[1].replace('@',''),
-            twitter_id: twit_user_id,
+            twitter_id: twit_user.id_str,
             channel: message.mentions.channels.first().id,
             reply: false,
             retweet: true,
