@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const Enmap = require('enmap')
 
-function cmds_index(message, client, config, functiondate, functiontime, publicBot, dbl){
+function cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl){
     const prefix = `<@!${client.user.id}>` 
     const prefix2 = `<@${client.user.id}>`
     let embed = new Discord.RichEmbed
@@ -16,7 +16,7 @@ function cmds_index(message, client, config, functiondate, functiontime, publicB
     }
 
     const oobe = require('./_oobe.js')
-    oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl)
+    oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client)
 
     const settings = require('./sets.js')
     settings(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)

@@ -108,7 +108,7 @@ client.on('message', message =>{
     if (message.author.bot) return;
     if (client.user.id === publicBot){
         const cmds_index = require('./cmds/cmds-index.js')
-        cmds_index(message, client, config, functiondate, functiontime, publicBot, dbl)
+        cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl)
     }
 })
 
