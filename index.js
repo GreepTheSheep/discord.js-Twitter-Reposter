@@ -71,7 +71,7 @@ client.on('ready', () => {
         
         client.user.setActivity('', { type: 'WATCHING' })
         const actfunction = new Promise(async function(resolve, reject) {
-            if (twit_send) {
+            if (!twit_send) {
                 client.user.setStatus('idle')
                 client.user.setActivity(`MAINTENANCE 🛠`, { type: 'WATCHING' })
             }
@@ -82,7 +82,7 @@ client.on('ready', () => {
             await wait(2*60*1000)
             client.user.setActivity(`${client.guilds.size} servers on shard ${client.shard.id + 1}`, { type: 'WATCHING' })
             setInterval(function() {
-                if (twit_send) {
+                if (!twit_send) {
                     client.user.setStatus('idle')
                     client.user.setActivity(`MAINTENANCE 🛠`, { type: 'WATCHING' })
                 }
@@ -97,7 +97,7 @@ client.on('ready', () => {
 
         dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
 
-        if (twit_send == true){
+        if (twit_send){
         const globaltwit = require('./globaltwit.js')
         globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send)
         }
