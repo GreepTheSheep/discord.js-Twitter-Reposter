@@ -72,17 +72,9 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                     collector2.on('collect', async m => {
                         m.delete()
                         const twit_user = await twitter_client.get('users/show', {screen_name: m.content.replace('@','')})
-                        .catch(err=>{
+                        .catch(function(err){
                             client.shard.send(err)
-                            if (err.code == 50) {
-                                bm.edit(`User @${m.content.replace('@','')} is not found on Twitter`)
-                            } else if (err.code == 63) {
-                                bm.edit(`User @${m.content.replace('@','')} is suspended on Twitter`)
-                            } else {
-                                client.shard.send(err.errors)
-                                bm.edit(`Error: ${err.message}`)
-                            }
-                            return
+                            return bm.edit(`Error: ${err.message}`)
                         });
                         bm.edit(`Ok, so your Twitter account URL will be https://twitter.com/${m.content.replace('@','')} ? (\`yes\` or \`no\`)`)
                         var acc = m.content;

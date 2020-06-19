@@ -76,6 +76,7 @@ client.on('ready', () => {
             setInterval(function() {
                 let actmsg = randomItem(actmsgs);
                 client.user.setActivity(actmsg, { type: 'WATCHING' })
+                dbl.postStats(client.guilds.size, client.shards.id, client.shards.total);
             }, 5 * 60 * 1000);
         });
 
