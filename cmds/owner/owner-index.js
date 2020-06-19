@@ -1,6 +1,6 @@
 const Discord = require('discord.js')
 
-function ownercmds(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed){
+function ownercmds(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, twit_send){
 
     const guildinfo = require('./guild-info.js')
     guildinfo(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
@@ -16,6 +16,9 @@ function ownercmds(message, client, config, functiondate, functiontime, publicBo
 
     const premium = require('./premium.js')
     premium(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)
+
+    const enable_send = require('./twit_send.js')
+    enable_send(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, twit_send)
 
 }
 

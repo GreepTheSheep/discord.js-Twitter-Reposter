@@ -23,6 +23,7 @@ var tokens = {
 };
 
 const twitter_client = new Twitter(tokens);
+var twit_send = false
 
 function functiondate() { 
     const datefu = new Date();
@@ -70,21 +71,37 @@ client.on('ready', () => {
         
         client.user.setActivity('', { type: 'WATCHING' })
         const actfunction = new Promise(async function(resolve, reject) {
-            client.user.setActivity(`${client.user.username} is starting...`, { type: 'WATCHING' })
+            if (twit_send) {
+                client.user.setStatus('idle')
+                client.user.setActivity(`MAINTENANCE 🛠`, { type: 'WATCHING' })
+            }
+            else {
+                client.user.setStatus('online')
+                client.user.setActivity(`${client.user.username} is starting...`, { type: 'WATCHING' })
+            }
             await wait(2*60*1000)
             client.user.setActivity(`${client.guilds.size} servers on shard ${client.shard.id + 1}`, { type: 'WATCHING' })
             setInterval(function() {
-                let actmsg = randomItem(actmsgs);
-                client.user.setActivity(actmsg, { type: 'WATCHING' })
+                if (twit_send) {
+                    client.user.setStatus('idle')
+                    client.user.setActivity(`MAINTENANCE 🛠`, { type: 'WATCHING' })
+                }
+                else {
+                    client.user.setStatus('online')
+                    let actmsg = randomItem(actmsgs);
+                    client.user.setActivity(actmsg, { type: 'WATCHING' })
+                }
                 dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
             }, 5 * 60 * 1000);
         });
 
         dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
 
+        if (twit_send == true){
         const globaltwit = require('./globaltwit.js')
-        globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime)
-
+        globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send)
+        }
+        
         actfunction
     } else {
         var twitter_params = { screen_name: config.twitter_name };
@@ -106,7 +123,7 @@ client.on('message', message =>{
     if (message.author.bot) return;
     if (client.user.id === publicBot){
         const cmds_index = require('./cmds/cmds-index.js')
-        cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl)
+        cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send)
     }
 })
 

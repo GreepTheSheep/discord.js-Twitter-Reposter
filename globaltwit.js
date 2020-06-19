@@ -4,7 +4,7 @@ const Enmap = require('enmap')
 const wait = require('util').promisify(setTimeout);
 const fs = require('fs')
 
-function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime){
+function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send){
     try{
     var g_acc = 0
     var g_acc_in_twitter = 0
@@ -16,6 +16,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
             var db = new Enmap({name:'db_'+g.id})
             if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
             if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
+            if (!twit_send) return
             var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
             if (twitter_accounts === undefined) return
             g_acc_in_twitter = 0
