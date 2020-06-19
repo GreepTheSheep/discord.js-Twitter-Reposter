@@ -23,6 +23,7 @@ async function oobe_advanced(message, client, config, functiondate, functiontime
         .then(results => {
             twit_user_id = results.id_str
         }).catch(err=>{
+            client.shard.send(err)
             if (err.errors[0].code == 50) {
                 return message.channel.send(`User @${args[1].replace('@','')} is not found on Twitter`)
             } else {

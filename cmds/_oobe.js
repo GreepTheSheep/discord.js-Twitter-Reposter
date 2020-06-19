@@ -76,6 +76,7 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                         .then(results => {
                             twit_user_id = results.id_str
                         }).catch(err=>{
+                            client.shard.send(err)
                             if (err.errors[0].code == 50) {
                                 return message.channel.send(`User @${m.content.replace('@','')} is not found on Twitter`)
                             } else {
