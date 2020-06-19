@@ -60,9 +60,7 @@ client.on('ready', () => {
             'issues on GitHub',
             'bots on Twitter',
             'cute cats images on Twitter',
-            'movies... Wait, I\'m late!',
             'Elon Musk\'s Twitter feed',
-            'Greep\'s Twitter feed (lol it\'s the creator)',
             'NASA\'s image of the day'
         ];
         
@@ -72,10 +70,9 @@ client.on('ready', () => {
         
         client.user.setActivity('', { type: 'WATCHING' })
         const actfunction = new Promise(async function(resolve, reject) {
-            client.user.setActivity(`${client.user.username} is loading...`, { type: 'WATCHING' })
+            client.user.setActivity(`${client.user.username} is starting...`, { type: 'WATCHING' })
             await wait(2*60*1000)
-            let actmsg = randomItem(actmsgs);
-            client.user.setActivity(actmsg, { type: 'WATCHING' })
+            client.user.setActivity(`${client.guilds.size} servers on shard ${client.shard.id + 1}`, { type: 'WATCHING' })
             setInterval(function() {
                 let actmsg = randomItem(actmsgs);
                 client.user.setActivity(actmsg, { type: 'WATCHING' })
