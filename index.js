@@ -99,7 +99,7 @@ client.on('ready', () => {
     }
 
    }catch(err){
-        client.shard.send(`[${functiondate()} - ${functiontime()}] ${err}`)
+        client.shard.send(`[${functiondate()} - ${functiontime()}]`, err)
    }
 })
 
