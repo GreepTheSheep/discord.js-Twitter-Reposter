@@ -2,14 +2,14 @@ const Discord = require('discord.js')
 const Twitter = require('twit')
 const Enmap = require('enmap')
 
-function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send){
+function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance){
     try{
     var g_acc_in_twitter = 0
         client.guilds.forEach(async g=>{
             var db = new Enmap({name:'db_'+g.id})
             if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
             if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
-            if (!twit_send) return
+            if (!twit_send && !authorised_guilds_in_maintenance.includes(g.id)) return
             var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
             if (twitter_accounts === undefined) return
             g_acc_in_twitter = 0
