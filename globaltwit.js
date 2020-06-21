@@ -19,18 +19,14 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
             }
             g_acc_in_twitter = 0
             twitter_accounts.forEach(async account=>{
-                if (!account.name) {
+                client.shard.send('Checking twitter account ' + account.name)
+                if (!account.name || !account.twitter_id) {
                     return client.shard.send('Has not a valid account')
                 }
-                client.shard.send('Checking twitter account ' + account.name)
 
                 twitter_client.get('users/show', { screen_name: account.name}).then(async result=>{
                     var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${g_acc_in_twitter} : ${account.name} - Channel ${account.channel} ] `
 
-                    if (!account.twitter_id) {
-                        account.twitter_id = result.id_str
-                        db.set('twitter_name', account)
-                    }
                     var Tstream = twitter_client.stream('statuses/filter', { follow: result.id_str })
 
                     Tstream.on('start', function (start_result) {
