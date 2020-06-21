@@ -8,7 +8,6 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         client.guilds.forEach(async g=>{
             if (!twit_send) {
                 if (!authorised_guilds_in_maintenance.includes(g.id)) return
-                else continue
             }
             var db = new Enmap({name:'db_'+g.id})
             if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
@@ -21,7 +20,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
 
                 twitter_client.get('users/show', { screen_name: account.name}).then(async result=>{
                     var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${g_acc_in_twitter} : ${account.name} - Channel ${account.channel} ] `
-                    
+
                     if (!account.twitter_id) {
                         account.twitter_id = result.id_str
                         db.set('twitter_name', account)
