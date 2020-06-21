@@ -19,7 +19,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
             }
             g_acc_in_twitter = 0
             twitter_accounts.forEach(async account=>{
-                if (!account.name || !account.twitter_id) {
+                if (!account.name) {
                     return client.shard.send('Has not a valid account')
                 }
                 client.shard.send('Checking twitter account ' + account.name)
