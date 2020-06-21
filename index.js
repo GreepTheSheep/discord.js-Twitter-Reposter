@@ -109,7 +109,6 @@ client.on('ready', () => {
 
         dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
 
-        newaccs = true
         const globaltwit = require('./globaltwit.js')
         globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs)
         
