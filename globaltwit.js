@@ -9,7 +9,10 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
             var db = new Enmap({name:'db_'+g.id})
             if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
             if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
-            if (!twit_send && !authorised_guilds_in_maintenance.includes(g.id)) return
+            if (!twit_send) {
+                if (!authorised_guilds_in_maintenance.includes(g.id)) return
+                else continue
+            }
             var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
             if (twitter_accounts === undefined) return
             g_acc_in_twitter = 0
