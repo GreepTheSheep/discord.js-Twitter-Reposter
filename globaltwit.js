@@ -3,8 +3,7 @@ const Twitter = require('twitter-lite')
 const Enmap = require('enmap')
 
 function check_accounts(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance){
-    var account_channel_ids;
-    var account_twitter_ids = []
+    var account = [];
     client.guilds.forEach(async g=>{
         if (!twit_send) {
             if (!authorised_guilds_in_maintenance.includes(g.id)) return
@@ -18,7 +17,7 @@ function check_accounts(twitter_client, tokens, client, config, debug, functiond
             return client.shard.send('Has not a db')
         }
         g_acc_in_twitter = 0
-        twitter_accounts.forEach(async account=>{
+        twitter_accounts.forEach(async account_cache=>{
             client.shard.send('Checking twitter account ' + account.name)
             if (!account.twitter_id) {
                 twitter_client.get('users/show', { screen_name: account.name}).then(result=>{
@@ -30,19 +29,22 @@ function check_accounts(twitter_client, tokens, client, config, debug, functiond
                     return
                 })
             }
-            if (!account_channel_ids[account.twitter_id]) account_channel_ids[account.twitter_id] = []
-            account_channel_ids[account.twitter_id].push(account.channel)
-            account_twitter_ids.push(account.twitter_id)
+            account.push(account_cache)
         })
     });
-    globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, account_channel_ids, account_twitter_ids)
+    globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, account)
 }
 
-function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, account_channel_ids, account_twitter_ids){
+function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, account){
     try{
+    var ids = [];
+    account.forEach(a=>ids.push({
+        twit_id : a.twitter_id,
+        channel: a.channel
+    }))
+
     var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${account.name} - Channel ${account.channel} ] `
-    var Tstream = twitter_client.stream('statuses/filter', { follow: account_twitter_ids })
-    var old_acc_list = account_twitter_ids
+    var Tstream = twitter_client.stream('statuses/filter', { follow: ids })
     Tstream.on('start', function (start_result) {
         if (start_result.status == 200) client.shard.send(`🟢 Streaming API started`)
         else client.shard.send(start_result.statusText)
