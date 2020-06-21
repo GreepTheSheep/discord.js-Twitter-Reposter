@@ -5,7 +5,7 @@
 */
 
 const Discord = require('discord.js')
-const Twitter = require('twit')
+const Twitter = require('twitter-lite')
 
 async function oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send){
     if (message.content == prefix || message.content == prefix2){

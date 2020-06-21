@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const Twitter = require('twit')
+const Twitter = require('twitter-lite')
 
 async function oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, dbl, twitter_client, twit_send){
     if (!db.has('twitter_name')) {

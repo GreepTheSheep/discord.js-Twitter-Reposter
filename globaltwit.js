@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const Twitter = require('twit')
+const Twitter = require('twitter-lite')
 const Enmap = require('enmap')
 
 function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance){
@@ -33,7 +33,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                     Tstream.on('start', function (result) {
                         client.shard.send(`🟢 Streaming API started for ${result.screen_name} (${result.id_str})`)
                     })
-                    Tstream.on('tweet', async function (tweet) {
+                    Tstream.on('data', async function (tweet) {
                         try{
 
                             let embed = new Discord.RichEmbed
