@@ -22,6 +22,7 @@ var tokens = {
 };
 
 const twitter_client = new Twitter(tokens);
+var newaccs = false;
 var twit_send = false
 var authorised_guilds_in_maintenance = [
     "570024448371982373", // Owner's server
@@ -108,8 +109,9 @@ client.on('ready', () => {
 
         dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
 
+        newaccs = true
         const globaltwit = require('./globaltwit.js')
-        globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance)
+        globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs)
         
         actfunction
     } else {
@@ -132,7 +134,7 @@ client.on('message', message =>{
     if (message.author.bot) return;
     if (client.user.id === publicBot){
         const cmds_index = require('./cmds/cmds-index.js')
-        cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send, authorised_guilds_in_maintenance)
+        cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send, authorised_guilds_in_maintenance, newaccs)
     }
 })
 
