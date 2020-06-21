@@ -30,7 +30,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                     }
                     var Tstream = T.stream('statuses/filter', { follow: result.id_str })
 
-                    Tstream.on('tweet', function (tweet) {
+                    Tstream.on('tweet', async function (tweet) {
                         try{
 
                             let embed = new Discord.RichEmbed

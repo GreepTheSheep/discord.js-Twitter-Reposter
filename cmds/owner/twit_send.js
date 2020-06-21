@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const shell = require('shelljs')
 
-function enable_send(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, twit_send, authorised_guilds_in_maintenance) {
+async function enable_send(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, twit_send, authorised_guilds_in_maintenance) {
     if (message.content.toLowerCase() == prefix + ' maintenance' || message.content.toLowerCase() == prefix2 + ' maintenance'){
         if (twit_send == false){
             twit_send = true
