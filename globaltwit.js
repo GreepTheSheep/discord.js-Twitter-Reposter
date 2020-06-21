@@ -6,6 +6,7 @@ const wait = require('util').promisify(setTimeout);
 function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs){
     setInterval(function(){
         if (newaccs){
+            var Tstream = undefined
             var twitter_ids = []
             var account_params = []
             client.guilds.forEach(async g=>{
@@ -37,9 +38,9 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                 })
             });
             // recreate new stream
-            if (Tstream) Tstream.destroy().then(a=>wait(45*1000))
+            if (Tstream != undefined) Tstream.destroy().then(a=>wait(45*1000))
 
-            const Tstream = client.stream("statuses/filter", { follow: twitter_ids })
+            Tstream = client.stream("statuses/filter", { follow: twitter_ids })
             newaccs = false
         } else client.shard.send('No new accs')
     }, 60*1000)
