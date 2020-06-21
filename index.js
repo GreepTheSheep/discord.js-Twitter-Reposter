@@ -153,11 +153,6 @@ client.on('disconnect', event => {
     client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ` + eventmsg)
 })
 
-client.on('reconnecting', () => {
-    const eventmsg = `reconnecting to WebSocket`
-    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ` + eventmsg)
-})
-
 client.login(config.discord_token)
 
 dbl.on('posted', () => {
