@@ -16,7 +16,7 @@ function cmds_index(message, client, config, functiondate, functiontime, publicB
     }
 
     const oobe = require('./_oobe.js')
-    oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client)
+    oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send)
 
     const settings = require('./sets.js')
     settings(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)

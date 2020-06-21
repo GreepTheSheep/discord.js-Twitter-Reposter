@@ -1,14 +1,14 @@
 const Discord = require('discord.js')
 const Twitter = require('twit')
 
-async function oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, dbl, twitter_client){
+async function oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, dbl, twitter_client, twit_send){
     if (!db.has('twitter_name')) {
         db.set('twitter_name', [])
     }
     var cache_twitter_name = db.get('twitter_name')
     if (args[0].toLowerCase() == 'help'){
         embed.setColor('#008800')
-        embed.setDescription(`For now, there are two systems of setting up a account on this bot: Step by Step or with arguments (for advanced users)\n\nIf you use step by step: just type \`@${client.user.username} setup\` and you're invited to fill up the steps.\n\nIf you use with arguments, here's the help:\n- \`@${client.user.username} setup add [Twitter username] [Channel mention]\` to add the user to a specified channel\n- \`@${client.user.username} setup remove [Twitter username]\` to delete the linked account\n- \`@${client.user.username} setup retweets [Twitter username]\` to activate or desativate retweet posting\n- \`@${client.user.username} setup replies [Twitter username]\` to activate or desativate reply posting\n- \`@${client.user.username} setup color [Twitter username] [HTML color code or 'random']\` change the color of the slidebar`)
+        embed.setDescription(`${twit_send?'':`🛠 MAINTENANCE MODE IS ENABLED: ${client.user.username} will not send tweets at the moment.\n\n`}For now, there are two systems of setting up a account on this bot: Step by Step or with arguments (for advanced users)\n\nIf you use step by step: just type \`@${client.user.username} setup\` and you're invited to fill up the steps.\n\nIf you use with arguments, here's the help:\n- \`@${client.user.username} setup add [Twitter username] [Channel mention]\` to add the user to a specified channel\n- \`@${client.user.username} setup remove [Twitter username]\` to delete the linked account\n- \`@${client.user.username} setup retweets [Twitter username]\` to activate or desativate retweet posting\n- \`@${client.user.username} setup replies [Twitter username]\` to activate or desativate reply posting\n- \`@${client.user.username} setup color [Twitter username] [HTML color code or 'random']\` change the color of the slidebar`)
         message.channel.send(embed)
     }
     else if (args[0].toLowerCase() == 'new' || args[0].toLowerCase() == 'add'){

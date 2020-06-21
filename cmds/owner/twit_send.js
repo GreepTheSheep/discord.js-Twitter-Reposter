@@ -6,11 +6,15 @@ function enable_send(message, client, config, functiondate, functiontime, public
         if (twit_send == false){
             twit_send = true
             message.reply(`Maintenance is disabled. Bot will send tweets`)
-            client.shard.send('Maintenance disabled')
+            client.user.setStatus('online')
+            client.user.setActivity(`✅ Exiting MAINTENANCE mode`, { type: 'WATCHING' })
+            client.shard.send(`Shard ${client.shard.id + 1} - Maintenance disabled`)
         } else {
             twit_send = false
             message.reply(`Maintenance is enabled. Bot will not send tweets`)
-            client.shard.send('Maintenance enabled')
+            client.user.setStatus('dnd')
+            client.user.setActivity(`🟠 Starting MAINTENANCE mode`, { type: 'WATCHING' })
+            client.shard.send(`Shard ${client.shard.id + 1} - Maintenance enabled`)
         }
     }
 }

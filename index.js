@@ -72,21 +72,21 @@ client.on('ready', () => {
         client.user.setActivity('', { type: 'WATCHING' })
         const actfunction = new Promise(async function(resolve, reject) {
             if (!twit_send) {
-                client.user.setStatus('idle')
-                client.user.setActivity(`MAINTENANCE 🛠`, { type: 'WATCHING' })
-                client.shard.send('Maintenance enabled')
+                client.user.setStatus('dnd')
+                client.user.setActivity(`🟠 Starting in MAINTENANCE mode`, { type: 'WATCHING' })
+                client.shard.send(`Shard ${client.shard.id + 1} - Maintenance enabled`)
             }
             else {
                 client.user.setStatus('online')
                 client.user.setActivity(`${client.user.username} is starting...`, { type: 'WATCHING' })
-                client.shard.send('Maintenance disabled')
+                client.shard.send(`Shard ${client.shard.id + 1} - Maintenance disabled`)
             }
             await wait(2*60*1000)
             client.user.setActivity(`${client.guilds.size} servers on shard ${client.shard.id + 1}`, { type: 'WATCHING' })
             setInterval(function() {
                 if (!twit_send) {
-                    client.user.setStatus('idle')
-                    client.user.setActivity(`MAINTENANCE 🛠`, { type: 'WATCHING' })
+                    client.user.setStatus('dnd')
+                    client.user.setActivity(`🛠 MAINTENANCE`, { type: 'WATCHING' })
                 }
                 else {
                     client.user.setStatus('online')
@@ -99,10 +99,8 @@ client.on('ready', () => {
 
         dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
 
-        if (twit_send){
         const globaltwit = require('./globaltwit.js')
         globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send)
-        }
         
         actfunction
     } else {

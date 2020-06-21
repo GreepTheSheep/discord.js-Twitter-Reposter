@@ -7,10 +7,10 @@
 const Discord = require('discord.js')
 const Twitter = require('twit')
 
-async function oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client){
+async function oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send){
     if (message.content == prefix || message.content == prefix2){
         if (!db.has('twitter_name')) {
-            embed.setDescription(`**__Hello ${message.author.username}!__**\n\n__You haven't linked any Twitter accounts with this server.__\nPlease type "${prefix} setup" to start the setup`)
+            embed.setDescription(`${twit_send?'':`🛠 MAINTENANCE MODE IS ENABLED: ${client.user.username} will not send tweets at the moment.\n\n`}**__Hello ${message.author.username}!__**\n\n__You haven't linked any Twitter accounts with this server.__\nPlease type "${prefix} setup" to start the setup`)
             embed.addField('Premium status:', `Premium status is ${db.get('premium') ? '**__enabled__** 🎉' : 'disabled.\n[Get premium here](https://patreon.com/Greep)'}`)
             embed.setColor('#BE534D')
             return message.channel.send(embed)
@@ -22,7 +22,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
             user_cache.push(`> ${counter+1}. **@${cache_twitter_name[counter].name}** on channel <#${cache_twitter_name[counter].channel}>`)            
             counter++
         })
-        embed.setDescription(`**__Hello ${message.author.username}!__**\n\nHere's the list of Twitter accounts linked with this server:\n${user_cache.join('\n')}\n\nType "${prefix} setup" to add an another account or to modify your account`)
+        embed.setDescription(`${twit_send?'':`🛠 MAINTENANCE MODE IS ENABLED: ${client.user.username} will not send tweets at the moment.\n\n`}**__Hello ${message.author.username}!__**\n\nHere's the list of Twitter accounts linked with this server:\n${user_cache.join('\n')}\n\nType "${prefix} setup" to add an another account or to modify your account`)
         embed.addField('Premium status:', `Premium status is ${db.get('premium') ? '**__enabled__** 🎉' : 'disabled.\n[Get premium here](https://patreon.com/Greep)'}`)
         embed.setColor('#068049')
         message.channel.send(embed)
@@ -30,10 +30,10 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
     else if (message.content.toLowerCase().startsWith(prefix + ' setup') || message.content.toLowerCase().startsWith(prefix2 + ' setup') || message.content.toLowerCase().startsWith(prefix + ' oobe') || message.content.toLowerCase().startsWith(prefix2 + ' oobe')){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             const args = message.content.split(' ').slice(2);
-            if (args.length < 1) oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client)
+            if (args.length < 1) oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send)
             else {
                 const oobe_advanced = require('./oobe-advanced.js')
-                oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, dbl, twitter_client)
+                oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, dbl, twitter_client, twit_send)
             } 
         } else {
             return message.reply('you don\'t have sufficient permissions!')
@@ -41,9 +41,9 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
     }
 }
 
-async function oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client){
+async function oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send){
     const filter = m => message.author == m.author;
-            embed.setDescription(`**__Hello ${message.author.username}!__**\n\nPlease make your choice by typing the number: \`\`\`1 - Link new account to this server\n2 - Modify an linked account\n3 - Show help about configuration\`\`\``)
+            embed.setDescription(`${twit_send?'':`🛠 MAINTENANCE MODE IS ENABLED: ${client.user.username} will not send tweets at the moment.\n\n`}**__Hello ${message.author.username}!__**\n\nPlease make your choice by typing the number: \`\`\`1 - Link new account to this server\n2 - Modify an linked account\n3 - Show help about configuration\`\`\``)
             embed.setColor('RANDOM')
             const bmembed = await message.channel.send(embed)
             const collector = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
