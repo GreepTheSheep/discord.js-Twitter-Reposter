@@ -64,6 +64,11 @@ client.on('ready', () => {
             'Elon Musk\'s Twitter feed',
             'NASA\'s image of the day'
         ];
+        const maintenance_actmsgs = [
+            `🛠 MAINTENANCE`,
+            'mention me to setup!',
+            `${client.guilds.size} servers on shard ${client.shard.id + 1}`,
+        ];
         
         function randomItem(array) {
             return array[Math.floor(Math.random() * array.length)];
@@ -86,7 +91,8 @@ client.on('ready', () => {
             setInterval(function() {
                 if (!twit_send) {
                     client.user.setStatus('dnd')
-                    client.user.setActivity(`🛠 MAINTENANCE`, { type: 'WATCHING' })
+                    let actmsg = randomItem(maintenance_actmsgs);
+                    client.user.setActivity(actmsg, { type: 'WATCHING' })
                 }
                 else {
                     client.user.setStatus('online')
