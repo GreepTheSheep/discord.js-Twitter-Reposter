@@ -4,6 +4,7 @@ const Enmap = require('enmap')
 const wait = require('util').promisify(setTimeout);
 
 function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs){
+    try{
     var twitter_ids = []
     var account_params = []
     client.guilds.forEach(async g=>{
@@ -34,7 +35,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
             account_params[account.name].push(account)
         })
     });
-    var Tstream = client.stream("statuses/filter", { follow: twitter_ids })
+    const Tstream = client.stream("statuses/filter", { follow: twitter_ids })
     setInterval(async function(){
         if (newaccs){
             var twitter_ids = []
@@ -197,6 +198,9 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         client.users.find(u=> u.id == config.owner_id).send(`:warning: ${stall.warning.message}`)
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] ${stall.warning.message} - ` + stall.warning.code)
     })
+}catch(e){
+    client.shard.send('globaltwit error: ' + e)
+}
 }
 
 module.exports = globaltwit
