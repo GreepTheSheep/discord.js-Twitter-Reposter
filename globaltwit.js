@@ -33,7 +33,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                     }
                     var Tstream = twitter_client.stream('statuses/filter', { follow: result.id_str })
 
-                    Tstream.on('start', function (result) {
+                    Tstream.on('start', function (start_result) {
                         client.shard.send(`🟢 Streaming API started for ${result.screen_name} (${result.id_str})`)
                     })
                     Tstream.on('data', async function (tweet) {
@@ -146,7 +146,8 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                         }
                     })
                     Tstream.on('error', function (err) {
-                        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit stream error:` + err)
+                        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit stream error:`)
+                        client.shard.send(err)
                     })
                     Tstream.on('stall_warnings', function (stall) {
                         client.users.find(u=> u.id == config.owner_id).send(`:warning: ${stall.warning.message}`)
