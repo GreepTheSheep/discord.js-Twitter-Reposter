@@ -6,27 +6,22 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
     try{
     var g_acc_in_twitter = 0
         client.guilds.forEach(async g=>{
-            var db = new Enmap({name:'db_'+g.id})
-            if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
-            if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
             if (!twit_send) {
                 if (!authorised_guilds_in_maintenance.includes(g.id)) return
                 else continue
             }
+            var db = new Enmap({name:'db_'+g.id})
+            if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
+            if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
             var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
             if (twitter_accounts === undefined) return
             g_acc_in_twitter = 0
             twitter_accounts.forEach(async account=>{
                 if (!account.name || !account.twitter_id) return
 
-                await twitter_client.get('users/show', { screen_name: account.name}, async (err, result) => {
+                twitter_client.get('users/show', { screen_name: account.name}).then(async result=>{
                     var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${g_acc_in_twitter} : ${account.name} - Channel ${account.channel} ] `
-                    if (err) {
-                        client.shard.send(debug_header + `Twitter User GET request error: ` + err.message + ' - ' + err.code);
-                        client.shard.send(err)
-                        return
-                    }
-
+                    
                     if (!account.twitter_id) {
                         account.twitter_id = result.id_str
                         db.set('twitter_name', account)
@@ -153,6 +148,11 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] ${stall.warning.message} - ` + stall.warning.code)
                     })
                     g_acc_in_twitter++
+                })
+                .catch(err=>{
+                    client.shard.send(debug_header + `Twitter User GET request error: ` + err.message + ' - ' + err.code);
+                    client.shard.send(err)
+                    return
                 })
             })
         });
