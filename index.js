@@ -19,11 +19,10 @@ var tokens = {
     access_token:        config.access_token_key,
     access_token_key:    config.access_token_key,
     access_token_secret: config.access_token_secret,
-    safe: false
 };
 
 const twitter_client = new Twitter(tokens);
-var twit_send = false
+var twit_send = true
 
 function functiondate() { 
     const datefu = new Date();
