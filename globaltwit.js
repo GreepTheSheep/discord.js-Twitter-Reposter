@@ -30,6 +30,9 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                     }
                     var Tstream = T.stream('statuses/filter', { follow: result.id_str })
 
+                    Tstream.on('start', function (result) {
+                        client.shard.send(`🟢 Streaming API started for ${result.screen_name} (${result.id_str})`)
+                    })
                     Tstream.on('tweet', async function (tweet) {
                         try{
 
