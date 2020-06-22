@@ -195,23 +195,23 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                 })
             })
         }catch(e){
-            if (debug === true) client.shard.send(`ERROR: ${debug_header}` + e)
+            if (debug === true) client.shard.send(`ERROR: ` + e)
             if (debug === true) client.shard.send(tweet)
             if (client.channels.some(c=>c.id == account.channel)) client.channels.find(c=>c.id == account.channel).send(`https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
             .catch(err=>client.shard.send(`Error sending on guild ${g.id} - ${g.name}\n${err}`))               
         }
     })
     Tstream.on('error', function (err) {
-        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit stream error:`)
+        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] globaltwit stream error:`)
         client.shard.send(err)
     })
     Tstream.on('stall_warnings', function (stall) {
         client.users.find(u=> u.id == config.owner_id).send(`:warning: ${stall.warning.message}`)
-        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] ${stall.warning.message} - ` + stall.warning.code)
+        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] ${stall.warning.message} - ` + stall.warning.code)
     })
 
 }catch(e){
-    client.shard.send('globaltwit error: ' + e)
+    client.shard.send(e)
 }
 }
 
