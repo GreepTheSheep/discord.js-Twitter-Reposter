@@ -38,7 +38,7 @@ function check(twitter_client, tokens, client, config, debug, functiondate, func
 function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs){
     try{
     newaccs = true
-    const Tstream;
+    var Tstream;
     var TstreamBol = false
     setInterval(async function(){
         if (newaccs){
