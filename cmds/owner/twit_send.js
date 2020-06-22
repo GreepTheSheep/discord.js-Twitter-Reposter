@@ -13,7 +13,7 @@ async function enable_send(message, client, config, functiondate, functiontime, 
         } else {
             twit_send = false
             message.reply(`Maintenance is enabled. Bot will not send tweets`)
-            client.user.setStatus('dnd')
+            client.user.setStatus('idle')
             client.user.setActivity(`🟠 Starting MAINTENANCE mode`, { type: 'WATCHING' })
             client.shard.send(`Shard ${client.shard.id + 1} - Maintenance enabled`)
             newaccs.emit('basicEvent')

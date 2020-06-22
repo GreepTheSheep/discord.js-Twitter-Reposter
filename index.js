@@ -83,7 +83,7 @@ client.on('ready', () => {
         client.user.setActivity('', { type: 'WATCHING' })
         const actfunction = new Promise(async function(resolve, reject) {
             if (!twit_send) {
-                client.user.setStatus('dnd')
+                client.user.setStatus('idle')
                 client.user.setActivity(`🟠 Starting in MAINTENANCE mode`, { type: 'WATCHING' })
                 client.shard.send(`Shard ${client.shard.id + 1} - Maintenance enabled`)
             }
@@ -96,7 +96,7 @@ client.on('ready', () => {
             client.user.setActivity(`${client.guilds.size} servers on shard ${client.shard.id + 1}`, { type: 'WATCHING' })
             setInterval(function() {
                 if (!twit_send) {
-                    client.user.setStatus('dnd')
+                    client.user.setStatus('idle')
                     let actmsg = randomItem(maintenance_actmsgs);
                     client.user.setActivity(actmsg, { type: 'WATCHING' })
                 }

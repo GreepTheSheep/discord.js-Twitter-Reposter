@@ -40,10 +40,14 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
     Tstream.on('start', function (start_result) {
         if (start_result.status == 200) client.shard.send(`🟢 Streaming API started`)
         else client.shard.send(start_result.statusText)
+        if (twit_send) client.user.setStatus('online')
+        else client.user.setStatus('idle')
     })
-    Tstream.on("end", response =>{
-        client.shard.send(response)
+    Tstream.on("end", async response =>{
         client.shard.send(`🔴 Streaming API ended`)
+        client.user.setStatus('dnd')
+        await wait(45*1000)
+        Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
     });
     Tstream.on('data', async function (tweet) {
         try{
@@ -208,8 +212,8 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         });
         // recreate new stream
             //Tstream.destroy()
-            //await wait(45*1000)
             delete Tstream
+            await wait(45*1000)
             var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
     })
 
