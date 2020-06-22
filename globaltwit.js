@@ -46,6 +46,9 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         try{
 
             client.guilds.forEach(g=>{
+                if (!twit_send) {
+                    if (!authorised_guilds_in_maintenance.includes(g.id)) return
+                }
                 var db = new Enmap({name:'db_'+g.id})
                 var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
                 if (twitter_accounts === undefined) return
