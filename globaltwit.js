@@ -5,41 +5,10 @@ const wait = require('util').promisify(setTimeout);
 
 function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs){
     try{
-        var twitter_ids = []
-            var account_params = []
-            client.guilds.forEach(async g=>{
-                if (!twit_send) {
-                    if (!authorised_guilds_in_maintenance.includes(g.id)) return
-                }
-                client.shard.send('Checking guild ' + g.id)
-                var db = new Enmap({name:'db_'+g.id})
-                if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
-                if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
-                var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
-                if (twitter_accounts === undefined) {
-                    return client.shard.send('Has not a db')
-                }
-                twitter_accounts.forEach(async account=>{
-                    client.shard.send('Checking twitter account ' + account.name)
-                    if (!account.twitter_id) {
-                        twitter_client.get('users/show', { screen_name: account.name}).then(result=>{
-                            account.twitter_id = result.id_str
-                        })
-                        .catch(err=>{
-                            client.shard.send(debug_header + `Twitter User GET request error: ` + err.message + ' - ' + err.code);
-                            client.shard.send(err)
-                            return
-                        })
-                    }
-                    twitter_ids.push(account.twitter_id)
-                    account_params[account.twitter_id].push(account)
-                })
-            });
-    Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids });
+    newaccs = true
     setInterval(async function(){
         if (newaccs){
             var twitter_ids = []
-            var account_params = []
             client.guilds.forEach(async g=>{
                 if (!twit_send) {
                     if (!authorised_guilds_in_maintenance.includes(g.id)) return
@@ -59,24 +28,21 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                             account.twitter_id = result.id_str
                         })
                         .catch(err=>{
-                            client.shard.send(debug_header + `Twitter User GET request error: ` + err.message + ' - ' + err.code);
+                            client.shard.send(`Twitter User GET request error: ` + err.message + ' - ' + err.code);
                             client.shard.send(err)
                             return
                         })
                     }
                     twitter_ids.push(account.twitter_id)
-                    account_params[account.twitter_id].push(account)
                 })
             });
             // recreate new stream
-            delete Tstream
+            if (Tstream) Tstream.destroy()
             await wait(45*1000)
-            Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+            const Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
             newaccs = false
         } else client.shard.send('No new accs')
     }, 60*1000)
-
-    var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1}] `
 
     Tstream.on('start', function (start_result) {
         if (start_result.status == 200) client.shard.send(`🟢 Streaming API started`)
@@ -91,6 +57,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                 if (twitter_accounts === undefined) return
                 twitter_accounts.forEach(async account=>{
                     if (account.twitter_id == tweet.user.id_str) {
+                        var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - ${account.name} - Channel ${account.channel}] `
                         
                     let embed = new Discord.RichEmbed
     
