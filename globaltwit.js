@@ -5,6 +5,7 @@ const wait = require('util').promisify(setTimeout);
 
 function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs){
     try{
+    const checkDelay = 2*60*1000
     var twitter_ids = []
     client.guilds.forEach(async g=>{
         if (!twit_send) {
@@ -168,7 +169,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] ${stall.warning.message} - ` + stall.warning.code)
     })
 
-    setInterval(new Promise(function(resolve, reject) {
+    const check = async function() {
         client.shard.send('Checking new accounts...')
             if (newaccs){
                 client.shard.send('New accounts found!')
@@ -205,8 +206,10 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                     await wait(45*1000)
                     Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
                 newaccs = false
-            } else client.shard.send(`No new accounts`)
-    }), 2*60*1000)
+            } else client.shard.send(`No new accounts, retrying in ${checkDelay/60/1000} minutes`)
+    };
+
+    setInterval(check, checkDelay)
 
 }catch(e){
     client.shard.send(e)
