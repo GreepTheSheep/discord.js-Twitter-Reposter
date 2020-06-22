@@ -5,7 +5,7 @@ const wait = require('util').promisify(setTimeout);
 
 function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs){
     try{
-    const checkDelay = 2*60*1000
+    const checkDelay = 1*60*1000
     var twitter_ids = []
     client.guilds.forEach(async g=>{
         if (!twit_send) {
@@ -169,7 +169,6 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] ${stall.warning.message} - ` + stall.warning.code)
     })
 
-    /*
     const check = async function() {
         client.shard.send('Checking new accounts...')
             if (newaccs){
@@ -211,7 +210,6 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
     };
 
     setInterval(check, checkDelay)
-    */
 
 }catch(e){
     client.shard.send(e)
