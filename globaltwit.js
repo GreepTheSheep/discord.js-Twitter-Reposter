@@ -169,6 +169,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] ${stall.warning.message} - ` + stall.warning.code)
     })
 
+    /*
     const check = async function() {
         client.shard.send('Checking new accounts...')
             if (newaccs){
@@ -210,6 +211,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
     };
 
     setInterval(check, checkDelay)
+    */
 
 }catch(e){
     client.shard.send(e)
