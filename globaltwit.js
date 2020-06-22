@@ -72,7 +72,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                 })
             });
             // recreate new stream
-                Tstream.destroy()
+                if (Tstream || TstreamBol) Tstream.destroy()
                 await wait(45*1000)
                 const Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
             newaccs = false
