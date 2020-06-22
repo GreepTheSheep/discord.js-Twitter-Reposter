@@ -10,7 +10,7 @@ const DBL = require("dblapi.js");
 const dbl = new DBL(config.topgg_token, client);
 if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
 const debug = config.verbose
-const publicBot = "661967218174853121"
+const publicBot = "706587515771158560"
 
 const Twitter = require('twitter-lite')
 var tokens = {
