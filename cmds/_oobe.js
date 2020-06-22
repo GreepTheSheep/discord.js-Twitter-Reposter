@@ -137,7 +137,7 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                                             
                                             db.set('shard_id', client.shard.id + 1)
 
-                                            newaccs.emit('basicEvent')
+                                            newaccs.emit('basicEvent', cache_twitter_name)
                                             bm.edit(`Ok, ${rptextbm}.\n\nThe setting is now done. You can now enjoy the power of Twitter reposting!`)
                                         
                                             const check_number_of_accounts = require('../events/check_number.js')
@@ -287,9 +287,8 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
 
                                 db.set('twitter_name', cache_twitter_name)
 
+                                newaccs.emit('basicEvent', cache_twitter_name)
                                 bm.edit('Account deleted.')
-
-                                newaccs.emit('basicEvent')
                                 
                             }
                             else return bm.edit('Out of range, canceling setup.')

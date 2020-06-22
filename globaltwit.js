@@ -180,22 +180,9 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
     })
 
 
-    newaccs.on('basicEvent', async () => {
+    newaccs.on('basicEvent', async (cache_twitter_name) => {
         client.shard.send('New accounts found!')
-        var twitter_ids = []
-        client.guilds.forEach(async g=>{
-            if (!twit_send) {
-                if (!authorised_guilds_in_maintenance.includes(g.id)) return
-            }
-            client.shard.send('Checking guild ' + g.id)
-            var db = new Enmap({name:'db_'+g.id})
-            if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
-            if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
-            var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
-            if (twitter_accounts === undefined) {
-                return client.shard.send('Has not a db')
-            }
-            twitter_accounts.forEach(async account=>{
+        cache_twitter_name.forEach(async account=>{
                 client.shard.send('Checking twitter account ' + account.name)
                 if (!account.twitter_id) {
                     twitter_client.get('users/show', { screen_name: account.name}).then(result=>{
@@ -208,7 +195,6 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                     })
                 }
                 twitter_ids.push(account.twitter_id)
-            })
         });
         // recreate new stream
             //Tstream.destroy()
