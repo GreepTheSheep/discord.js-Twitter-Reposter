@@ -149,7 +149,7 @@ client.on('guildCreate', guild => {
     }
     const botjoinguildlog = `${client.user.username} joined ${guild.name} - ID: ${guild.id}`
     client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botjoinguildlog}`)
-    dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
+    if (client.user.id === publicBot) dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
 }catch(e){
     client.shard.send(e)
 }
@@ -164,7 +164,7 @@ client.on('guildDelete', guild => {
         }
         const botleftguildlog = `${client.user.username} left ${guild.name} - ID: ${guild.id}`
         client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
-        dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
+        if (client.user.id === publicBot) dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
     } catch(e) {
         client.shard.send(e)
     }
