@@ -46,7 +46,7 @@ async function oobe_advanced(message, client, config, functiondate, functiontime
         message.channel.send(`Account @${args[1].replace('@','')} added to <#${message.mentions.channels.first().id}>!`)
         const check_number_of_accounts = require('../events/check_number.js')
         check_number_of_accounts(client, config, debug, functiondate, functiontime, twit_send)
-        newaccs = true
+        newaccs.emit('basicEvent')
     }
     else if (args[0].toLowerCase() == 'remove' || args[0].toLowerCase() == 'delete'){
         if (!args[1]) return message.channel.send('Twitter account username argument missing')
@@ -56,7 +56,7 @@ async function oobe_advanced(message, client, config, functiondate, functiontime
                 cache_twitter_name.splice(n,1)
                 db.set('twitter_name', cache_twitter_name)
                 message.channel.send(`Account @${acc.name} for channel <#${acc.channel}> deleted.`)
-                newaccs = true
+                newaccs.emit('basicEvent')
                 return
             }
             n++

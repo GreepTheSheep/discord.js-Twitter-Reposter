@@ -12,7 +12,7 @@ function cmds_index(message, client, config, functiondate, functiontime, publicB
 
     if (message.author.id == config.owner_id){
         const ownercmds = require('./owner/owner-index.js')
-        ownercmds(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, twit_send, authorised_guilds_in_maintenance)
+        ownercmds(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, twit_send, authorised_guilds_in_maintenance, newaccs)
     }
 
     const oobe = require('./_oobe.js')

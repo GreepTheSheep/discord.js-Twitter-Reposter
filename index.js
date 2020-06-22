@@ -22,7 +22,7 @@ var tokens = {
 };
 
 const twitter_client = new Twitter(tokens);
-var newaccs = false;
+const newaccs = require('events').EventEmitter
 var twit_send = false
 var authorised_guilds_in_maintenance = [
     //"570024448371982373", // Owner's server

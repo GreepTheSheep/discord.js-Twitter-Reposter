@@ -142,7 +142,7 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                                             const check_number_of_accounts = require('../events/check_number.js')
                                             check_number_of_accounts(client, config, debug, functiondate, functiontime, twit_send)
 
-                                            newaccs = true
+                                            newaccs.emit('basicEvent')
                                         
                                         });
                                         collector6.on('end', (collected, reason) => {
@@ -290,7 +290,7 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
 
                                 bm.edit('Account deleted.')
 
-                                newaccs = true
+                                newaccs.emit('basicEvent')
                                 
                             }
                             else return bm.edit('Out of range, canceling setup.')

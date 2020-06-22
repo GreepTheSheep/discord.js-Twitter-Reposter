@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const shell = require('shelljs')
 
-async function enable_send(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, twit_send, authorised_guilds_in_maintenance) {
+async function enable_send(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, twit_send, authorised_guilds_in_maintenance, newaccs) {
     if (message.content.toLowerCase() == prefix + ' maintenance' || message.content.toLowerCase() == prefix2 + ' maintenance'){
         if (twit_send == false){
             twit_send = true
@@ -9,12 +9,14 @@ async function enable_send(message, client, config, functiondate, functiontime, 
             client.user.setStatus('online')
             client.user.setActivity(`✅ Exiting MAINTENANCE mode`, { type: 'WATCHING' })
             client.shard.send(`Shard ${client.shard.id + 1} - Maintenance disabled`)
+            newaccs.emit('basicEvent')
         } else {
             twit_send = false
             message.reply(`Maintenance is enabled. Bot will not send tweets`)
             client.user.setStatus('dnd')
             client.user.setActivity(`🟠 Starting MAINTENANCE mode`, { type: 'WATCHING' })
             client.shard.send(`Shard ${client.shard.id + 1} - Maintenance enabled`)
+            newaccs.emit('basicEvent')
         }
     }
     if (message.content.toLowerCase() == prefix + ' auth' || message.content.toLowerCase() == prefix2 + ' auth'){
@@ -31,6 +33,7 @@ async function enable_send(message, client, config, functiondate, functiontime, 
                             if (guild == m.content){
                                 authorised_guilds_in_maintenance.splice(n,1)
                                 message.channel.send(`Guild deleted.`)
+                                newaccs.emit('basicEvent')
                                 return
                             }
                             n++
@@ -39,6 +42,7 @@ async function enable_send(message, client, config, functiondate, functiontime, 
                     else {
                         authorised_guilds_in_maintenance.push(m.content)
                         message.channel.send(`Guild added.`)
+                        newaccs.emit('basicEvent')
                     }
                 }
                 else if (!gu) return m.react('❌')
