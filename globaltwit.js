@@ -42,9 +42,15 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
             await wait(45*1000)
             Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
             newaccs = false
+            streaming(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs, Tstream, twitter_accounts, twitter_ids)
         } else client.shard.send('No new accs')
     }, 60*1000)
+}catch(e){
+    client.shard.send('globaltwit error: ' + e)
+}
+}
 
+async function streaming(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs, Tstream, twitter_accounts, twitter_ids){
     Tstream.on('start', function (start_result) {
         if (start_result.status == 200) client.shard.send(`🟢 Streaming API started`)
         else client.shard.send(start_result.statusText)
@@ -175,9 +181,6 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         client.users.find(u=> u.id == config.owner_id).send(`:warning: ${stall.warning.message}`)
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] ${stall.warning.message} - ` + stall.warning.code)
     })
-}catch(e){
-    client.shard.send('globaltwit error: ' + e)
-}
 }
 
 module.exports = globaltwit
