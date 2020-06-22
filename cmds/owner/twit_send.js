@@ -25,6 +25,14 @@ async function enable_send(message, client, config, functiondate, functiontime, 
             const filter = m => message.author == m.author;
             const collectorguild = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
             collectorguild.on('collect', m => {
+                if (m.content == 'list'){
+                    var list = []
+                    authorised_guilds_in_maintenance.forEach(g=>{
+                        list.push(`${g} : ${client.guilds.find(gf=> gf.id == g).name}`)
+                    })
+                    message.channel.send(`\`\`\`${list.join('\n')}\`\`\``)
+                    return
+                }
                 var gu = client.guilds.some(g=> g.id == m.content)
                 if (gu) {
                     if (authorised_guilds_in_maintenance.includes(m.content)){
