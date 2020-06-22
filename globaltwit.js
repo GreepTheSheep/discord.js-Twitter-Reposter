@@ -1,6 +1,7 @@
 const Discord = require('discord.js')
 const Twitter = require('twitter-lite')
-const Enmap = require('enmap')
+const Enmap = require('enmap');
+const { delete } = require('request');
 const wait = require('util').promisify(setTimeout);
 
 function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs){
