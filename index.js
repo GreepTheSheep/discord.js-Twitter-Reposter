@@ -22,7 +22,9 @@ var tokens = {
 };
 
 const twitter_client = new Twitter(tokens);
-const newaccs = require('events').EventEmitter
+const EventEmitter = require('events');
+class MyEmitter extends EventEmitter {}
+const newaccs = new MyEmitter();
 var twit_send = false
 var authorised_guilds_in_maintenance = [
     //"570024448371982373", // Owner's server
