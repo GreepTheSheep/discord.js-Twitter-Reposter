@@ -207,9 +207,9 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
             })
         });
         // recreate new stream
-            process.nextTick(() => Tstream.destroy());
+            Tstream.destroy()
             await wait(45*1000)
-            const Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+            Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
     })
 
 }catch(e){
