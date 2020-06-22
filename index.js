@@ -25,7 +25,7 @@ const twitter_client = new Twitter(tokens);
 var newaccs = false;
 var twit_send = false
 var authorised_guilds_in_maintenance = [
-    "570024448371982373", // Owner's server
+    //"570024448371982373", // Owner's server
     "706587808910934096" // test server
 ]
 
