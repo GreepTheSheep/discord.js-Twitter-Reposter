@@ -4,19 +4,19 @@ const shell = require('shelljs')
 async function enable_send(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, twit_send, authorised_guilds_in_maintenance, newaccs) {
     if (message.content.toLowerCase() == prefix + ' maintenance' || message.content.toLowerCase() == prefix2 + ' maintenance'){
         if (twit_send == false){
-            twit_send = true
             message.reply(`Maintenance is disabled. Bot will send tweets`)
             client.user.setStatus('online')
             client.user.setActivity(`✅ Exiting MAINTENANCE mode`, { type: 'WATCHING' })
             client.shard.send(`Shard ${client.shard.id + 1} - Maintenance disabled`)
             newaccs.emit('fetchAll')
+            return twit_send = true
         } else {
-            twit_send = false
             message.reply(`Maintenance is enabled. Bot will not send tweets`)
             client.user.setStatus('idle')
             client.user.setActivity(`🟠 Starting MAINTENANCE mode`, { type: 'WATCHING' })
             client.shard.send(`Shard ${client.shard.id + 1} - Maintenance enabled`)
             newaccs.emit('fetchAll')
+            return twit_send = false
         }
     }
     if (message.content.toLowerCase() == prefix + ' auth' || message.content.toLowerCase() == prefix2 + ' auth'){
