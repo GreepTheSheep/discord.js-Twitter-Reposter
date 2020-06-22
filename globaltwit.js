@@ -172,7 +172,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
     })
 
 
-    newaccs.on('basicEvent', async function(){
+    newaccs.on('basicEvent', async () => {
         client.shard.send('New accounts found!')
         var twitter_ids = []
         client.guilds.forEach(async g=>{
