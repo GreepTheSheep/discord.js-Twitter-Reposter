@@ -10,7 +10,7 @@ const DBL = require("dblapi.js");
 const dbl = new DBL(config.topgg_token, client);
 if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
 const debug = config.verbose
-const publicBot = "706587515771158560"
+const publicBot = "661967218174853121"
 
 const Twitter = require('twitter-lite')
 var tokens = {
@@ -27,7 +27,7 @@ class MyEmitter extends EventEmitter {}
 const newaccs = new MyEmitter();
 var twit_send = false
 var authorised_guilds_in_maintenance = [
-    //"570024448371982373", // Owner's server
+    "570024448371982373", // Owner's server
     "706587808910934096" // test server
 ]
 
