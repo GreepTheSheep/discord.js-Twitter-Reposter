@@ -129,15 +129,20 @@ client.on('ready', () => {
 })
 
 client.on('message', message =>{
-    if (message.channel.type === 'dm') return
-    if (message.author.bot) return;
-    if (client.user.id === publicBot){
-        const cmds_index = require('./cmds/cmds-index.js')
-        cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send, authorised_guilds_in_maintenance, newaccs)
+    try{
+        if (message.channel.type === 'dm') return
+        if (message.author.bot) return;
+        if (client.user.id === publicBot){
+            const cmds_index = require('./cmds/cmds-index.js')
+            cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send, authorised_guilds_in_maintenance, newaccs)
+        }
+    }catch(e){
+        
     }
 })
 
 client.on('guildCreate', guild => {
+    try{
     if (client.user.id === publicBot){
         const Enmap = require('enmap')
         const db = new Enmap({name:'db_' + guild.id})
@@ -145,17 +150,24 @@ client.on('guildCreate', guild => {
     const botjoinguildlog = `${client.user.username} joined ${guild.name} - ID: ${guild.id}`
     client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botjoinguildlog}`)
     dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
+}catch(e){
+    client.shard.send(e)
+}
 })
 
 client.on('guildDelete', guild => {
-    if (client.user.id === publicBot){
-        const Enmap = require('enmap')
-        const db = new Enmap({name:'db_' + guild.id})
-        db.destroy()
+    try{
+        if (client.user.id === publicBot){
+            const Enmap = require('enmap')
+            const db = new Enmap({name:'db_' + guild.id})
+            db.destroy()
+        }
+        const botleftguildlog = `${client.user.username} left ${guild.name} - ID: ${guild.id}`
+        client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
+        dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
+    } catch(e) {
+        client.shard.send(e)
     }
-    const botleftguildlog = `${client.user.username} left ${guild.name} - ID: ${guild.id}`
-    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
-    dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
 })
 
 client.on('disconnect', event => {
