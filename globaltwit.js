@@ -41,6 +41,10 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         if (start_result.status == 200) client.shard.send(`🟢 Streaming API started`)
         else client.shard.send(start_result.statusText)
     })
+    Tstream.on("end", response =>{
+        client.shard.send(response)
+        client.shard.send(`🔴 Streaming API ended`)
+    });
     Tstream.on('data', async function (tweet) {
         try{
 
