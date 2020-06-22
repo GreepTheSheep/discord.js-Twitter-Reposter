@@ -40,45 +40,6 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
     TstreamBol = true
     newaccs = false
 
-    setInterval(async function(){
-        if (newaccs){
-            client.shard.send('New accounts found!')
-            var twitter_ids = []
-            client.guilds.forEach(async g=>{
-                if (!twit_send) {
-                    if (!authorised_guilds_in_maintenance.includes(g.id)) return
-                }
-                client.shard.send('Checking guild ' + g.id)
-                var db = new Enmap({name:'db_'+g.id})
-                if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
-                if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
-                var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
-                if (twitter_accounts === undefined) {
-                    return client.shard.send('Has not a db')
-                }
-                twitter_accounts.forEach(async account=>{
-                    client.shard.send('Checking twitter account ' + account.name)
-                    if (!account.twitter_id) {
-                        twitter_client.get('users/show', { screen_name: account.name}).then(result=>{
-                            account.twitter_id = result.id_str
-                        })
-                        .catch(err=>{
-                            client.shard.send(`Twitter User GET request error: ` + err.message + ' - ' + err.code);
-                            client.shard.send(err)
-                            return
-                        })
-                    }
-                    twitter_ids.push(account.twitter_id)
-                })
-            });
-            // recreate new stream
-                if (Tstream || TstreamBol) Tstream.destroy()
-                await wait(45*1000)
-                Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
-            newaccs = false
-        } else client.shard.send('No new accs')
-    }, 60*1000)
-
     Tstream.on('start', function (start_result) {
         if (start_result.status == 200) client.shard.send(`🟢 Streaming API started`)
         else client.shard.send(start_result.statusText)
@@ -209,6 +170,49 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         client.users.find(u=> u.id == config.owner_id).send(`:warning: ${stall.warning.message}`)
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] ${stall.warning.message} - ` + stall.warning.code)
     })
+
+    const check = new Promise(async function(resolve, reject) {
+        setInterval(async function(){
+            if (newaccs){
+                client.shard.send('New accounts found!')
+                var twitter_ids = []
+                client.guilds.forEach(async g=>{
+                    if (!twit_send) {
+                        if (!authorised_guilds_in_maintenance.includes(g.id)) return
+                    }
+                    client.shard.send('Checking guild ' + g.id)
+                    var db = new Enmap({name:'db_'+g.id})
+                    if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
+                    if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
+                    var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
+                    if (twitter_accounts === undefined) {
+                        return client.shard.send('Has not a db')
+                    }
+                    twitter_accounts.forEach(async account=>{
+                        client.shard.send('Checking twitter account ' + account.name)
+                        if (!account.twitter_id) {
+                            twitter_client.get('users/show', { screen_name: account.name}).then(result=>{
+                                account.twitter_id = result.id_str
+                            })
+                            .catch(err=>{
+                                client.shard.send(`Twitter User GET request error: ` + err.message + ' - ' + err.code);
+                                client.shard.send(err)
+                                return
+                            })
+                        }
+                        twitter_ids.push(account.twitter_id)
+                    })
+                });
+                // recreate new stream
+                    if (Tstream || TstreamBol) Tstream.destroy()
+                    await wait(45*1000)
+                    Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+                newaccs = false
+            } else client.shard.send('No new accs')
+        }, 60*1000)
+    });
+
+    check
 
 }catch(e){
     client.shard.send(e)
