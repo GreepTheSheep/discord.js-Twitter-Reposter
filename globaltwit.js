@@ -168,8 +168,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] ${stall.warning.message} - ` + stall.warning.code)
     })
 
-    const check = new Promise(async function(resolve, reject) {
-        setInterval(async function(){
+    const check = function() {
             if (newaccs){
                 client.shard.send('New accounts found!')
                 var twitter_ids = []
@@ -206,10 +205,9 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                     Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
                 newaccs = false
             } else client.shard.send('No new accs')
-        }, 60*1000)
-    });
+    };
 
-    check
+    setInterval(check, 60*1000)
 
 }catch(e){
     client.shard.send(e)
