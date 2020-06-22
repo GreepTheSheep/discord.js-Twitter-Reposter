@@ -36,7 +36,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         })
     });
 
-    const Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+    var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
     TstreamBol = true
     newaccs = false
 
@@ -74,7 +74,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
             // recreate new stream
                 if (Tstream || TstreamBol) Tstream.destroy()
                 await wait(45*1000)
-                const Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+                Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
             newaccs = false
         } else client.shard.send('No new accs')
     }, 60*1000)
