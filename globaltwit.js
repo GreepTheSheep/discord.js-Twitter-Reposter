@@ -5,7 +5,6 @@ const wait = require('util').promisify(setTimeout);
 
 function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs){
     try{
-    const checkDelay = 2*60*1000
     var twitter_ids = []
     client.guilds.forEach(async g=>{
         if (!twit_send) {
@@ -206,8 +205,8 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                     await wait(45*1000)
                     Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
                 newaccs = false
-            } else client.shard.send(`No new accounts, retrying in ${checkDelay/60/1000} minutes`)
-    }), checkDelay)
+            } else client.shard.send(`No new accounts`)
+    }), 2*60*1000)
 
 }catch(e){
     client.shard.send(e)
