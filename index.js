@@ -124,7 +124,7 @@ client.on('ready', () => {
     }
 
    }catch(err){
-        client.shard.send(err)
+        console.error(err)
    }
 })
 
@@ -137,7 +137,7 @@ client.on('message', message =>{
             cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send, authorised_guilds_in_maintenance, newaccs)
         }
     }catch(e){
-        
+        console.error(e)
     }
 })
 
@@ -151,7 +151,7 @@ client.on('guildCreate', guild => {
     client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botjoinguildlog}`)
     if (client.user.id === publicBot) dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
 }catch(e){
-    client.shard.send(e)
+    console.error(e)
 }
 })
 
@@ -166,7 +166,7 @@ client.on('guildDelete', guild => {
         client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
         if (client.user.id === publicBot) dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
     } catch(e) {
-        client.shard.send(e)
+        console.error(e)
     }
 })
 
@@ -185,5 +185,5 @@ dbl.on('error', e => {
     client.shard.send(`top.gg error! ${e}`);
 })
 }catch(e){
-    client.shard.send(e)
+    console.error(e)
 }

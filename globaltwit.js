@@ -209,7 +209,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
     })
 
 }catch(e){
-    client.shard.send(e)
+    console.error(e)
 }
 }
 
