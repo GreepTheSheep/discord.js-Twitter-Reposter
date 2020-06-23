@@ -46,7 +46,6 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
     Tstream.on("end", async response =>{
         client.shard.send(`🔴 Streaming API ended`)
         client.user.setStatus('dnd')
-        await wait(45*1000)
         Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
     });
     Tstream.on('data', async function (tweet) {
@@ -197,9 +196,8 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                 twitter_ids.push(account.twitter_id)
         });
         // recreate new stream
-            //Tstream.destroy()
+            Tstream.destroy()
             delete Tstream
-            await wait(45*1000)
             var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
     })
 
@@ -236,7 +234,6 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
         // recreate new stream
             //Tstream.destroy()
             delete Tstream
-            await wait(45*1000)
             var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
     })
 

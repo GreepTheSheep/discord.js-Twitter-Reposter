@@ -96,12 +96,10 @@ client.on('ready', () => {
             client.user.setActivity(`${client.guilds.size} servers on shard ${client.shard.id + 1}`, { type: 'WATCHING' })
             setInterval(function() {
                 if (!twit_send) {
-                    client.user.setStatus('idle')
                     let actmsg = randomItem(maintenance_actmsgs);
                     client.user.setActivity(actmsg, { type: 'WATCHING' })
                 }
                 else {
-                    client.user.setStatus('online')
                     let actmsg = randomItem(actmsgs);
                     client.user.setActivity(actmsg, { type: 'WATCHING' })
                 }
