@@ -23,7 +23,7 @@ var tokens = {
 };
 
 const twitter_client = new Twitter(tokens);
-var twit_send = false
+var twit_send = true
 
 function functiondate() { 
     const datefu = new Date();
