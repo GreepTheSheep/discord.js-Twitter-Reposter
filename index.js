@@ -25,7 +25,7 @@ const twitter_client = new Twitter(tokens);
 const EventEmitter = require('events');
 class MyEmitter extends EventEmitter {}
 const newaccs = new MyEmitter();
-var twit_send = false
+var twit_send = true
 var authorised_guilds_in_maintenance = [
     "570024448371982373", // Owner's server
     "706587808910934096" // test server
