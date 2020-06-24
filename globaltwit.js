@@ -1,216 +1,245 @@
 const Discord = require('discord.js')
-const Twitter = require('twit')
-const Enmap = require('enmap')
+const Twitter = require('twitter-lite')
+const Enmap = require('enmap');
 const wait = require('util').promisify(setTimeout);
-const fs = require('fs')
 
-function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send){
+function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs){
     try{
-    var g_acc = 0
-    var g_acc_in_twitter = 0
-    var old_twt = {}
-    setInterval(async function(){
+    const checkDelay = 1*60*1000
+    var twitter_ids = []
+    client.guilds.forEach(async g=>{
+        if (!twit_send) {
+            if (!authorised_guilds_in_maintenance.includes(g.id)) return
+        }
+        client.shard.send('Checking guild ' + g.id)
+        var db = new Enmap({name:'db_'+g.id})
+        if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
+        if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
+        var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
+        if (twitter_accounts === undefined) {
+            return client.shard.send('Has not a db')
+        }
+        twitter_accounts.forEach(async account=>{
+            client.shard.send('Checking twitter account ' + account.name)
+            if (!account.twitter_id) {
+                twitter_client.get('users/show', { screen_name: account.name}).then(result=>{
+                    account.twitter_id = result.id_str
+                })
+                .catch(err=>{
+                    client.shard.send(`Twitter User GET request error: ` + err.message + ' - ' + err.code);
+                    client.shard.send(err)
+                    return
+                })
+            }
+            twitter_ids.push(account.twitter_id)
+        })
+    });
+
+    var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+
+    Tstream.on('start', function (start_result) {
+        if (start_result.status == 200) client.shard.send(`🟢 Streaming API started`)
+        else client.shard.send(start_result.statusText)
+        if (twit_send) client.user.setStatus('online')
+        else client.user.setStatus('idle')
+    })
+    Tstream.on("end", async response =>{
+        client.shard.send(`🔴 Streaming API ended`)
+        client.user.setStatus('dnd')
+        Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+    });
+    Tstream.on('data', async function (tweet) {
         try{
-        g_acc = 0
-        client.guilds.forEach(async g=>{
-            var db = new Enmap({name:'db_'+g.id})
-            if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
-            if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
-            if (!twit_send) return
-            var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
-            if (twitter_accounts === undefined) return
-            g_acc_in_twitter = 0
-            twitter_accounts.forEach(async account=>{
-                if (!account.name) return
-                var twitter_params = { screen_name: account.name}
 
-                await twitter_client.get('statuses/user_timeline', twitter_params, async (err, tweets) => {
-                    var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) - ${g_acc_in_twitter} : ${account.name} - Channel ${account.channel} ] `
-                    if (err) {
-                        client.shard.send(debug_header + `Twitter GET request error: ` + err.message + ' - ' + err.code);
-                        client.shard.send(err)
-                        if (err.code == 34 || err.code == null){
-                            var n = 0
-                            twitter_accounts.forEach(acc=>{
-                                if (acc.name == account.name){
-                                    twitter_accounts.splice(n,1)
-                                    db.set('twitter_name', twitter_accounts)
-                                    client.shard.send(`Account @${account.name} for channel ${account.channel} deleted.`)
-                                    g.channels.find(c=>c.id == account.channel).send(`Account @${account.name} is not found on Twitter, the account was deleted from the database to prevent errors.\nMake sure your account is not deleted!`)
-                                }
-                                n++
-                            })  
-                        }
-                        else if (err.code == 80 || err.code == 88){
-                            if (tokens.safe == false) {
-                                tokens = {
-                                    consumer_key:        config.safe_consumer_key,
-                                    consumer_secret:     config.safe_consumer_secret,
-                                    access_token:        config.safe_access_token_key,
-                                    access_token_key:    config.safe_access_token_key,
-                                    access_token_secret: config.safe_access_token_secret,
-                                    safe: true
-                                }
-                                client.user.setStatus('idle')
-                                client.shard.send(`TWITTER RATE LIMITED, safe mode activated`)
-                                fs.writeFileSync('./data/safemode-logs.txt', fs.readFileSync('./data/safemode-logs.txt') + `[${functiondate()} - ${functiontime()}] Safe mode activated\n`)
-                            }
-                            else {
-                                tokens = {
-                                    consumer_key:        config.consumer_key,
-                                    consumer_secret:     config.consumer_secret,
-                                    access_token:        config.access_token_key,
-                                    access_token_key:    config.access_token_key,
-                                    access_token_secret: config.access_token_secret,
-                                    safe: false
-                                }
-                                client.user.setStatus('online')
-                                client.shard.send(`TWITTER RATE LIMITED, safe mode desactivated`)
-                                fs.writeFileSync('./data/safemode-logs.txt', fs.readFileSync('./data/safemode-logs.txt') + `[${functiondate()} - ${functiontime()}] Safe mode desactivated\n\n`)
-                            }
-                            twitter_client = new Twitter(tokens);
-                            
-                        } else process.exit(err.code)
-                        return
-                    }
-                    
-                    if (old_twt[tweets[0].user.screen_name] && old_twt[tweets[0].user.screen_name].id == tweets[0].id) {
-                        if (debug === true) client.shard.send(debug_header + `no new tweets`)
-                    }
-                    if (old_twt[tweets[0].user.screen_name] && old_twt[tweets[0].user.screen_name].id != tweets[0].id) {
-                        try{
-
-                            let embed = new Discord.RichEmbed
+            client.guilds.forEach(g=>{
+                if (!twit_send) {
+                    if (!authorised_guilds_in_maintenance.includes(g.id)) return
+                }
+                var db = new Enmap({name:'db_'+g.id})
+                var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
+                if (twitter_accounts === undefined) return
+                twitter_accounts.forEach(async account=>{
+                    if (account.twitter_id == tweet.user.id_str) {
+                        var debug_header = `[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - ${account.name} - Channel ${account.channel}] `
+                        
+                    let embed = new Discord.RichEmbed
     
-                            tweets[0].text.replace('&amp;', '&')
-    
-                        if (tweets[0].retweeted === true || tweets[0].text.startsWith('RT')) {
+                    tweet.text.replace('&amp;', '&')
+                        if (tweet.retweeted === true || tweet.text.startsWith('RT')) {
                             if (account.retweet === true){
-                                if (debug === true) client.shard.send(debug_header + `Retweet from @${tweets[0].retweeted_status.user.screen_name}`)
+                                if (debug === true) client.shard.send(debug_header + `Retweet from @${tweet.retweeted_status.user.screen_name}`)
                                 embed   .setColor(account.embed_color ? account.embed_color : 'RANDOM')
-                                        .setAuthor(`Retweet\n${tweets[0].retweeted_status.user.name} (@${tweets[0].retweeted_status.user.screen_name})`, tweets[0].retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                                        .setDescription(tweets[0].retweeted_status.text)
-                                        .setTimestamp(tweets[0].retweeted_status.created_at)
+                                        .setAuthor(`Retweet\n${tweet.retweeted_status.user.name} (@${tweet.retweeted_status.user.screen_name})`, tweet.retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
+                                        .setDescription(tweet.retweeted_status.text)
+                                        .setTimestamp(tweet.retweeted_status.created_at)
                                         .setThumbnail('https://img.icons8.com/color/96/000000/retweet.png')
-                                if (tweets[0].retweeted_status.entities.media) embed.setImage(tweets[0].retweeted_status.entities.media[0].media_url_https)
-                                if (g.channels.some(c=>c.id == account.channel)) {
-                                    var webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
-                                    .catch(g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
-                                        .then(async wh=>{
-                                            client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
+                                if (tweet.retweeted_status.entities.media) embed.setImage(tweet.retweeted_status.entities.media[0].media_url_https)
+                                if (client.channels.some(c=>c.id == account.channel)) {
+                                    var webhooks = await client.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                    .catch(client.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
+                                    .then(async wh=>{
+                                            client.shard.send(`Created webhook ${wh.name} for account @${tweet.user.screen_name} on channel ${wh.channelID}`)
                                             webhook.send('', {
-                                                username: tweets[0].user.name,
-                                                avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                                username: tweet.user.name,
+                                                avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
                                                 embeds: [embed]
                                             })
                                         })
                                     )
-                                    webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                    webhooks = await client.channels.find(c=>c.id == account.channel).fetchWebhooks()
                                     var webhook = webhooks.first()
                                     webhook.send('', {
-                                        username: tweets[0].user.name,
-                                        avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                        username: tweet.user.name,
+                                        avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
                                         embeds: [embed]
                                     })
                                 } else return
                             } else {
-                                if (debug === true) client.shard.send(debug_header + `Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
+                                if (debug === true) client.shard.send(debug_header + `Retweet from @${tweet.retweeted_status.user.screen_name}, but retweet config is disabled`)
                             }
-                        } else if (tweets[0].retweeted === false || !tweets[0].text.startsWith('RT')) {
-                            if (tweets[0].in_reply_to_status_id == null || tweets[0].in_reply_to_user_id == null) {
-                                if (debug === true) client.shard.send(debug_header + `Simple tweet, id ${tweets[0].id_str}`)
+                        } else if (tweet.retweeted === false || !tweet.text.startsWith('RT')) {
+                            if (tweet.in_reply_to_status_id == null || tweet.in_reply_to_user_id == null) {
+                                if (debug === true) client.shard.send(debug_header + `Simple tweet, id ${tweet.id_str}`)
                                 embed   .setColor(account.embed_color ? account.embed_color : 'RANDOM')
-                                        .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                                        .setDescription(tweets[0].text)
-                                        .setTimestamp(tweets[0].created_at)
-                                if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                                if (g.channels.some(c=>c.id == account.channel)) {
-                                    var webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
-                                    .catch(g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
+                                        .setAuthor(`${tweet.user.name} (@${tweet.user.screen_name})`, tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
+                                        .setDescription(tweet.text)
+                                        .setTimestamp(tweet.created_at)
+                                if (tweet.entities.media) embed.setImage(tweet.entities.media[0].media_url_https)
+                                if (client.channels.some(c=>c.id == account.channel)) {
+                                    var webhooks = await client.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                    .catch(client.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
                                         .then(async wh=>{
-                                            client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
+                                            client.shard.send(`Created webhook ${wh.name} for account @${tweet.user.screen_name} on channel ${wh.channelID}`)
                                             webhook.send('', {
-                                                username: tweets[0].user.name,
-                                                avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                                username: tweet.user.name,
+                                                avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
                                                 embeds: [embed]
                                             })
                                         })
                                     )
-                                    webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                    webhooks = await client.channels.find(c=>c.id == account.channel).fetchWebhooks()
                                     var webhook = webhooks.first()
                                     webhook.send('', {
-                                        username: tweets[0].user.name,
-                                        avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                        username: tweet.user.name,
+                                        avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
                                         embeds: [embed]
                                     })
                                 } else return
-                            } else if (tweets[0].in_reply_to_status_id != null || tweets[0].in_reply_to_user_id != null){
+                            } else if (tweet.in_reply_to_status_id != null || tweet.in_reply_to_user_id != null){
                                 if (account.reply === false){
                                     if (debug === true) client.shard.send(debug_header + `Reply to a tweet, but reply option is off`)
                                 } else {
-                                    if (debug === true) client.shard.send(debug_header + `Reply to a tweet, id ${tweets[0].in_reply_to_status_id}`)
+                                    if (debug === true) client.shard.send(debug_header + `Reply to a tweet, id ${tweet.in_reply_to_status_id}`)
                                     embed   .setColor(account.embed_color ? account.embed_color : 'RANDOM')
-                                            .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})\nReply to @${tweets[0].in_reply_to_screen_name}`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                                            .setDescription(tweets[0].text.replace(`@${tweets[0].in_reply_to_screen_name}`, ""))
-                                            .setTimestamp(tweets[0].created_at)
+                                            .setAuthor(`${tweet.user.name} (@${tweet.user.screen_name})\nReply to @${tweet.in_reply_to_screen_name}`, tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
+                                            .setDescription(tweet.text.replace(`@${tweet.in_reply_to_screen_name}`, ""))
+                                            .setTimestamp(tweet.created_at)
                                             .setThumbnail('https://cdn1.iconfinder.com/data/icons/messaging-3/48/Reply-512.png')
-                                    if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                                    if (g.channels.some(c=>c.id == account.channel)) {
-                                    var webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
-                                    .catch(g.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
-                                        .then(async wh=>{
-                                            client.shard.send(`Created webhook ${wh.name} for account @${tweets[0].user.screen_name} on channel ${wh.channelID}`)
-                                            webhook.send('', {
-                                                username: tweets[0].user.name,
-                                                avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
-                                                embeds: [embed]
+                                    if (tweet.entities.media) embed.setImage(tweet.entities.media[0].media_url_https)
+                                    if (client.channels.some(c=>c.id == account.channel)) {
+                                        var webhooks = await client.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                        .catch(client.channels.find(c=>c.id == account.channel).createWebhook(client.user.username)
+                                            .then(async wh=>{
+                                                client.shard.send(`Created webhook ${wh.name} for account @${tweet.user.screen_name} on channel ${wh.channelID}`)
+                                                webhook.send('', {
+                                                    username: tweet.user.name,
+                                                    avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                                    embeds: [embed]
+                                                })
                                             })
+                                        )
+                                        webhooks = await client.channels.find(c=>c.id == account.channel).fetchWebhooks()
+                                        var webhook = webhooks.first()
+                                        webhook.send('', {
+                                            username: tweet.user.name,
+                                            avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                            embeds: [embed]
                                         })
-                                    )
-                                    webhooks = await g.channels.find(c=>c.id == account.channel).fetchWebhooks()
-                                    var webhook = webhooks.first()
-                                    webhook.send('', {
-                                        username: tweets[0].user.name,
-                                        avatarURL: tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
-                                        embeds: [embed]
-                                    })
                                     } else return
                                 }
                             }
                         }
-                        old_twt[tweets[0].user.screen_name] = {
-                            id: tweets[0].id
-                        }
-                        }catch(e){
-                            if (debug === true) client.shard.send(`ERROR: ${debug_header}` + e)
-                            if (debug === true) client.shard.send(tweets[0])
-                            if (g.channels.some(c=>c.id == account.channel)) g.channels.find(c=>c.id == account.channel).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                            .catch(err=>client.shard.send(`Error sending on guild ${g.id} - ${g.name}\n${err}`))
-                            old_twt[tweets[0].user.screen_name] = {
-                                id: tweets[0].id
-                            }
-                        }
                     }
-                    if (!old_twt[tweets[0].user.screen_name]) {
-                        if (debug === true) client.shard.send(debug_header + `old_tweets not defined, setting var`)
-                        old_twt[tweets[0].user.screen_name] = {
-                            id: tweets[0].id
-                        }
-                    }
-                    g_acc_in_twitter++
                 })
-                client.shard.send('\n')
-                await wait(Number(twitter_accounts.length) * 1000)
-                g_acc++
             })
+        }catch(e){
+            if (debug === true) client.shard.send(`ERROR: ` + e)
+            if (debug === true) client.shard.send(tweet)
+            if (client.channels.some(c=>c.id == account.channel)) client.channels.find(c=>c.id == account.channel).send(`https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
+            .catch(err=>client.shard.send(`Error sending on guild ${g.id} - ${g.name}\n${err}`))               
+        }
+    })
+    Tstream.on('error', function (err) {
+        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] globaltwit stream error:`)
+        client.shard.send(err)
+    })
+    Tstream.on('stall_warnings', function (stall) {
+        client.users.find(u=> u.id == config.owner_id).send(`:warning: ${stall.warning.message}`)
+        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] ${stall.warning.message} - ` + stall.warning.code)
+    })
+
+
+    newaccs.on('basicEvent', async (cache_twitter_name) => {
+        client.shard.send('New accounts found!')
+        cache_twitter_name.forEach(async account=>{
+                client.shard.send('Checking twitter account ' + account.name)
+                if (!account.twitter_id) {
+                    twitter_client.get('users/show', { screen_name: account.name}).then(result=>{
+                        account.twitter_id = result.id_str
+                    })
+                    .catch(err=>{
+                        client.shard.send(`Twitter User GET request error: ` + err.message + ' - ' + err.code);
+                        client.shard.send(err)
+                        return
+                    })
+                }
+                twitter_ids.push(account.twitter_id)
         });
-    } catch (e) {
-        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit interval function error:` + e);
-    }
-    }, 60 * 1000) // 60 sec
-    
-    } catch (e) {
-        client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - Guild ${g.id} (${g.name}) ] globaltwit function error:` + e);
-    }
+        // recreate new stream
+            Tstream.destroy()
+            delete Tstream
+            var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+    })
+
+    newaccs.on('fetchAll', async (cache_twitter_name) => {
+        client.shard.send('Fetching all accounts')
+        var twitter_ids = []
+    client.guilds.forEach(async g=>{
+        if (!twit_send) {
+            if (!authorised_guilds_in_maintenance.includes(g.id)) return
+        }
+        client.shard.send('Checking guild ' + g.id)
+        var db = new Enmap({name:'db_'+g.id})
+        if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
+        if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
+        var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
+        if (twitter_accounts === undefined) {
+            return client.shard.send('Has not a db')
+        }
+        twitter_accounts.forEach(async account=>{
+            client.shard.send('Checking twitter account ' + account.name)
+            if (!account.twitter_id) {
+                twitter_client.get('users/show', { screen_name: account.name}).then(result=>{
+                    account.twitter_id = result.id_str
+                })
+                .catch(err=>{
+                    client.shard.send(`Twitter User GET request error: ` + err.message + ' - ' + err.code);
+                    client.shard.send(err)
+                    return
+                })
+            }
+            twitter_ids.push(account.twitter_id)
+        })
+    });
+        // recreate new stream
+            //Tstream.destroy()
+            delete Tstream
+            var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+    })
+
+}catch(e){
+    console.error(e)
 }
+}
+
 module.exports = globaltwit

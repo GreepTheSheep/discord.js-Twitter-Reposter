@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
-const Twitter = require('twit')
+const Twitter = require('twitter-lite')
 
-async function oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, dbl, twitter_client, twit_send){
+async function oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, dbl, twitter_client, twit_send, newaccs){
     if (!db.has('twitter_name')) {
         db.set('twitter_name', [])
     }
@@ -43,7 +43,10 @@ async function oobe_advanced(message, client, config, functiondate, functiontime
             embed_color: 'RANDOM'
         })
         db.set('twitter_name', cache_twitter_name)
+        newaccs.emit('basicEvent', cache_twitter_name)
         message.channel.send(`Account @${args[1].replace('@','')} added to <#${message.mentions.channels.first().id}>!`)
+        const check_number_of_accounts = require('../events/check_number.js')
+        check_number_of_accounts(client, config, debug, functiondate, functiontime, twit_send)
     }
     else if (args[0].toLowerCase() == 'remove' || args[0].toLowerCase() == 'delete'){
         if (!args[1]) return message.channel.send('Twitter account username argument missing')
@@ -53,6 +56,7 @@ async function oobe_advanced(message, client, config, functiondate, functiontime
                 cache_twitter_name.splice(n,1)
                 db.set('twitter_name', cache_twitter_name)
                 message.channel.send(`Account @${acc.name} for channel <#${acc.channel}> deleted.`)
+                newaccs.emit('basicEvent', cache_twitter_name)
                 return
             }
             n++

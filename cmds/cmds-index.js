@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const Enmap = require('enmap')
 
-function cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send){
+function cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send, authorised_guilds_in_maintenance, newaccs){
     const prefix = `<@!${client.user.id}>` 
     const prefix2 = `<@${client.user.id}>`
     let embed = new Discord.RichEmbed
@@ -12,11 +12,11 @@ function cmds_index(message, client, config, functiondate, functiontime, publicB
 
     if (message.author.id == config.owner_id){
         const ownercmds = require('./owner/owner-index.js')
-        ownercmds(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, twit_send)
+        ownercmds(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, twit_send, authorised_guilds_in_maintenance, newaccs)
     }
 
     const oobe = require('./_oobe.js')
-    oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send)
+    oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send, newaccs)
 
     const settings = require('./sets.js')
     settings(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed)

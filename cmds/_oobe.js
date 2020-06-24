@@ -5,9 +5,9 @@
 */
 
 const Discord = require('discord.js')
-const Twitter = require('twit')
+const Twitter = require('twitter-lite')
 
-async function oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send){
+async function oobe(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send, newaccs){
     if (message.content == prefix || message.content == prefix2){
         if (!db.has('twitter_name')) {
             embed.setDescription(`${twit_send?'':`🛠 MAINTENANCE MODE IS ENABLED: ${client.user.username} will not send tweets at the moment.\n\n`}**__Hello ${message.author.username}!__**\n\n__You haven't linked any Twitter accounts with this server.__\nPlease type "${prefix} setup" to start the setup`)
@@ -30,10 +30,10 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
     else if (message.content.toLowerCase().startsWith(prefix + ' setup') || message.content.toLowerCase().startsWith(prefix2 + ' setup') || message.content.toLowerCase().startsWith(prefix + ' oobe') || message.content.toLowerCase().startsWith(prefix2 + ' oobe')){
         if(message.member.hasPermission("ADMINISTRATOR") || message.member.id == config.owner_id){
             const args = message.content.split(' ').slice(2);
-            if (args.length < 1) oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send)
+            if (args.length < 1) oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send, newaccs)
             else {
                 const oobe_advanced = require('./oobe-advanced.js')
-                oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, dbl, twitter_client, twit_send)
+                oobe_advanced(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, args, dbl, twitter_client, twit_send, newaccs)
             } 
         } else {
             return message.reply('you don\'t have sufficient permissions!')
@@ -41,7 +41,7 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
     }
 }
 
-async function oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send){
+async function oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send, newaccs){
     const filter = m => message.author == m.author;
             embed.setDescription(`${twit_send?'':`🛠 MAINTENANCE MODE IS ENABLED: ${client.user.username} will not send tweets at the moment.\n\n`}**__Hello ${message.author.username}!__**\n\nPlease make your choice by typing the number: \`\`\`1 - Link new account to this server\n2 - Modify an linked account\n3 - Show help about configuration\`\`\``)
             embed.setColor('RANDOM')
@@ -137,7 +137,12 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                                             
                                             db.set('shard_id', client.shard.id + 1)
 
+                                            newaccs.emit('basicEvent', cache_twitter_name)
                                             bm.edit(`Ok, ${rptextbm}.\n\nThe setting is now done. You can now enjoy the power of Twitter reposting!`)
+                                        
+                                            const check_number_of_accounts = require('../events/check_number.js')
+                                            check_number_of_accounts(client, config, debug, functiondate, functiontime, twit_send)
+                                        
                                         });
                                         collector6.on('end', (collected, reason) => {
                                             if (reason == 'time'){
@@ -282,6 +287,7 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
 
                                 db.set('twitter_name', cache_twitter_name)
 
+                                newaccs.emit('basicEvent', cache_twitter_name)
                                 bm.edit('Account deleted.')
                                 
                             }

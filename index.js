@@ -12,18 +12,24 @@ if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
 const debug = config.verbose
 const publicBot = "661967218174853121"
 
-const Twitter = require('twit')
+const Twitter = require('twitter-lite')
 var tokens = {
     consumer_key:        config.consumer_key,
     consumer_secret:     config.consumer_secret,
     access_token:        config.access_token_key,
     access_token_key:    config.access_token_key,
     access_token_secret: config.access_token_secret,
-    safe: false
 };
 
 const twitter_client = new Twitter(tokens);
+const EventEmitter = require('events');
+class MyEmitter extends EventEmitter {}
+const newaccs = new MyEmitter();
 var twit_send = true
+var authorised_guilds_in_maintenance = [
+    "570024448371982373", // Owner's server
+    "706587808910934096" // test server
+]
 
 function functiondate() { 
     const datefu = new Date();
@@ -77,7 +83,7 @@ client.on('ready', () => {
         client.user.setActivity('', { type: 'WATCHING' })
         const actfunction = new Promise(async function(resolve, reject) {
             if (!twit_send) {
-                client.user.setStatus('dnd')
+                client.user.setStatus('idle')
                 client.user.setActivity(`🟠 Starting in MAINTENANCE mode`, { type: 'WATCHING' })
                 client.shard.send(`Shard ${client.shard.id + 1} - Maintenance enabled`)
             }
@@ -90,12 +96,10 @@ client.on('ready', () => {
             client.user.setActivity(`${client.guilds.size} servers on shard ${client.shard.id + 1}`, { type: 'WATCHING' })
             setInterval(function() {
                 if (!twit_send) {
-                    client.user.setStatus('dnd')
                     let actmsg = randomItem(maintenance_actmsgs);
                     client.user.setActivity(actmsg, { type: 'WATCHING' })
                 }
                 else {
-                    client.user.setStatus('online')
                     let actmsg = randomItem(actmsgs);
                     client.user.setActivity(actmsg, { type: 'WATCHING' })
                 }
@@ -106,7 +110,7 @@ client.on('ready', () => {
         dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
 
         const globaltwit = require('./globaltwit.js')
-        globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send)
+        globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs)
         
         actfunction
     } else {
@@ -120,38 +124,50 @@ client.on('ready', () => {
     }
 
    }catch(err){
-        client.shard.send(err)
+        console.error(err)
    }
 })
 
 client.on('message', message =>{
-    if (message.channel.type === 'dm') return
-    if (message.author.bot) return;
-    if (client.user.id === publicBot){
-        const cmds_index = require('./cmds/cmds-index.js')
-        cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send)
+    try{
+        if (message.channel.type === 'dm') return
+        if (message.author.bot) return;
+        if (client.user.id === publicBot){
+            const cmds_index = require('./cmds/cmds-index.js')
+            cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send, authorised_guilds_in_maintenance, newaccs)
+        }
+    }catch(e){
+        console.error(e)
     }
 })
 
 client.on('guildCreate', guild => {
+    try{
     if (client.user.id === publicBot){
         const Enmap = require('enmap')
         const db = new Enmap({name:'db_' + guild.id})
     }
     const botjoinguildlog = `${client.user.username} joined ${guild.name} - ID: ${guild.id}`
     client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botjoinguildlog}`)
-    dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
+    if (client.user.id === publicBot) dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
+}catch(e){
+    console.error(e)
+}
 })
 
 client.on('guildDelete', guild => {
-    if (client.user.id === publicBot){
-        const Enmap = require('enmap')
-        const db = new Enmap({name:'db_' + guild.id})
-        db.destroy()
+    try{
+        if (client.user.id === publicBot){
+            const Enmap = require('enmap')
+            const db = new Enmap({name:'db_' + guild.id})
+            db.destroy()
+        }
+        const botleftguildlog = `${client.user.username} left ${guild.name} - ID: ${guild.id}`
+        client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
+        if (client.user.id === publicBot) dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
+    } catch(e) {
+        console.error(e)
     }
-    const botleftguildlog = `${client.user.username} left ${guild.name} - ID: ${guild.id}`
-    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
-    dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
 })
 
 client.on('disconnect', event => {
@@ -169,5 +185,5 @@ dbl.on('error', e => {
     client.shard.send(`top.gg error! ${e}`);
 })
 }catch(e){
-    client.shard.send(e)
+    console.error(e)
 }
