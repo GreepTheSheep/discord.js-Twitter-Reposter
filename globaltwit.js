@@ -47,7 +47,12 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
         client.shard.send(twitter_ids)
     });
 
-    client.shard.send(twitter_ids)
+    await wait(10*1000)
+    if (twitter_ids.length == 0) {
+        client.shard.send(`🔴 lol where are accounts`)
+        client.user.setStatus('dnd')
+        await client.shard.send(`Retrying in 45 seconds...`).then(wait(45*1000))
+    }
     var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
 
     Tstream.on('start', function (start_result) {
@@ -59,6 +64,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
     Tstream.on("end", async response =>{
         client.shard.send(`🔴 Streaming API ended`)
         client.user.setStatus('dnd')
+        await client.shard.send(`Retrying in 45 seconds...`).then(wait(45*1000))
         Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
     });
     Tstream.on('data', async function (tweet) {
