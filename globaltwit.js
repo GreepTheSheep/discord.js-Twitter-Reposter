@@ -44,7 +44,6 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
             twitter_ids.push(acc_id)
             client.shard.send('Done! ID: ' + acc_id)
         })
-        client.shard.send(twitter_ids)
     });
 
     await wait(10*1000)
