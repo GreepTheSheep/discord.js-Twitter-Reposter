@@ -42,12 +42,13 @@ async function oobe(message, client, config, functiondate, functiontime, publicB
 }
 
 async function oobe_stepByStep(message, client, config, functiondate, functiontime, publicBot, db, prefix, prefix2, embed, dbl, twitter_client, twit_send, newaccs){
-    const filter = m => message.author == m.author;
+            const filter = m => message.author == m.author;
             embed.setDescription(`${twit_send?'':`🛠 MAINTENANCE MODE IS ENABLED: ${client.user.username} will not send tweets at the moment.\n\n`}**__Hello ${message.author.username}!__**\n\nPlease make your choice by typing the number: \`\`\`1 - Link new account to this server\n2 - Modify an linked account\n3 - Show help about configuration\`\`\``)
             embed.setColor('RANDOM')
             const bmembed = await message.channel.send(embed)
             const collector = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
             collector.on('collect', async m => {
+                var cache_twitter_name = db.get('twitter_name')
                 if (m.content == '1'){ // Create new account
                     if (!db.has('twitter_name')) {
                         db.set('twitter_name', [])
@@ -62,7 +63,7 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                         else if (!voted && members >= 50) maxAccs = 3
                         else maxAccs = 2
                     });
-                    if (db.get('twitter_name').length >= maxAccs && !db.get('premium')) {
+                    if (!db.get('premium') && cache_twitter_name.length >= maxAccs) {
                         embed.setDescription('I\'m sorry, but you have reached the maximun number of accounts for this server\n\n[Get premium and remove this limit](https://patreon.com/Greep)')
                         embed.setColor('#ff0000')
                         return message.channel.send(embed)
@@ -179,7 +180,6 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                     if (!db.has('twitter_name')) return message.channel.send('You haven\'t linked any Twitter accounts in this server. Please link a Twitter account before continue.');
                     var user_cache = []
                     var counter = 0;
-                    var cache_twitter_name = db.get('twitter_name')
                     db.get('twitter_name').forEach(()=>{
                         user_cache.push(`> ${counter+1}. **@${cache_twitter_name[counter].name}** on channel <#${cache_twitter_name[counter].channel}>`)            
                         counter++

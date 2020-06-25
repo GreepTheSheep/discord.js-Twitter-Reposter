@@ -22,7 +22,7 @@ async function oobe_advanced(message, client, config, functiondate, functiontime
             else if (!voted && members >= 50) maxAccs = 3
             else maxAccs = 2
         });
-        if (db.get('twitter_name').length >= maxAccs && !db.get('premium')) {
+        if (!db.get('premium') && cache_twitter_name.length >= maxAccs) {
             embed.setDescription('I\'m sorry, but you have reached the maximun number of accounts for this server\n\n[Get premium and remove this limit](https://patreon.com/Greep)')
             embed.setColor('#ff0000')
             return message.channel.send(embed)
