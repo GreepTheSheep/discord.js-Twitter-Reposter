@@ -20,9 +20,10 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
             return client.shard.send('Has not a db')
         }
         twitter_accounts.forEach(async account=>{
+            var acc_id;
             client.shard.send('Checking twitter account ' + account.name)
             await twitter_client.get('users/show', { screen_name: account.name}).then(result=>{
-                twitter_ids.push(result.id_str)
+                acc_id = result.id_str
                 client.shard.send('Done! ID: ' + result.id_str)
             })
             .catch(err=>{
@@ -42,6 +43,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                 }
                 return
             })
+            twitter_ids.push(acc_id)
         })
     });
 
