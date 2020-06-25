@@ -214,9 +214,10 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
                 twitter_ids.push(account.twitter_id)
         });
         // recreate new stream
-            Tstream.destroy()
-            delete Tstream
-            var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+        Tstream.destroy()
+        delete Tstream
+        await await client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45*1000))
+        var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
     })
 
     newaccs.on('fetchAll', async (cache_twitter_name) => {
@@ -234,24 +235,42 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
         if (twitter_accounts === undefined) {
             return client.shard.send('Has not a db')
         }
-        twitter_accounts.forEach(async account=>{
+        var acc_id;
+        await twitter_accounts.forEach(async account=>{
             client.shard.send('Checking twitter account ' + account.name)
-            if (!account.twitter_id) {
-                twitter_client.get('users/show', { screen_name: account.name}).then(result=>{
-                    account.twitter_id = result.id_str
-                })
-                .catch(err=>{
-                    client.shard.send(`Twitter User GET request error: ` + err.message + ' - ' + err.code);
-                    client.shard.send(err)
-                    return
-                })
-            }
-            twitter_ids.push(account.twitter_id)
+            var result = await twitter_client.get('users/show', { screen_name: account.name})
+            .catch(err=>{
+                client.shard.send(`Twitter User GET request error for ${account.name}: ` + err.errors[0].message + ' - ' + err.errors[0].code);
+                client.shard.send(err)
+                if (err.errors[0].code == 50 || err.errors[0].message == 'User not found.'){
+                    var n = 0
+                    twitter_accounts.forEach(acc=>{
+                        if (acc.name == account.name){
+                            twitter_accounts.splice(n,1)
+                            db.set('twitter_name', twitter_accounts)
+                            client.shard.send(`Account @${account.name} for channel ${account.channel} deleted.`)
+                            client.channels.find(c=>c.id == account.channel).send(`Account @${account.name} is not found on Twitter, the account was deleted from the database to prevent errors.\nMake sure your account is not deleted!`)
+                        }
+                        n++
+                    }) 
+                }
+                return
+            })
+            acc_id = result.id_str
+            twitter_ids.push(acc_id)
+            client.shard.send('Done! ID: ' + acc_id)
         })
     });
         // recreate new stream
-            //Tstream.destroy()
+        await wait(10*1000)
+        if (twitter_ids.length == 0) {
+            client.shard.send(`🔴 lol where are accounts`)
+            client.user.setStatus('dnd')
+            await client.shard.send(`Retrying in 45 seconds...`).then(wait(45*1000))
+        }
+            Tstream.destroy()
             delete Tstream
+            await await client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45*1000))
             var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
     })
 
