@@ -3,11 +3,11 @@ const Twitter = require('twitter-lite')
 const Enmap = require('enmap');
 const wait = require('util').promisify(setTimeout);
 
-function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs){
+async function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs){
     try{
     const checkDelay = 1*60*1000
     var twitter_ids = []
-    client.guilds.forEach(async g=>{
+    await client.guilds.forEach(async g=>{
         if (!twit_send) {
             if (!authorised_guilds_in_maintenance.includes(g.id)) return
         }
@@ -20,7 +20,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
             return client.shard.send('Has not a db')
         }
         var acc_id;
-        twitter_accounts.forEach(async account=>{
+        await twitter_accounts.forEach(async account=>{
             client.shard.send('Checking twitter account ' + account.name)
             var result = await twitter_client.get('users/show', { screen_name: account.name})
             .catch(err=>{
