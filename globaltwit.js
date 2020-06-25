@@ -26,7 +26,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
             .catch(err=>{
                 client.shard.send(`Twitter User GET request error for ${account.name}: ` + err.errors[0].message + ' - ' + err.errors[0].code);
                 client.shard.send(err)
-                if (err.errors[0].code == 50 || err.errors[0].message == 'User not found.'){
+                if (err.errors[0].code == 50 || err.errors[0].code == 63 || err.errors[0].code == 32){
                     var n = 0
                     twitter_accounts.forEach(acc=>{
                         if (acc.name == account.name){
@@ -242,7 +242,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
             .catch(err=>{
                 client.shard.send(`Twitter User GET request error for ${account.name}: ` + err.errors[0].message + ' - ' + err.errors[0].code);
                 client.shard.send(err)
-                if (err.errors[0].code == 50 || err.errors[0].message == 'User not found.'){
+                if (err.errors[0].code == 50 || err.errors[0].code == 63 || err.errors[0].code == 32){
                     var n = 0
                     twitter_accounts.forEach(acc=>{
                         if (acc.name == account.name){
