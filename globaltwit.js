@@ -24,6 +24,7 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
             client.shard.send('Checking twitter account ' + account.name)
             await twitter_client.get('users/show', { screen_name: account.name}).then(result=>{
                 acc_id = result.id_str
+                twitter_ids.push(acc_id)
                 client.shard.send('Done! ID: ' + result.id_str)
             })
             .catch(err=>{
@@ -43,10 +44,11 @@ function globaltwit(twitter_client, tokens, client, config, debug, functiondate,
                 }
                 return
             })
-            twitter_ids.push(acc_id)
         })
+        client.shard.send(twitter_ids)
     });
 
+    client.shard.send(twitter_ids)
     var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
 
     Tstream.on('start', function (start_result) {
