@@ -52,6 +52,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
                 if (newacctrigger == true){
                     client.shard.send('New accs found!')
                     newacctrigger = false
+                    twitter_ids = []
                     await client.guilds.forEach(async g => {
             if (!twit_send) {
                 if (!authorised_guilds_in_maintenance.includes(g.id)) return
@@ -86,17 +87,13 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
                         return
                     })
                 acc_id = result.id_str
-                if (!twitter_ids.include(acc_id)){
                     twitter_ids.push(acc_id)
                     client.shard.send('Done! ID: ' + acc_id)
-                } else {
-                    client.shard.send(acc_id + ' already added')
-                }
             })
         });
                     newacctrigger = false
                     // recreate new stream
-                    await process.nextTick(() => {Tstream.destroy(); delete Tstream});
+                    process.nextTick(() => {Tstream.destroy(); delete Tstream});
                     client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
                     var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
                 } else if (newacctrigger == false){
@@ -302,7 +299,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
                 client.user.setStatus('dnd')
                 await client.shard.send(`Retrying in 45 seconds...`).then(wait(45 * 1000))
             }
-            await process.nextTick(() => {Tstream.destroy(); delete Tstream});
+            process.nextTick(() => {Tstream.destroy(); delete Tstream});
             client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
             var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
         })
