@@ -199,7 +199,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
         var newacctrigger = false
         newaccs.on('basicEvent', newacctrigger = true)
         const checkInterval = new Promise(async function(resolve, reject) {
-            setInterval({
+            setInterval(async function (){
                 if (newacctrigger == true){
                     client.shard.send('New accs found!')
                     cache_twitter_name.forEach(async account => {
