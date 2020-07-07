@@ -8,14 +8,14 @@ async function enable_send(message, client, config, functiondate, functiontime, 
             client.user.setStatus('online')
             client.user.setActivity(`✅ Exiting MAINTENANCE mode`, { type: 'WATCHING' })
             client.shard.send(`Shard ${client.shard.id + 1} - Maintenance disabled`)
-            newaccs.emit('fetchAll')
+            newaccs.emit('basicEvent')
             return twit_send = true
         } else {
             message.reply(`Maintenance is enabled. Bot will not send tweets`)
             client.user.setStatus('idle')
             client.user.setActivity(`🟠 Starting MAINTENANCE mode`, { type: 'WATCHING' })
             client.shard.send(`Shard ${client.shard.id + 1} - Maintenance enabled`)
-            newaccs.emit('fetchAll')
+            newaccs.emit('basicEvent')
             return twit_send = false
         }
     }
@@ -41,7 +41,7 @@ async function enable_send(message, client, config, functiondate, functiontime, 
                             if (guild == m.content){
                                 authorised_guilds_in_maintenance.splice(n,1)
                                 message.channel.send(`Guild deleted.`)
-                                newaccs.emit('fetchAll')
+                                newaccs.emit('basicEvent')
                                 return
                             }
                             n++
@@ -50,7 +50,7 @@ async function enable_send(message, client, config, functiondate, functiontime, 
                     else {
                         authorised_guilds_in_maintenance.push(m.content)
                         message.channel.send(`Guild added.`)
-                        newaccs.emit('fetchAll')
+                        newaccs.emit('basicEvent')
                     }
                 }
                 else if (!gu) return m.react('❌')
