@@ -93,9 +93,9 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
         });
                     newacctrigger = false
                     // recreate new stream
-                    process.nextTick(() => {Tstream.destroy(); delete Tstream});
+                    process.nextTick(() => {Tstream.destroy()});
                     client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
-                    var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+                    const Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
                 } else if (newacctrigger == false){
                     client.shard.send('No new accs, retrying in ' + checkDelay/60/1000 + ' minutes')
                 }
@@ -107,7 +107,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
             client.user.setStatus('dnd')
             client.shard.send(`Retrying in 45 seconds...`).then(wait(45 * 1000))
         }
-        var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+        const Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
 
         Tstream.on('start', function(start_result) {
             if (start_result.status == 200) client.shard.send(`🟢 Streaming API started`)
@@ -299,9 +299,9 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
                 client.user.setStatus('dnd')
                 await client.shard.send(`Retrying in 45 seconds...`).then(wait(45 * 1000))
             }
-            process.nextTick(() => {Tstream.destroy(); delete Tstream});
+            process.nextTick(() => {Tstream.destroy()});
             client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
-            var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+            const Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
         })
 
     } catch (e) {
