@@ -47,7 +47,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
         });
 
         var newacctrigger = false
-        newaccs.on('basicEvent', newacctrigger = true)
+        newaccs.on('basicEvent', {newacctrigger = true})
             setInterval(async function (){
                 if (newacctrigger == true){
                     client.shard.send('New accs found!')
