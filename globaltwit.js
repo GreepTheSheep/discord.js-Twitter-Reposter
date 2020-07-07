@@ -201,11 +201,11 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
         const checkInterval = new Promise(async function(resolve, reject) {
             setInterval({
                 if (newacctrigger){
-                client.shard.send('New accs found!')
-                cache_twitter_name.forEach(async account => {
-                    client.shard.send('Checking twitter account ' + account.name)
-                    if (!account.twitter_id) {
-                        twitter_client.get('users/show', { screen_name: account.name }).then(result => {
+                    client.shard.send('New accs found!')
+                    cache_twitter_name.forEach(async account => {
+                        client.shard.send('Checking twitter account ' + account.name)
+                        if (!account.twitter_id) {
+                            twitter_client.get('users/show', { screen_name: account.name }).then(result => {
                                 account.twitter_id = result.id_str
                             })
                             .catch(err => {
@@ -213,15 +213,15 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
                                 client.shard.send(err)
                                 return
                             })
-                    }
-                    twitter_ids.push(account.twitter_id)
-                });
-                newacctrigger = false
-                // recreate new stream
-                Tstream.destroy()
-                delete Tstream
-                await client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
-                var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+                        }
+                        twitter_ids.push(account.twitter_id)
+                    });
+                    newacctrigger = false
+                    // recreate new stream
+                    Tstream.destroy()
+                    delete Tstream
+                    await client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
+                    var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
                 } else {
                     client.shard.send('No new accs, retrying in one minute')
                 }
