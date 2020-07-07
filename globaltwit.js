@@ -247,11 +247,14 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
             client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] globaltwit stream error:`)
             client.shard.send(err)
         })
+        /*
         Tstream.on('stall_warnings', function(stall) {
             client.users.find(u => u.id == config.owner_id).send(`:warning: ${stall.warning.message}`)
             client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] ${stall.warning.message} - ` + stall.warning.code)
         })
+        */
 
+/*
         newaccs.on('fetchAll', async (cache_twitter_name) => {
             client.shard.send('Fetching all accounts')
             var twitter_ids = []
@@ -305,6 +308,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
             client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
             const Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
         })
+*/
 
     } catch (e) {
         client.shard.send('GlobalTwit error: ' + e)
