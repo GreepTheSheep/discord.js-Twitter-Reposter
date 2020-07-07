@@ -120,7 +120,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
             client.shard.send(`🔴 Streaming API ended`)
             client.user.setStatus('dnd')
             await client.shard.send(`Retrying in 45 seconds...`).then(wait(45 * 1000))
-            Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+            const Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
         });
         Tstream.on('data', async function(tweet) {
             try {
