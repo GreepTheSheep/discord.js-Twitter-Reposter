@@ -200,7 +200,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
         newaccs.on('basicEvent', newacctrigger = true)
         const checkInterval = new Promise(async function(resolve, reject) {
             setInterval({
-                if (newacctrigger){
+                if (newacctrigger == true){
                     client.shard.send('New accs found!')
                     cache_twitter_name.forEach(async account => {
                         client.shard.send('Checking twitter account ' + account.name)
@@ -221,7 +221,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
                     Tstream.destroy()
                     client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
                     var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
-                } else {
+                } else if (newacctrigger == false){
                     client.shard.send('No new accs, retrying in one minute')
                 }
             }, 60*1000)
