@@ -46,6 +46,35 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
             })
         });
 
+        var newacctrigger = false
+        newaccs.on('basicEvent', newacctrigger = true)
+            setInterval(async function (){
+                if (newacctrigger == true){
+                    client.shard.send('New accs found!')
+                    cache_twitter_name.forEach(async account => {
+                        client.shard.send('Checking twitter account ' + account.name)
+                        if (!account.twitter_id) {
+                            twitter_client.get('users/show', { screen_name: account.name }).then(result => {
+                                account.twitter_id = result.id_str
+                            })
+                            .catch(err => {
+                                client.shard.send(`Twitter User GET request error: ` + err.message + ' - ' + err.code);
+                                client.shard.send(err)
+                                return
+                            })
+                        }
+                        twitter_ids.push(account.twitter_id)
+                    });
+                    newacctrigger = false
+                    // recreate new stream
+                    Tstream.destroy()
+                    client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
+                    var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+                } else if (newacctrigger == false){
+                    client.shard.send('No new accs, retrying in one minute')
+                }
+            }, 60*1000)
+
         await wait(10 * 1000)
         if (twitter_ids.length == 0) {
             client.shard.send(`🔴 lol where are accounts`)
@@ -195,35 +224,6 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
             client.users.find(u => u.id == config.owner_id).send(`:warning: ${stall.warning.message}`)
             client.shard.send(`[${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} ] ${stall.warning.message} - ` + stall.warning.code)
         })
-
-        var newacctrigger = false
-        newaccs.on('basicEvent', newacctrigger = true)
-            setInterval(async function (){
-                if (newacctrigger == true){
-                    client.shard.send('New accs found!')
-                    cache_twitter_name.forEach(async account => {
-                        client.shard.send('Checking twitter account ' + account.name)
-                        if (!account.twitter_id) {
-                            twitter_client.get('users/show', { screen_name: account.name }).then(result => {
-                                account.twitter_id = result.id_str
-                            })
-                            .catch(err => {
-                                client.shard.send(`Twitter User GET request error: ` + err.message + ' - ' + err.code);
-                                client.shard.send(err)
-                                return
-                            })
-                        }
-                        twitter_ids.push(account.twitter_id)
-                    });
-                    newacctrigger = false
-                    // recreate new stream
-                    Tstream.destroy()
-                    client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
-                    var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
-                } else if (newacctrigger == false){
-                    client.shard.send('No new accs, retrying in one minute')
-                }
-            }, 60*1000)
 
         newaccs.on('fetchAll', async (cache_twitter_name) => {
             client.shard.send('Fetching all accounts')
