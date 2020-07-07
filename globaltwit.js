@@ -50,7 +50,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
         if (twitter_ids.length == 0) {
             client.shard.send(`🔴 lol where are accounts`)
             client.user.setStatus('dnd')
-            await client.shard.send(`Retrying in 45 seconds...`).then(wait(45 * 1000))
+            client.shard.send(`Retrying in 45 seconds...`).then(wait(45 * 1000))
         }
         var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
 
@@ -218,8 +218,8 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
                     });
                     newacctrigger = false
                     // recreate new stream
-                    Tstream.destroy();
-                    await await client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
+                    Tstream.destroy()
+                    client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
                     var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
                 } else {
                     client.shard.send('No new accs, retrying in one minute')
@@ -277,7 +277,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
                 await client.shard.send(`Retrying in 45 seconds...`).then(wait(45 * 1000))
             }
             Tstream.destroy()
-            await await client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
+            client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
             var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
         })
 
