@@ -192,7 +192,7 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                         if (m.content.toLowerCase == 'cancel') return message.channel.send('Okay, stopping setup.')
                         if (!Number(m.content) || Number(m.content) == NaN) return message.channel.send('That\'s not a valid number, canceling setup')
                         var n = Number(m.content)-1
-                        bm.edit(`\`\`\`Account @${db.get('twitter_name')[n].name}\nSet up on the channel #${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).name} (${db.get('twitter_name')[n].channel})\n\nPlease choose the number you want to set it up:\n1. ${db.get('twitter_name')[n].retweet ? 'Enable' : 'Disable'} retweet posting\n2. ${db.get('twitter_name')[n].reply ? 'Enable' : 'Disable'} reply posting\n3. Change channel\n4. Change Twitter account\n5. Change embed slide color\n6. Delete account\`\`\``)
+                        bm.edit(`\`\`\`Account @${db.get('twitter_name')[n].name}\nSet up on the channel #${message.guild.channels.find(c=>c.id == db.get('twitter_name')[n].channel).name} (${db.get('twitter_name')[n].channel})\n\nPlease choose the number you want to set it up:\n1. ${db.get('twitter_name')[n].retweet ? 'Disable' : 'Enable'} retweet posting\n2. ${db.get('twitter_name')[n].reply ? 'Disable' : 'Enable'} reply posting\n3. Change channel\n4. Change Twitter account\n5. Change embed slide color\n6. Delete account\`\`\``)
                         const collector2 = message.channel.createMessageCollector(filter, {time: 30000, max: 1});
                         collector2.on('collect', m => {
                             m.delete()
