@@ -284,6 +284,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
     } catch (e) {
         client.shard.send('GlobalTwit error: ' + e)
         client.shard.send(e)
+        console.error(e)
     }
 }
 
