@@ -93,10 +93,12 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
         });
                     newacctrigger = false
                     // recreate new stream
-                    //process.nextTick(() => {Tstream.destroy()});
+                    /*
+                    process.nextTick(() => {Tstream.destroy()});
                     Tstream.destroy()
                     client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
                     const Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
+                    */
                 } else if (newacctrigger == false){
                     client.shard.send('No new accs, retrying in ' + checkDelay/60/1000 + ' minutes')
                 }
