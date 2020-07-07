@@ -51,29 +51,58 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
             setInterval(async function (){
                 if (newacctrigger == true){
                     client.shard.send('New accs found!')
-                    cache_twitter_name.forEach(async account => {
-                        client.shard.send('Checking twitter account ' + account.name)
-                        if (!account.twitter_id) {
-                            twitter_client.get('users/show', { screen_name: account.name }).then(result => {
-                                account.twitter_id = result.id_str
-                            })
-                            .catch(err => {
-                                client.shard.send(`Twitter User GET request error: ` + err.message + ' - ' + err.code);
-                                client.shard.send(err)
-                                return
+                    newacctrigger = false
+                    Tstream.destroy()
+                    await client.guilds.forEach(async g => {
+            if (!twit_send) {
+                if (!authorised_guilds_in_maintenance.includes(g.id)) return
+            }
+            client.shard.send('Checking guild ' + g.id)
+            var db = new Enmap({ name: 'db_' + g.id })
+            if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
+            if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
+            var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
+            if (twitter_accounts === undefined) {
+                return client.shard.send('Has not a db')
+            }
+            var acc_id;
+            await twitter_accounts.forEach(async account => {
+                client.shard.send('Checking twitter account ' + account.name)
+                var result = await twitter_client.get('users/show', { screen_name: account.name })
+                    .catch(err => {
+                        client.shard.send(`Twitter User GET request error for ${account.name}: ` + err.errors[0].message + ' - ' + err.errors[0].code);
+                        client.shard.send(err)
+                        if (err.errors[0].code == 50 || err.errors[0].code == 63 || err.errors[0].code == 32) {
+                            var n = 0
+                            twitter_accounts.forEach(acc => {
+                                if (acc.name == account.name) {
+                                    twitter_accounts.splice(n, 1)
+                                    db.set('twitter_name', twitter_accounts)
+                                    client.shard.send(`Account @${account.name} for channel ${account.channel} deleted.`)
+                                    client.channels.find(c => c.id == account.channel).send(`Account @${account.name} is not found on Twitter, the account was deleted from the database to prevent errors.\nMake sure your account is not deleted!`)
+                                }
+                                n++
                             })
                         }
-                        twitter_ids.push(account.twitter_id)
-                    });
+                        return
+                    })
+                acc_id = result.id_str
+                if (!twitter_ids.include(acc_id)){
+                    twitter_ids.push(acc_id)
+                    client.shard.send('Done! ID: ' + acc_id)
+                } else {
+                    client.shard.send(acc_id + ' already added')
+                }
+            })
+        });
                     newacctrigger = false
                     // recreate new stream
-                    Tstream.destroy()
                     client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
                     var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
                 } else if (newacctrigger == false){
-                    client.shard.send('No new accs, retrying in one minute')
+                    client.shard.send('No new accs, retrying in ' + checkDelay/60/1000 + ' minutes')
                 }
-            }, 60*1000)
+            }, checkDelay)
 
         await wait(10 * 1000)
         if (twitter_ids.length == 0) {
