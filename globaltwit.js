@@ -52,7 +52,6 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
                 if (newacctrigger == true){
                     client.shard.send('New accs found!')
                     newacctrigger = false
-                    Tstream.destroy()
                     await client.guilds.forEach(async g => {
             if (!twit_send) {
                 if (!authorised_guilds_in_maintenance.includes(g.id)) return
@@ -97,6 +96,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
         });
                     newacctrigger = false
                     // recreate new stream
+                    await process.nextTick(() => {Tstream.destroy(); delete Tstream});
                     client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
                     var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
                 } else if (newacctrigger == false){
@@ -302,7 +302,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
                 client.user.setStatus('dnd')
                 await client.shard.send(`Retrying in 45 seconds...`).then(wait(45 * 1000))
             }
-            Tstream.destroy()
+            await process.nextTick(() => {Tstream.destroy(); delete Tstream});
             client.shard.send(`🟠 Retrying in 45 seconds...`).then(wait(45 * 1000))
             var Tstream = twitter_client.stream("statuses/filter", { follow: twitter_ids })
         })
