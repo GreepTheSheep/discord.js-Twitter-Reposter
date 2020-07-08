@@ -138,11 +138,11 @@ async function oobe_stepByStep(message, client, config, functiondate, functionti
                                             
                                             db.set('shard_id', client.shard.id + 1)
 
-                                            newaccs.emit('basicEvent', cache_twitter_name)
+                                            newaccs.emit('basicEvent')
                                             bm.edit(`Ok, ${rptextbm}.\n\nThe setting is now done. You can now enjoy the power of Twitter reposting!`)
                                         
-                                            const check_number_of_accounts = require('../events/check_number.js')
-                                            check_number_of_accounts(client, config, debug, functiondate, functiontime, twit_send)
+                                            //const check_number_of_accounts = require('../events/check_number.js')
+                                            //check_number_of_accounts(client, config, debug, functiondate, functiontime, twit_send)
                                         
                                         });
                                         collector6.on('end', (collected, reason) => {
