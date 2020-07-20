@@ -109,8 +109,8 @@ client.on('ready', () => {
 
         dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
 
-        const globaltwit = require('./globaltwit.js')
-        globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs)
+        const globaltwit_premium = require('./globaltwit-p.js')
+        globaltwit_premium(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs)
         
         actfunction
     } else {
