@@ -3,7 +3,7 @@ const Twitter = require('twitter-lite')
 const Enmap = require('enmap');
 const wait = require('util').promisify(setTimeout);
 
-async function globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs) {
+async function globaltwit_premium(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs) {
     try {
         const checkDelay = 1 * 60 * 1000
         var twitter_ids = []
@@ -13,6 +13,7 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
             }
             client.shard.send('Checking guild ' + g.id)
             var db = new Enmap({ name: 'db_' + g.id })
+            if (db.get('premium') == false) return
             if (db.get('shard_id') != client.shard.id + 1 || !db.has('shard_id')) db.set('shard_id', client.shard.id + 1)
             if (!db.has('guild_name') || db.get('guild_name') != g.name) db.set('guild_name', g.name)
             var twitter_accounts = db.has('twitter_name') ? db.get('twitter_name') : undefined
@@ -262,4 +263,4 @@ async function globaltwit(twitter_client, tokens, client, config, debug, functio
     }
 }
 
-module.exports = globaltwit
+module.exports = globaltwit_premium
