@@ -1,14 +1,12 @@
-try{
 const Discord = require('discord.js');
 const client = new Discord.Client({
   fetchAllMembers: true
 });
 const wait = require('util').promisify(setTimeout);
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
-const DBL = require("dblapi.js");
-const dbl = new DBL(config.topgg_token, client);
-if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
+const configfile = "./config.json";
+const config = JSON.parse(fs.readFileSync(configfile, "utf8"));
+
 const debug = config.verbose
 const publicBot = "661967218174853121"
 
@@ -22,14 +20,8 @@ var tokens = {
 };
 
 const twitter_client = new Twitter(tokens);
-const EventEmitter = require('events');
-class MyEmitter extends EventEmitter {}
-const newaccs = new MyEmitter();
-var twit_send = true
-var authorised_guilds_in_maintenance = [
-    "570024448371982373", // Owner's server
-    "706587808910934096" // test server
-]
+const twitter_params = { screen_name: config.twitter_name };
+
 
 function functiondate() { 
     const datefu = new Date();
@@ -50,95 +42,22 @@ function functiontime() {
     return time
 }
 
+var old_avatar = undefined
+var old_tweets = undefined
+var old_count = undefined
+var old_name = undefined
+
 client.on('ready', () => { 
     try{
     const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
     client.shard.send(readylog);
 
-    if (client.user.id === publicBot){
-        const actmsgs = [
-            'your Twitter feed',
-            'mention me to setup!',
-            'VERSION 3 OPEN BETA',
-            'if all is set up correctly',
-            `if Twitter is not down...`,
-            `funny memes on Twitter`,
-            `${client.guilds.size} servers on shard ${client.shard.id + 1}`,
-            'issues on GitHub',
-            'bots on Twitter',
-            'cute cats images on Twitter',
-            'Elon Musk\'s Twitter feed',
-            'NASA\'s image of the day'
-        ];
-        const maintenance_actmsgs = [
-            `🛠 MAINTENANCE`,
-            'mention me to setup!',
-            `${client.guilds.size} servers on shard ${client.shard.id + 1}`,
-        ];
-        
-        function randomItem(array) {
-            return array[Math.floor(Math.random() * array.length)];
-        }
-        
-        client.user.setActivity('', { type: 'WATCHING' })
-        const actfunction = new Promise(async function(resolve, reject) {
-            if (!twit_send) {
-                client.user.setStatus('idle')
-                client.user.setActivity(`🟠 Starting in MAINTENANCE mode`, { type: 'WATCHING' })
-                client.shard.send(`Shard ${client.shard.id + 1} - Maintenance enabled`)
-            }
-            else {
-                client.user.setStatus('online')
-                client.user.setActivity(`${client.user.username} is starting...`, { type: 'WATCHING' })
-                client.shard.send(`Shard ${client.shard.id + 1} - Maintenance disabled`)
-            }
-            await wait(2*60*1000)
-            client.user.setActivity(`${client.guilds.size} servers on shard ${client.shard.id + 1}`, { type: 'WATCHING' })
-            setInterval(function() {
-                if (!twit_send) {
-                    let actmsg = randomItem(maintenance_actmsgs);
-                    client.user.setActivity(actmsg, { type: 'WATCHING' })
-                }
-                else {
-                    let actmsg = randomItem(actmsgs);
-                    client.user.setActivity(actmsg, { type: 'WATCHING' })
-                }
-                dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
-            }, 5 * 60 * 1000);
-        });
-
-        dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
-
-        const globaltwit_premium = require('./globaltwit-p.js')
-        globaltwit_premium(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs)
-        
-        actfunction
-    } else {
-        var twitter_params = { screen_name: config.twitter_name };
-        var old_avatar = undefined
-        var old_tweets = undefined
-        var old_count = undefined
-        var old_name = undefined
-        const twit = require('./twitter-function.js')
-        twit(twitter_client, twitter_params, client, config, debug, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets)
-    }
+    const twit = require('./twitter-function.js')
+    twit(twitter_client, twitter_params, client, config, debug, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets)
 
    }catch(err){
         console.error(err)
    }
-})
-
-client.on('message', message =>{
-    try{
-        if (message.channel.type === 'dm') return
-        if (message.author.bot) return;
-        if (client.user.id === publicBot){
-            const cmds_index = require('./cmds/cmds-index.js')
-            cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send, authorised_guilds_in_maintenance, newaccs)
-        }
-    }catch(e){
-        console.error(e)
-    }
 })
 
 client.on('guildCreate', guild => {
@@ -176,14 +95,3 @@ client.on('disconnect', event => {
 })
 
 client.login(config.discord_token)
-
-dbl.on('posted', () => {
-    client.shard.send('Server count posted on top.gg!');
-})
-  
-dbl.on('error', e => {
-    client.shard.send(`top.gg error! ${e}`);
-})
-}catch(e){
-    console.error(e)
-}
