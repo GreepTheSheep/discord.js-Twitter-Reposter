@@ -3,6 +3,7 @@
     "verbose": false,
     "retweet": true,
     "reply": false,
+    "embed_color" : "RANDOM",
 
     "owner_id": "YOUR USER ID",
     "discord_token" : "YOUR DISCORD BOT TOKEN",

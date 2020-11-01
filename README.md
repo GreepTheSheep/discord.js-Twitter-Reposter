@@ -5,8 +5,6 @@ Get informations of a Twitter account & latest posts and sends it to a Discord b
 
 [![Depfu](https://badges.depfu.com/badges/190262c44fa8dabd30ca874dd155e141/status.svg)](https://depfu.com) [![Depfu](https://badges.depfu.com/badges/190262c44fa8dabd30ca874dd155e141/overview.svg)](https://depfu.com/github/GreepTheSheep/discord.js-Twitter-integration?project_id=9856) [![Depfu](https://badges.depfu.com/badges/190262c44fa8dabd30ca874dd155e141/count.svg)](https://depfu.com/github/GreepTheSheep/discord.js-Twitter-integration?project_id=9856)
 
-[![Discord Bots](https://top.gg/api/widget/661967218174853121.svg)](https://top.gg/bot/661967218174853121)
-
 ## Pictures
 ![pic1](https://i.ibb.co/WVLx1dy/IMG-20191020-003135.jpg)
 ![pic2](https://i.ibb.co/W6sPpBz/IMG-20191020-003201.jpg)
