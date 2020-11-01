@@ -1,119 +1,189 @@
-function twit(twitter_client, twitter_params, client, config, debug, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets){
-    setInterval(function(){
-        twitter_client.get('statuses/user_timeline', twitter_params, (err, tweets) => {
-            if (err) client.shard.send(err);
+const Discord = require('discord.js')
 
-            if (old_name && old_name === tweets[0].user.name) {
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] display name not changed`)
-            }
-            if (old_name && old_name !== tweets[0].user.name){
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] display name changed, setting in Discord...`)
-                client.user.setUsername(tweets[0].user.name).catch(err=>{
-                    if (debug === true) client.shard.send(err)
-                    client.user.setUsername(tweets[0].user.screen_name)
-                })
-                old_name = tweets[0].user.name
-            }
-            if (!old_name){
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] old_name not defined, setting var`)
-                client.user.setUsername(tweets[0].user.name).catch(err=>{
-                    client.shard.send(err)
-                    client.user.setUsername(tweets[0].user.screen_name)
-                })
-                old_name = tweets[0].user.name
-            }
-        
-            if (old_count && old_count === tweets[0].user.followers_count) {
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] followers counter not changed`)
-            }
-            if (old_count && old_count !== tweets[0].user.followers_count){
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] followers counter changed, setting in Discord...`)
-                client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
-                old_count = tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")
-            }
-            if (!old_count){
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] old_counts not defined, setting var`)
-                client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
-                old_count = tweets[0].user.followers_count
-            }
-        
-            if (old_avatar && old_avatar === tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")) {
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar not changed`)
-            }
-            if (old_avatar && old_avatar !== tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")){
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar changed, setting in Discord...`)
-                client.user.setAvatar(tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")).catch(err=>{if (debug === true) client.shard.send(`[${functiondate()} - ${functiontime()}] ${err}`)})
-                old_avatar = tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")
-            }
-            if (!old_avatar){
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] old_avatar not defined, setting var`)
-                client.user.setAvatar(tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")).catch(err=>{if (debug === true) client.shard.send(`[${functiondate()} - ${functiontime()}] ${err}`)})
-                old_avatar = tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")
-            }
-        
+function checkUser(twitter_client, old_avatar, old_count, old_name, acc_id){
+    twitter_client.get('statuses/user_timeline', { user_id: acc_id }, (err, tweets) => {
+        if (err) console.log(err)
+        if (old_name && old_name === tweets[0].user.name) {
+            if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] display name not changed`)
+        }
+        if (old_name && old_name !== tweets[0].user.name){
+            if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] display name changed, setting in Discord...`)
+            client.user.setUsername(tweets[0].user.name).catch(err=>{
+                if (debug === true) console.log(err)
+                client.user.setUsername(tweets[0].user.screen_name)
+            })
+            old_name = tweets[0].user.name
+        }
+        if (!old_name){
+            if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_name not defined, setting var`)
+            client.user.setUsername(tweets[0].user.name).catch(err=>{
+                console.log(err)
+                client.user.setUsername(tweets[0].user.screen_name)
+            })
+            old_name = tweets[0].user.name
+        }
 
-            if (old_tweets && old_tweets === tweets[0].id) {
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] no new tweets`)
-            }
-            if (old_tweets && old_tweets !== tweets[0].id) {
-                try{
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] new tweet! sending in Discord...`)
-                
-                let embed = new Discord.RichEmbed
+        if (old_count && old_count === tweets[0].user.followers_count) {
+            if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] followers counter not changed`)
+        }
+        if (old_count && old_count !== tweets[0].user.followers_count){
+            if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] followers counter changed, setting in Discord...`)
+            client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
+            old_count = tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")
+        }
+        if (!old_count){
+            if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_counts not defined, setting var`)
+            client.user.setActivity(`${tweets[0].user.followers_count} followers`, { type: 'WATCHING' })
+            old_count = tweets[0].user.followers_count
+        }
 
-                tweets[0].text.replace('&amp;', '&')
+        if (old_avatar && old_avatar === tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")) {
+            if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar not changed`)
+        }
+        if (old_avatar && old_avatar !== tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")){
+            if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] avatar changed, setting in Discord...`)
+            client.user.setAvatar(tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")).catch(err=>{if (debug === true) console.log(`[${functiondate()} - ${functiontime()}] ${err}`)})
+            old_avatar = tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")
+        }
+        if (!old_avatar){
+            if (debug === true) console.log(`[DEBUG: ${functiondate()} - ${functiontime()}] old_avatar not defined, setting var`)
+            client.user.setAvatar(tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")).catch(err=>{if (debug === true) console.log(`[${functiondate()} - ${functiontime()}] ${err}`)})
+            old_avatar = tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg")
+        }
+    })
+}
 
-                if (tweets[0].retweeted === true || tweets[0].text.startsWith('RT')) {
-                    if (config.retweet === true){
-                        if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}`)
-                        embed   .setColor(`#${tweets[0].retweeted_status.user.profile_sidebar_border_color}`)
-                                .setAuthor(`Retweet\n${tweets[0].retweeted_status.user.name} (@${tweets[0].retweeted_status.user.screen_name})`, tweets[0].retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                                .setDescription(tweets[0].retweeted_status.text)
-                                .setTimestamp(tweets[0].retweeted_status.created_at)
-                                .setThumbnail('https://img.icons8.com/color/96/000000/retweet.png')
-                        if (tweets[0].retweeted_status.entities.media) embed.setImage(tweets[0].retweeted_status.entities.media[0].media_url_https)
-                        if (client.channels.find(c=>c.id == config.channel_id)) client.channels.find(c=>c.id == config.channel_id).send(embed)
+function twit(twitter_client, acc_id, client, config, debug, functiondate, functiontime, old_avatar, old_count, old_name){
+
+    setInterval(() =>
+        checkUser(twitter_client, old_avatar, old_count, old_name, acc_id)
+    , 5000)
+
+    const Tstream = twitter_client.stream("statuses/filter", { follow: acc_id })
+
+    Tstream.on('start', function(start_result) {
+        if (start_result.status == 200) console.log(`🟢 Streaming API started - Watching ${config.twitter_name} (Account ID ${acc_id})`)
+        else console.log(start_result.statusText)
+    })
+    Tstream.on("end", async response => {
+        console.log(`🔴 Streaming API ended`)
+        process.exit(2)
+    });
+    Tstream.on('data', async function(tweet) {
+        try {
+            var debug_header = `[${functiondate()} - ${functiontime()} - https://twitter.com/${config.twitter_name}/status/${tweet.id_str}`
+
+            let embed = new Discord.RichEmbed
+
+            tweet.text.replace('&amp;', '&')
+            if (tweet.retweeted === true || tweet.text.startsWith('RT')) {
+                if (config.retweet === true) {
+                    if (debug === true) console.log(debug_header + `Retweet from @${tweet.retweeted_status.user.screen_name}`)
+                    embed.setColor(config.embed_color ? config.embed_color : 'RANDOM')
+                        .setAuthor(`Retweet\n${tweet.retweeted_status.user.name} (@${tweet.retweeted_status.user.screen_name})`, tweet.retweeted_status.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
+                        .setDescription(tweet.retweeted_status.text)
+                        .setTimestamp(tweet.retweeted_status.created_at)
+                        .setThumbnail('https://img.icons8.com/color/96/000000/retweet.png')
+                    if (tweet.retweeted_status.entities.media) embed.setImage(tweet.retweeted_status.entities.media[0].media_url_https)
+                    if (client.channels.some(c => c.id == config.channel_id)) {
+                        var webhooks = await client.channels.find(c => c.id == config.channel_id).fetchWebhooks()
+                            .catch(client.channels.find(c => c.id == config.channel_id).createWebhook(client.user.username)
+                                .then(async wh => {
+                                    console.log(`Created webhook ${wh.name} for account @${tweet.user.screen_name} on channel ${wh.channelID}`)
+                                    webhook.send('', {
+                                        username: tweet.user.name,
+                                        avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                        embeds: [embed]
+                                    })
+                                })
+                            )
+                        webhooks = await client.channels.find(c => c.id == config.channel_id).fetchWebhooks()
+                        var webhook = webhooks.first()
+                        webhook.send('', {
+                            username: tweet.user.name,
+                            avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                            embeds: [embed]
+                        })
+                    } else return
+                } else {
+                    if (debug === true) console.log(debug_header + `Retweet from @${tweet.retweeted_status.user.screen_name}, but retweet config is disabled`)
+                }
+            } else if (tweet.retweeted === false || !tweet.text.startsWith('RT')) {
+                if (tweet.in_reply_to_status_id == null || tweet.in_reply_to_user_id == null) {
+                    if (debug === true) console.log(debug_header + `Simple tweet, id ${tweet.id_str}`)
+                    embed.setColor(config.embed_color ? config.embed_color : 'RANDOM')
+                        .setAuthor(`${tweet.user.name} (@${tweet.user.screen_name})`, tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
+                        .setDescription(tweet.text)
+                        .setTimestamp(tweet.created_at)
+                    if (tweet.entities.media) embed.setImage(tweet.entities.media[0].media_url_https)
+                    if (client.channels.some(c => c.id == config.channel_id)) {
+                        var webhooks = await client.channels.find(c => c.id == config.channel_id).fetchWebhooks()
+                            .catch(client.channels.find(c => c.id == config.channel_id).createWebhook(client.user.username)
+                                .then(async wh => {
+                                    console.log(`Created webhook ${wh.name} for account @${tweet.user.screen_name} on channel ${wh.channelID}`)
+                                    webhook.send('', {
+                                        username: tweet.user.name,
+                                        avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                        embeds: [embed]
+                                    })
+                                })
+                            )
+                        webhooks = await client.channels.find(c => c.id == config.channel_id).fetchWebhooks()
+                        var webhook = webhooks.first()
+                        webhook.send('', {
+                            username: tweet.user.name,
+                            avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                            embeds: [embed]
+                        })
+                    } else return
+                } else if (tweet.in_reply_to_status_id != null || tweet.in_reply_to_user_id != null) {
+                    if (config.reply === false) {
+                        if (debug === true) console.log(debug_header + `Reply to a tweet, but reply option is off`)
                     } else {
-                        if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] Retweet from @${tweets[0].retweeted_status.user.screen_name}, but retweet config is disabled`)
-                    }
-                } else if (tweets[0].retweeted === false || !tweets[0].text.startsWith('RT')) {
-                    if (tweets[0].in_reply_to_status_id == null || tweets[0].in_reply_to_user_id == null) {
-                        if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] Simple tweet`)
-                        embed   .setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
-                            .setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                            .setDescription(tweets[0].text)
-                            .setTimestamp(tweets[0].created_at)
-                            if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                            if (client.channels.find(c=>c.id == config.channel_id)) client.channels.find(c=>c.id == config.channel_id).send(embed)
-                    } else if (tweets[0].in_reply_to_status_id != null || tweets[0].in_reply_to_user_id != null){
-                        if (config.reply === false){
-                            if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] Reply to a tweet, but reply option is off`)
-                        } else {
-                            if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] Reply to a tweet`)
-                            embed.setColor(`#${tweets[0].user.profile_sidebar_border_color}`)
-                            embed.setAuthor(`${tweets[0].user.name} (@${tweets[0].user.screen_name})\nReply to @${tweets[0].in_reply_to_screen_name}`, tweets[0].user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                            embed.setDescription(tweets[0].text.replace(`@${tweets[0].in_reply_to_screen_name}`, ""))
-                            embed.setTimestamp(tweets[0].created_at)
-                            embed.setThumbnail('https://cdn1.iconfinder.com/data/icons/messaging-3/48/Reply-512.png')
-                            if (tweets[0].entities.media) embed.setImage(tweets[0].entities.media[0].media_url_https)
-                            if (client.channels.find(c=>c.id == config.channel_id)) client.channels.find(c=>c.id == config.channel_id).send(embed)
-                        }
+                        if (debug === true) console.log(debug_header + `Reply to a tweet, id ${tweet.in_reply_to_status_id}`)
+                        embed.setColor(config.embed_color ? config.embed_color : 'RANDOM')
+                            .setAuthor(`${tweet.user.name} (@${tweet.user.screen_name})\nReply to @${tweet.in_reply_to_screen_name}`, tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"), `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
+                            .setDescription(tweet.text.replace(`@${tweet.in_reply_to_screen_name}`, ""))
+                            .setTimestamp(tweet.created_at)
+                            .setThumbnail('https://cdn1.iconfinder.com/data/icons/messaging-3/48/Reply-512.png')
+                        if (tweet.entities.media) embed.setImage(tweet.entities.media[0].media_url_https)
+                        if (client.channels.some(c => c.id == config.channel_id)) {
+                            var webhooks = await client.channels.find(c => c.id == config.channel_id).fetchWebhooks()
+                                .catch(client.channels.find(c => c.id == config.channel_id).createWebhook(client.user.username)
+                                    .then(async wh => {
+                                        console.log(`Created webhook ${wh.name} for account @${tweet.user.screen_name} on channel ${wh.channelID}`)
+                                        webhook.send('', {
+                                            username: tweet.user.name,
+                                            avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                            embeds: [embed]
+                                        })
+                                    })
+                                )
+                            webhooks = await client.channels.find(c => c.id == config.channel_id).fetchWebhooks()
+                            var webhook = webhooks.first()
+                            webhook.send('', {
+                                username: tweet.user.name,
+                                avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
+                                embeds: [embed]
+                            })
+                        } else return
                     }
                 }
-                old_tweets = tweets[0].id
-                }catch(e){
-                    client.channels.get(config.channel_id).send(`https://twitter.com/${tweets[0].user.screen_name}/status/${tweets[0].id_str}`)
-                    .catch(err=>client.shard.send(err))
-                    old_tweets = tweets[0].id
-                    if (debug === true) client.shard.send(`[ERROR: ${functiondate()} - ${functiontime()} - Shard ${client.shard.id + 1} - guild ${g.id} ] ` + e)
-                    if (debug === true) client.shard.send(tweets[0])
-                }
             }
-            if (!old_tweets) {
-                if (debug === true) client.shard.send(`[DEBUG: ${functiondate()} - ${functiontime()}] old_tweets not defined, setting var`)
-                old_tweets = tweets[0].id
-            }
-         });
-    }, 5000)
+        } catch (e) {
+            if (debug === true) console.log(`ERROR: ` + e)
+            if (debug === true) console.log(tweet)
+            if (client.channels.some(c => c.id == config.channel_id)) client.channels.find(c => c.id == config.channel_id).send(`https://twitter.com/${config.twitter_name}/status/${tweet.id_str}`)
+                .catch(err => console.log(`Error sending on guild ${g.id} - ${g.name}\n${err}`))
+        }
+    })
+    Tstream.on('error', function(err) {
+        console.log(`[${functiondate()} - ${functiontime()} ] globaltwit stream error:`)
+        console.log(err)
+    })
+    Tstream.on('stall_warnings', function(stall) {
+        client.users.find(u => u.id == config.owner_id).send(`:warning: ${stall.warning.message}`)
+        console.log(`[${functiondate()} - ${functiontime()} ] ${stall.warning.message} - ` + stall.warning.code)
+    })
 }
 module.exports = twit

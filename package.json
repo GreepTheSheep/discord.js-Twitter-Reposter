@@ -4,8 +4,7 @@
   "description": "Get informations of a Twitter account & latest posts and sends it to a Discord bot",
   "main": "index.js",
   "scripts": {
-    "start": "node shard.js",
-    "install": "node selfhost-install.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +19,7 @@
   "dependencies": {
     "discord.js": "^11.5.1",
     "fs": "0.0.2",
-    "twitter": "^1.7.1",
+    "twitter-lite": "0.14.0",
     "shelljs": "0.8.3",
     "colors": "1.4.0",
     "prompt": "1.0.0",
