@@ -39,6 +39,14 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
 
                     let embed = new Discord.RichEmbed
 
+                    var webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
+                    var webhook = webhooks.find(wh=>wh.name == client.user.username)
+                    if (!webhook) {
+                        client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username)
+                        webhook = webhooks.find(wh=>wh.name == client.user.username)
+                    }
+                    console.log(webhook)
+
                     tweet.text.replace('&amp;', '&')
                     if (tweet.retweeted === true || tweet.text.startsWith('RT')) {
                         if (acc.retweet === true) {
@@ -50,10 +58,6 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                                 .setThumbnail('https://img.icons8.com/color/96/000000/retweet.png')
                             if (tweet.retweeted_status.entities.media) embed.setImage(tweet.retweeted_status.entities.media[0].media_url_https)
                             if (client.channels.some(c => c.id == acc.channel_id)) {
-                                var webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
-                                    .catch(client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username))
-                                webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
-                                var webhook = webhooks.first()
                                 webhook.send('', {
                                     username: tweet.user.name,
                                     avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
@@ -72,10 +76,6 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                                 .setTimestamp(tweet.created_at)
                             if (tweet.entities.media) embed.setImage(tweet.entities.media[0].media_url_https)
                             if (client.channels.some(c => c.id == acc.channel_id)) {
-                                var webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
-                                    .catch(client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username))
-                                webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
-                                var webhook = webhooks.first()
                                 webhook.send('', {
                                     username: tweet.user.name,
                                     avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
@@ -94,10 +94,6 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                                     .setThumbnail('https://cdn1.iconfinder.com/data/icons/messaging-3/48/Reply-512.png')
                                 if (tweet.entities.media) embed.setImage(tweet.entities.media[0].media_url_https)
                                 if (client.channels.some(c => c.id == acc.channel_id)) {
-                                    var webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
-                                        .catch(client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username))
-                                    webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
-                                    var webhook = webhooks.first()
                                     webhook.send('', {
                                         username: tweet.user.name,
                                         avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
