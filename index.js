@@ -49,7 +49,9 @@ client.on('ready', async () => {
         const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
         console.log(readylog);
 
-        var result = await twitter_client.get('users/show', { screen_name: config.twitter_name })
+        var twtaccounts = []
+        config.accounts.forEach(async acc=>{
+            var result = await twitter_client.get('users/show', { screen_name: acc.twitter_name })
             .catch(err => {
                 console.log(`Twitter User GET request error for ${account.name}: ` + err.errors[0].message + ' - ' + err.errors[0].code);
                 console.log(err)
@@ -59,17 +61,23 @@ client.on('ready', async () => {
                 }
                 return
             })
-        var acc_id = result.id_str
+            twtaccounts.push({
+                "id" : result.id_str,
+                "twitter_name" : acc.twitter_name,
+                "channel_id" : acc.channel_id,
+                "embed_color" : acc.embed_color
+            }) 
+        })
 
         if (config.accounts.length == 1){
             const checkUser = require('./check-user.js')
             setInterval(() =>
-                checkUser(client, config, debug, twitter_client, old_avatar, old_count, old_name)
+                checkUser(client, config, debug, twitter_client, old_avatar, old_count, old_name, twtaccounts[0])
             , 30 * 1000)
         }
         
         const twit = require('./twitter-function.js')
-        twit(twitter_client, acc_id, client, config, debug, functiondate, functiontime)
+        twit(twitter_client, client, twtaccounts, debug, functiondate, functiontime)
 
    }catch(err){
         console.error(err)
