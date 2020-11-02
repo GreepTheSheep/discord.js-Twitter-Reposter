@@ -32,12 +32,12 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
     });
     Tstream.on('data', async function(tweet) {
         try {
-            var debug_header = `[${functiondate()} - ${functiontime()}] `
-
-            let embed = new Discord.RichEmbed
-
             twtaccounts.forEach(async acc=>{
                 if (tweet.user.id_str == acc.id){
+                    var debug_header = `[${functiondate()} - ${functiontime()} - ${acc.twitter_name} ] `
+
+                    let embed = new Discord.RichEmbed
+
                     tweet.text.replace('&amp;', '&')
                     if (tweet.retweeted === true || tweet.text.startsWith('RT')) {
                         if (acc.retweet === true) {
