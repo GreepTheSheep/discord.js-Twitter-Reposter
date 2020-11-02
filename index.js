@@ -61,8 +61,15 @@ client.on('ready', async () => {
             })
         var acc_id = result.id_str
 
+        if (config.accounts.length == 1){
+            const checkUser = require('./check-user.js')
+            setInterval(() =>
+                checkUser(client, config, debug, twitter_client, old_avatar, old_count, old_name)
+            , 30 * 1000)
+        }
+        
         const twit = require('./twitter-function.js')
-        twit(twitter_client, acc_id, client, config, debug, functiondate, functiontime, old_avatar, old_count, old_name)
+        twit(twitter_client, acc_id, client, config, debug, functiondate, functiontime)
 
    }catch(err){
         console.error(err)
