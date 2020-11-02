@@ -2,11 +2,19 @@ const Discord = require('discord.js')
 
 function twit(twitter_client, client, twtaccounts, debug, functiondate, functiontime){
 
-    var watchingids = []
-    twtaccounts.forEach(acc=>{
-        watchingids.push(acc.id)
-    })
-    watchingids.join(', ')
+    console.log(twtaccounts)
+    var watchingids
+
+    if (twtaccounts.length > 1){
+        watchingids = []
+        twtaccounts.forEach(acc=>{
+            watchingids.push(acc.id)
+        })
+        watchingids.join(', ')
+    } else {
+        watchingids = twtaccounts[0].id
+    }
+    
 
     const Tstream = twitter_client.stream("statuses/filter", { follow: watchingids })
 
@@ -28,7 +36,7 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
             var debug_header = `[${functiondate()} - ${functiontime()}] `
 
             let embed = new Discord.RichEmbed
-            
+
             twtaccounts.forEach(async acc=>{
                 if (tweet.user.id_str == acc.id){
                     tweet.text.replace('&amp;', '&')

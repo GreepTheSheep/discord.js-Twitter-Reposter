@@ -20,6 +20,26 @@ var tokens = {
 
 const twitter_client = new Twitter(tokens);
 
+var twtaccounts = []
+config.accounts.forEach(async acc=>{
+    var result = await twitter_client.get('users/show', { screen_name: acc.twitter_name })
+    .catch(err => {
+        console.log(`Twitter User GET request error for ${account.name}: ` + err.errors[0].message + ' - ' + err.errors[0].code);
+        console.log(err)
+        if (err.errors[0].code == 50 || err.errors[0].code == 63 || err.errors[0].code == 32) {
+            console.error('Account not found!')
+            process.exit(1)
+        }
+        return
+    })
+    twtaccounts.push({
+        "id" : result.id_str,
+        "twitter_name" : acc.twitter_name,
+        "channel_id" : acc.channel_id,
+        "embed_color" : acc.embed_color
+    })
+})
+
 
 function functiondate() { 
     const datefu = new Date();
@@ -48,26 +68,6 @@ client.on('ready', async () => {
     try{
         const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
         console.log(readylog);
-
-        var twtaccounts = []
-        config.accounts.forEach(async acc=>{
-            var result = await twitter_client.get('users/show', { screen_name: acc.twitter_name })
-            .catch(err => {
-                console.log(`Twitter User GET request error for ${account.name}: ` + err.errors[0].message + ' - ' + err.errors[0].code);
-                console.log(err)
-                if (err.errors[0].code == 50 || err.errors[0].code == 63 || err.errors[0].code == 32) {
-                    console.error('Account not found!')
-                    process.exit(1)
-                }
-                return
-            })
-            twtaccounts.push({
-                "id" : result.id_str,
-                "twitter_name" : acc.twitter_name,
-                "channel_id" : acc.channel_id,
-                "embed_color" : acc.embed_color
-            }) 
-        })
 
         if (config.accounts.length == 1){
             const checkUser = require('./check-user.js')
