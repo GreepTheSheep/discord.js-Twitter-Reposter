@@ -33,6 +33,7 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
     Tstream.on('data', async function(tweet) {
         try {
             twtaccounts.forEach(async acc=>{
+                if (!tweet.text || tweet.text == '') return
                 if (tweet.user.id_str == acc.id){
                     var debug_header = `[${functiondate()} - ${functiontime()} - ${acc.twitter_name} ] `
 
@@ -51,6 +52,7 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                             if (client.channels.some(c => c.id == acc.channel_id)) {
                                 var webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
                                     .catch(client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username))
+                                webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
                                 var webhook = webhooks.first()
                                 webhook.send('', {
                                     username: tweet.user.name,
@@ -72,6 +74,7 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                             if (client.channels.some(c => c.id == acc.channel_id)) {
                                 var webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
                                     .catch(client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username))
+                                webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
                                 var webhook = webhooks.first()
                                 webhook.send('', {
                                     username: tweet.user.name,
@@ -93,6 +96,7 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                                 if (client.channels.some(c => c.id == acc.channel_id)) {
                                     var webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
                                         .catch(client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username))
+                                    webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
                                     var webhook = webhooks.first()
                                     webhook.send('', {
                                         username: tweet.user.name,
