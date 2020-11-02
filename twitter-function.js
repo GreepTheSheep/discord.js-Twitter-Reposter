@@ -28,10 +28,8 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
             var debug_header = `[${functiondate()} - ${functiontime()}] `
 
             let embed = new Discord.RichEmbed
-
-            var user_twt = tweet.user.screen_name
-
-            twtaccounts.forEach(acc=>{
+            
+            twtaccounts.forEach(async acc=>{
                 if (tweet.user.id_str == acc.id){
                     tweet.text.replace('&amp;', '&')
                     if (tweet.retweeted === true || tweet.text.startsWith('RT')) {
