@@ -36,7 +36,9 @@ config.accounts.forEach(async acc=>{
         "id" : result.id_str,
         "twitter_name" : acc.twitter_name,
         "channel_id" : acc.channel_id,
-        "embed_color" : acc.embed_color
+        "embed_color" : acc.embed_color,
+        "retweet": acc.retweet,
+        "reply": acc.reply
     })
 })
 
@@ -72,7 +74,7 @@ client.on('ready', async () => {
         if (config.accounts.length == 1){
             const checkUser = require('./check-user.js')
             setInterval(() =>
-                checkUser(client, config, debug, twitter_client, old_avatar, old_count, old_name, twtaccounts[0])
+                checkUser(client, config, debug, twitter_client, old_avatar, old_count, old_name)
             , 30 * 1000)
         }
         

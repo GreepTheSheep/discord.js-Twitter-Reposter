@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 
-function checkUser(client, twitter_client, debug, old_avatar, old_count, old_name, twtaccount){
-    twitter_client.get('statuses/user_timeline', { screen_name: twtaccount.twitter_name }, (err, tweets) => {
+function checkUser(client, config, debug, twitter_client, old_avatar, old_count, old_name){
+    twitter_client.get('statuses/user_timeline', { screen_name: config.accounts[0].twitter_name }, (err, tweets) => {
         if (err) console.log(err)
 
         if (old_name && old_name === tweets[0].user.name) {

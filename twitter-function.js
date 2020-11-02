@@ -51,7 +51,6 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                             if (client.channels.some(c => c.id == acc.channel_id)) {
                                 var webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
                                     .catch(client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username))
-                                webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
                                 var webhook = webhooks.first()
                                 webhook.send('', {
                                     username: tweet.user.name,
@@ -72,17 +71,7 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                             if (tweet.entities.media) embed.setImage(tweet.entities.media[0].media_url_https)
                             if (client.channels.some(c => c.id == acc.channel_id)) {
                                 var webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
-                                    .catch(client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username)
-                                        .then(async wh => {
-                                            console.log(`Created webhook ${wh.name} for account @${tweet.user.screen_name} on channel ${wh.channelID}`)
-                                            webhook.send('', {
-                                                username: tweet.user.name,
-                                                avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
-                                                embeds: [embed]
-                                            })
-                                        })
-                                    )
-                                webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
+                                    .catch(client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username))
                                 var webhook = webhooks.first()
                                 webhook.send('', {
                                     username: tweet.user.name,
@@ -103,17 +92,7 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                                 if (tweet.entities.media) embed.setImage(tweet.entities.media[0].media_url_https)
                                 if (client.channels.some(c => c.id == acc.channel_id)) {
                                     var webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
-                                        .catch(client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username)
-                                            .then(async wh => {
-                                                console.log(`Created webhook ${wh.name} for account @${tweet.user.screen_name} on channel ${wh.channelID}`)
-                                                webhook.send('', {
-                                                    username: tweet.user.name,
-                                                    avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
-                                                    embeds: [embed]
-                                                })
-                                            })
-                                        )
-                                    webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
+                                        .catch(client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username))
                                     var webhook = webhooks.first()
                                     webhook.send('', {
                                         username: tweet.user.name,
