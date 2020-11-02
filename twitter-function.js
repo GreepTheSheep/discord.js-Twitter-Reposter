@@ -2,7 +2,6 @@ const Discord = require('discord.js')
 
 function twit(twitter_client, client, twtaccounts, debug, functiondate, functiontime){
 
-    console.log(twtaccounts)
     var watchingids
 
     if (twtaccounts.length > 1){
