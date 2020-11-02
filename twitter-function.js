@@ -45,7 +45,6 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                         client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username)
                         webhook = webhooks.find(wh=>wh.name == client.user.username)
                     }
-                    console.log(webhook)
 
                     tweet.text.replace('&amp;', '&')
                     if (tweet.retweeted === true || tweet.text.startsWith('RT')) {
