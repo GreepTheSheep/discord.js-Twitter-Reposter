@@ -17,13 +17,13 @@
   },
   "homepage": "https://github.com/GreepTheSheep/discord.js-Twitter-Reposter#readme",
   "dependencies": {
-    "discord.js": "^11.5.1",
-    "fs": "0.0.2",
-    "twitter-lite": "0.14.0",
-    "shelljs": "0.8.3",
     "colors": "1.4.0",
-    "prompt": "1.0.0",
+    "discord.js": "^12.4.1",
+    "fs": "0.0.2",
     "os": "0.1.1",
-    "request": "2.88.0"
+    "prompt": "1.0.0",
+    "request": "2.88.0",
+    "shelljs": "0.8.3",
+    "twitter-lite": "0.14.0"
   }
 }

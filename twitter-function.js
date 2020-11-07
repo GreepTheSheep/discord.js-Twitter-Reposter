@@ -39,10 +39,10 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
 
                     let embed = new Discord.RichEmbed
 
-                    var webhooks = await client.channels.find(c => c.id == acc.channel_id).fetchWebhooks()
+                    var webhooks = await client.channels.cache.find(c => c.id == acc.channel_id).fetchWebhooks()
                     var webhook = webhooks.find(wh=>wh.name == client.user.username)
                     if (!webhook) {
-                        client.channels.find(c => c.id == acc.channel_id).createWebhook(client.user.username)
+                        client.channels.cache.find(c => c.id == acc.channel_id).createWebhook(client.user.username)
                         webhook = webhooks.find(wh=>wh.name == client.user.username)
                     }
 
