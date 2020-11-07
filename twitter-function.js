@@ -37,7 +37,7 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                 if (tweet.user.id_str == acc.id){
                     var debug_header = `[${functiondate()} - ${functiontime()} - ${acc.twitter_name} ] `
 
-                    let embed = new Discord.RichEmbed
+                    let embed = new Discord.MessageEmbed
 
                     var webhooks = await client.channels.cache.find(c => c.id == acc.channel_id).fetchWebhooks()
                     var webhook = webhooks.find(wh=>wh.name == client.user.username)

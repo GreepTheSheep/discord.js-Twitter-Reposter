@@ -70,8 +70,10 @@ client.on('ready', async () => {
     try{
         const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
         console.log(readylog);
+        console.log(`${config.accounts.length} accounts set`)
 
         if (config.accounts.length == 1){
+            
             const checkUser = require('./check-user.js')
             setInterval(() =>
                 checkUser(client, config, debug, twitter_client, old_avatar, old_count, old_name)
