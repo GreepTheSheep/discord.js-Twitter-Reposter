@@ -56,7 +56,7 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                                 .setTimestamp(tweet.retweeted_status.created_at)
                                 .setThumbnail('https://img.icons8.com/color/96/000000/retweet.png')
                             if (tweet.retweeted_status.entities.media) embed.setImage(tweet.retweeted_status.entities.media[0].media_url_https)
-                            if (client.channels.some(c => c.id == acc.channel_id)) {
+                            if (client.channels.cache.some(c => c.id == acc.channel_id)) {
                                 webhook.send('', {
                                     username: tweet.user.name,
                                     avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
@@ -74,7 +74,7 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                                 .setDescription(tweet.text)
                                 .setTimestamp(tweet.created_at)
                             if (tweet.entities.media) embed.setImage(tweet.entities.media[0].media_url_https)
-                            if (client.channels.some(c => c.id == acc.channel_id)) {
+                            if (client.channels.cache.some(c => c.id == acc.channel_id)) {
                                 webhook.send('', {
                                     username: tweet.user.name,
                                     avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
@@ -92,7 +92,7 @@ function twit(twitter_client, client, twtaccounts, debug, functiondate, function
                                     .setTimestamp(tweet.created_at)
                                     .setThumbnail('https://cdn1.iconfinder.com/data/icons/messaging-3/48/Reply-512.png')
                                 if (tweet.entities.media) embed.setImage(tweet.entities.media[0].media_url_https)
-                                if (client.channels.some(c => c.id == acc.channel_id)) {
+                                if (client.channels.cache.some(c => c.id == acc.channel_id)) {
                                     webhook.send('', {
                                         username: tweet.user.name,
                                         avatarURL: tweet.user.profile_image_url_https.replace("normal.jpg", "200x200.jpg"),
