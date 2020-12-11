@@ -8,7 +8,6 @@ const configfile = "./config.json";
 const config = JSON.parse(fs.readFileSync(configfile, "utf8"));
 
 const debug = config.verbose
-const publicBot = "661967218174853121"
 
 const Twitter = require('twitter-lite')
 var tokens = {
@@ -72,16 +71,9 @@ client.on('ready', async () => {
         console.log(readylog);
         console.log(`${config.accounts.length} accounts set`)
 
-        if (config.accounts.length == 1){
-            
-            const checkUser = require('./check-user.js')
-            setInterval(() =>
-                checkUser(client, config, debug, twitter_client, old_avatar, old_count, old_name)
-            , 30 * 1000)
-        }
+        if (config.accounts.length == 1) require('./check-user.js')(client, config, debug, twitter_client, old_avatar, old_count, old_name)
         
-        const twit = require('./twitter-function.js')
-        twit(twitter_client, client, twtaccounts, debug, functiondate, functiontime)
+        require('./twitter-function.js')(twitter_client, client, twtaccounts, debug, functiondate, functiontime)
 
    }catch(err){
         console.error(err)
@@ -90,13 +82,8 @@ client.on('ready', async () => {
 
 client.on('guildCreate', guild => {
     try{
-    if (client.user.id === publicBot){
-        const Enmap = require('enmap')
-        const db = new Enmap({name:'db_' + guild.id})
-    }
     const botjoinguildlog = `${client.user.username} joined ${guild.name} - ID: ${guild.id}`
     console.log(`[${functiondate(0)} - ${functiontime(0)}] ${botjoinguildlog}`)
-    if (client.user.id === publicBot) dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
 }catch(e){
     console.error(e)
 }
@@ -104,14 +91,8 @@ client.on('guildCreate', guild => {
 
 client.on('guildDelete', guild => {
     try{
-        if (client.user.id === publicBot){
-            const Enmap = require('enmap')
-            const db = new Enmap({name:'db_' + guild.id})
-            db.destroy()
-        }
         const botleftguildlog = `${client.user.username} left ${guild.name} - ID: ${guild.id}`
         console.log(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
-        if (client.user.id === publicBot) dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
     } catch(e) {
         console.error(e)
     }
