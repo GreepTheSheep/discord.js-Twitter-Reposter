@@ -4,8 +4,7 @@
   "description": "Get informations of a Twitter account & latest posts and sends it to a Discord bot",
   "main": "index.js",
   "scripts": {
-    "start": "node shard.js",
-    "install": "node selfhost-install.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -18,18 +17,13 @@
   },
   "homepage": "https://github.com/GreepTheSheep/discord.js-Twitter-Reposter#readme",
   "dependencies": {
-    "better-sqlite-pool": "^0.2.3",
-    "better-sqlite3": "5.4.3",
     "colors": "1.4.0",
-    "dblapi.js": "^2.4.0",
-    "discord.js": "^11.6.1",
-    "enmap": "^5.3.1",
-    "events": "^3.1.0",
+    "discord.js": "^12.5.1",
     "fs": "0.0.2",
     "os": "0.1.1",
     "prompt": "1.0.0",
     "request": "2.88.0",
     "shelljs": "0.8.3",
-    "twitter-lite": "latest"
+    "twitter-lite": "0.14.0"
   }
 }

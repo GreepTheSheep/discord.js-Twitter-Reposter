@@ -1,16 +1,16 @@
 module.exports = {
   apps : [{
     name: 'Twitter-Discord',
-    script: 'shard.js',
+    script: 'index.js',
 
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
-    args: 'one two',
+    args: '',
     instances: 1,
     autorestart: true,
     watch: false,
     max_memory_restart: '500M',
     env: {
-      NODE_ENV: 'development'
+      NODE_ENV: 'production'
     },
     env_production: {
       NODE_ENV: 'production'

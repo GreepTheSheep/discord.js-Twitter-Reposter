@@ -1,35 +1,46 @@
-try{
 const Discord = require('discord.js');
 const client = new Discord.Client({
   fetchAllMembers: true
 });
 const wait = require('util').promisify(setTimeout);
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
-const DBL = require("dblapi.js");
-const dbl = new DBL(config.topgg_token, client);
-if (client.shard.count == 0) client.shard.send = (m) => console.log(m)
+const configfile = "./config.json";
+const config = JSON.parse(fs.readFileSync(configfile, "utf8"));
+
 const debug = config.verbose
-const publicBot = "661967218174853121"
 
 const Twitter = require('twitter-lite')
 var tokens = {
     consumer_key:        config.consumer_key,
     consumer_secret:     config.consumer_secret,
-    access_token:        config.access_token_key,
     access_token_key:    config.access_token_key,
     access_token_secret: config.access_token_secret,
 };
 
 const twitter_client = new Twitter(tokens);
-const EventEmitter = require('events');
-class MyEmitter extends EventEmitter {}
-const newaccs = new MyEmitter();
-var twit_send = true
-var authorised_guilds_in_maintenance = [
-    "570024448371982373", // Owner's server
-    "706587808910934096" // test server
-]
+
+var twtaccounts = []
+config.accounts.forEach(async acc=>{
+    var result = await twitter_client.get('users/show', { screen_name: acc.twitter_name })
+    .catch(err => {
+        console.log(`Twitter User GET request error for ${account.name}: ` + err.errors[0].message + ' - ' + err.errors[0].code);
+        console.log(err)
+        if (err.errors[0].code == 50 || err.errors[0].code == 63 || err.errors[0].code == 32) {
+            console.error('Account not found!')
+            process.exit(1)
+        }
+        return
+    })
+    twtaccounts.push({
+        "id" : result.id_str,
+        "twitter_name" : acc.twitter_name,
+        "channel_id" : acc.channel_id,
+        "embed_color" : acc.embed_color,
+        "retweet": acc.retweet,
+        "reply": acc.reply
+    })
+})
+
 
 function functiondate() { 
     const datefu = new Date();
@@ -50,106 +61,29 @@ function functiontime() {
     return time
 }
 
-client.on('ready', () => { 
+var old_avatar = undefined
+var old_count = undefined
+var old_name = undefined
+
+client.on('ready', async () => { 
     try{
-    const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
-    client.shard.send(readylog);
+        const readylog = `Logged in as ${client.user.tag}!\nOn ${functiondate(0)} at ${functiontime(0)}`
+        console.log(readylog);
+        console.log(`${config.accounts.length} accounts set`)
 
-    if (client.user.id === publicBot){
-        const actmsgs = [
-            'your Twitter feed',
-            'mention me to setup!',
-            'VERSION 3 OPEN BETA',
-            'if all is set up correctly',
-            `if Twitter is not down...`,
-            `funny memes on Twitter`,
-            `${client.guilds.size} servers on shard ${client.shard.id + 1}`,
-            'issues on GitHub',
-            'bots on Twitter',
-            'cute cats images on Twitter',
-            'Elon Musk\'s Twitter feed',
-            'NASA\'s image of the day'
-        ];
-        const maintenance_actmsgs = [
-            `🛠 MAINTENANCE`,
-            'mention me to setup!',
-            `${client.guilds.size} servers on shard ${client.shard.id + 1}`,
-        ];
+        if (config.accounts.length == 1) require('./check-user.js')(client, config, debug, twitter_client, old_avatar, old_count, old_name)
         
-        function randomItem(array) {
-            return array[Math.floor(Math.random() * array.length)];
-        }
-        
-        client.user.setActivity('', { type: 'WATCHING' })
-        const actfunction = new Promise(async function(resolve, reject) {
-            if (!twit_send) {
-                client.user.setStatus('idle')
-                client.user.setActivity(`🟠 Starting in MAINTENANCE mode`, { type: 'WATCHING' })
-                client.shard.send(`Shard ${client.shard.id + 1} - Maintenance enabled`)
-            }
-            else {
-                client.user.setStatus('online')
-                client.user.setActivity(`${client.user.username} is starting...`, { type: 'WATCHING' })
-                client.shard.send(`Shard ${client.shard.id + 1} - Maintenance disabled`)
-            }
-            await wait(2*60*1000)
-            client.user.setActivity(`${client.guilds.size} servers on shard ${client.shard.id + 1}`, { type: 'WATCHING' })
-            setInterval(function() {
-                if (!twit_send) {
-                    let actmsg = randomItem(maintenance_actmsgs);
-                    client.user.setActivity(actmsg, { type: 'WATCHING' })
-                }
-                else {
-                    let actmsg = randomItem(actmsgs);
-                    client.user.setActivity(actmsg, { type: 'WATCHING' })
-                }
-                dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
-            }, 5 * 60 * 1000);
-        });
-
-        dbl.postStats(client.guilds.size, client.shard.id, client.shard.count);
-
-        const globaltwit = require('./globaltwit.js')
-        globaltwit(twitter_client, tokens, client, config, debug, functiondate, functiontime, twit_send, authorised_guilds_in_maintenance, newaccs)
-        
-        actfunction
-    } else {
-        var twitter_params = { screen_name: config.twitter_name };
-        var old_avatar = undefined
-        var old_tweets = undefined
-        var old_count = undefined
-        var old_name = undefined
-        const twit = require('./twitter-function.js')
-        twit(twitter_client, twitter_params, client, config, debug, functiondate, functiontime, old_avatar, old_count, old_name, old_tweets)
-    }
+        require('./twitter-function.js')(twitter_client, client, twtaccounts, debug, functiondate, functiontime)
 
    }catch(err){
         console.error(err)
    }
 })
 
-client.on('message', message =>{
-    try{
-        if (message.channel.type === 'dm') return
-        if (message.author.bot) return;
-        if (client.user.id === publicBot){
-            const cmds_index = require('./cmds/cmds-index.js')
-            cmds_index(message, client, config, functiondate, functiontime, publicBot, twitter_client, dbl, twit_send, authorised_guilds_in_maintenance, newaccs)
-        }
-    }catch(e){
-        console.error(e)
-    }
-})
-
 client.on('guildCreate', guild => {
     try{
-    if (client.user.id === publicBot){
-        const Enmap = require('enmap')
-        const db = new Enmap({name:'db_' + guild.id})
-    }
     const botjoinguildlog = `${client.user.username} joined ${guild.name} - ID: ${guild.id}`
-    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botjoinguildlog}`)
-    if (client.user.id === publicBot) dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
+    console.log(`[${functiondate(0)} - ${functiontime(0)}] ${botjoinguildlog}`)
 }catch(e){
     console.error(e)
 }
@@ -157,14 +91,8 @@ client.on('guildCreate', guild => {
 
 client.on('guildDelete', guild => {
     try{
-        if (client.user.id === publicBot){
-            const Enmap = require('enmap')
-            const db = new Enmap({name:'db_' + guild.id})
-            db.destroy()
-        }
         const botleftguildlog = `${client.user.username} left ${guild.name} - ID: ${guild.id}`
-        client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
-        if (client.user.id === publicBot) dbl.postStats(client.guilds.size, client.shard.Id, client.shard.count);
+        console.log(`[${functiondate(0)} - ${functiontime(0)}] ${botleftguildlog}`)
     } catch(e) {
         console.error(e)
     }
@@ -172,18 +100,7 @@ client.on('guildDelete', guild => {
 
 client.on('disconnect', event => {
     const eventmsg = `Bot down : code ${event.code}: "${event.reason}"`
-    client.shard.send(`[${functiondate(0)} - ${functiontime(0)}] ` + eventmsg)
+    console.log(`[${functiondate(0)} - ${functiontime(0)}] ` + eventmsg)
 })
 
 client.login(config.discord_token)
-
-dbl.on('posted', () => {
-    client.shard.send('Server count posted on top.gg!');
-})
-  
-dbl.on('error', e => {
-    client.shard.send(`top.gg error! ${e}`);
-})
-}catch(e){
-    console.error(e)
-}
